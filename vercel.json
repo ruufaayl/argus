@@ -1,0 +1,10 @@
+{
+  "buildCommand": "pnpm turbo build --filter=@sentinel/web",
+  "outputDirectory": "apps/web/dist",
+  "framework": "vite",
+  "installCommand": "pnpm install",
+  "env": {
+    "VITE_CESIUM_ION_TOKEN": "@cesium-ion-token",
+    "VITE_API_URL": "@api-url"
+  }
+}

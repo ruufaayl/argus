@@ -1,0 +1,53 @@
+﻿# Environment files — NEVER commit these
+.env
+.env.local
+.env.production
+.env.development
+*.env
+.dev.vars
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.output/
+.cache/
+
+# Wrangler
+.wrangler/
+wrangler.toml.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+test-claude.js
+tests.js
+tsc_errors.txt
+tsc_output.txt
+tserr.txt
+scripts/update_specific_landmarks.js
+
+test-gemini.js
+test-gemini-models.js

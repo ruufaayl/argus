@@ -1,0 +1,27 @@
+{
+  "name": "pakistan-sentinel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "dev:web": "turbo dev --filter=@sentinel/web",
+    "dev:api": "turbo dev --filter=@sentinel/api",
+    "build:web": "turbo build --filter=@sentinel/web",
+    "build:api": "turbo build --filter=@sentinel/api"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.6",
+    "cheerio": "^1.2.0"
+  }
+}

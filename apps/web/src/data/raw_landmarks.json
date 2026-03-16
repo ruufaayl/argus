@@ -1,0 +1,1174 @@
+## 🏛 GOVERNMENT — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Prime Minister's Office | Islamabad | ICT | T1 | 33.7295 | 73.0932 |
+| 2 | President's Secretariat (Aiwan-e-Sadr) | Islamabad | ICT | T1 | 33.7298 | 73.0888 |
+| 3 | Parliament House | Islamabad | ICT | T1 | 33.7350 | 73.0940 |
+| 4 | Pak Secretariat R-Block | Islamabad | ICT | T1 | 33.7259 | 73.0986 |
+| 5 | Pak Secretariat S-Block | Islamabad | ICT | T1 | 33.7261 | 73.0990 |
+| 6 | Supreme Court of Pakistan | Islamabad | ICT | T1 | 33.7279 | 73.0891 |
+| 7 | Ministry of Interior H-11 | Islamabad | ICT | T1 | 33.6765 | 72.9978 |
+| 8 | Ministry of Foreign Affairs | Islamabad | ICT | T1 | 33.7270 | 73.1000 |
+| 9 | Ministry of Finance | Islamabad | ICT | T1 | 33.7258 | 73.0974 |
+| 10 | Ministry of Defence | Islamabad | ICT | T1 | 33.7271 | 73.0985 |
+| 11 | NACTA Headquarters | Islamabad | ICT | T1 | 33.7287 | 73.0927 |
+| 12 | FIA Headquarters | Islamabad | ICT | T1 | 33.7244 | 73.0877 |
+| 13 | Election Commission of Pakistan | Islamabad | ICT | T2 | 33.7341 | 73.0861 |
+| 14 | National Assembly Secretariat | Islamabad | ICT | T1 | 33.7353 | 73.0945 |
+| 15 | Senate Secretariat | Islamabad | ICT | T1 | 33.7356 | 73.0949 |
+| 16 | Islamabad High Court | Islamabad | ICT | T1 | 33.7295 | 73.0876 |
+| 17 | FBR Headquarters | Islamabad | ICT | T2 | 33.7298 | 73.0650 |
+| 18 | SECP Headquarters | Islamabad | ICT | T2 | 33.7234 | 73.0699 |
+| 19 | PPRA Offices | Islamabad | ICT | T2 | 33.7270 | 73.0840 |
+| 20 | Planning Commission | Islamabad | ICT | T2 | 33.7289 | 73.0895 |
+| 21 | Auditor General Office | Islamabad | ICT | T2 | 33.7256 | 73.0904 |
+| 22 | NADRA Headquarters | Islamabad | ICT | T2 | 33.6934 | 73.0491 |
+| 23 | State Bank of Pakistan HQ | Karachi | Sindh | T1 | 24.8575 | 67.0213 |
+| 24 | Governor House Punjab | Lahore | Punjab | T1 | 31.5655 | 74.3108 |
+| 25 | CM Secretariat Punjab | Lahore | Punjab | T1 | 31.5497 | 74.3257 |
+| 26 | Lahore High Court | Lahore | Punjab | T1 | 31.5611 | 74.3291 |
+| 27 | Punjab Assembly | Lahore | Punjab | T1 | 31.5648 | 74.3268 |
+| 28 | Governor House Sindh | Karachi | Sindh | T1 | 24.8608 | 67.0120 |
+| 29 | Sindh Assembly | Karachi | Sindh | T1 | 24.8610 | 67.0130 |
+| 30 | Sindh High Court | Karachi | Sindh | T1 | 24.8569 | 67.0104 |
+| 31 | CM House KPK | Peshawar | KPK | T1 | 34.0104 | 71.5844 |
+| 32 | KPK Assembly | Peshawar | KPK | T1 | 34.0109 | 71.5848 |
+| 33 | Peshawar High Court | Peshawar | KPK | T1 | 34.0098 | 71.5726 |
+| 34 | Governor House Balochistan | Quetta | Balochistan | T1 | 30.1946 | 67.0084 |
+| 35 | Balochistan Assembly | Quetta | Balochistan | T1 | 30.1951 | 67.0090 |
+| 36 | Quetta High Court | Quetta | Balochistan | T1 | 30.1938 | 67.0078 |
+| 37 | WAPDA House | Lahore | Punjab | T2 | 31.5527 | 74.3199 |
+| 38 | Pakistan Customs HQ | Karachi | Sindh | T2 | 24.8562 | 67.0129 |
+| 39 | OGRA Headquarters | Islamabad | ICT | T2 | 33.7210 | 73.0620 |
+| 40 | NEPRA Headquarters | Islamabad | ICT | T2 | 33.7215 | 73.0618 |
+| 41 | Competition Commission Pakistan | Islamabad | ICT | T2 | 33.7230 | 73.0670 |
+| 42 | Federal Ombudsman Office | Islamabad | ICT | T2 | 33.7248 | 73.0860 |
+| 43 | Wafaqi Mohtasib Secretariat | Islamabad | ICT | T2 | 33.7246 | 73.0858 |
+| 44 | Drug Regulatory Authority (DRAP) | Islamabad | ICT | T2 | 33.6780 | 73.0042 |
+| 45 | Pakistan Standards Authority (PSQCA) | Karachi | Sindh | T3 | 24.9046 | 67.0723 |
+| 46 | CAA Civil Aviation Authority HQ | Karachi | Sindh | T2 | 24.9065 | 67.1609 |
+| 47 | Maritime Security Agency | Karachi | Sindh | T2 | 24.8418 | 66.9904 |
+| 48 | Federal Investigation Agency Lahore | Lahore | Punjab | T2 | 31.5409 | 74.3097 |
+| 49 | FIA Karachi Zonal Office | Karachi | Sindh | T2 | 24.8607 | 67.0199 |
+| 50 | Sindh Revenue Board | Karachi | Sindh | T2 | 24.8578 | 67.0117 |
+| 51 | KPK Revenue Authority | Peshawar | KPK | T2 | 34.0088 | 71.5784 |
+| 52 | Lahore Development Authority | Lahore | Punjab | T2 | 31.5550 | 74.3290 |
+| 53 | Capital Development Authority HQ | Islamabad | ICT | T2 | 33.7210 | 73.0510 |
+| 54 | Karachi Development Authority | Karachi | Sindh | T2 | 24.8630 | 67.0210 |
+| 55 | Rawalpindi City District Office | Rawalpindi | Punjab | T3 | 33.5979 | 73.0596 |
+| 56 | DC Office Peshawar | Peshawar | KPK | T2 | 34.0105 | 71.5720 |
+| 57 | DC Office Quetta | Quetta | Balochistan | T2 | 30.1941 | 67.0074 |
+| 58 | DC Office Lahore | Lahore | Punjab | T2 | 31.5556 | 74.3294 |
+| 59 | DC Office Multan | Multan | Punjab | T2 | 30.1978 | 71.4748 |
+| 60 | DC Office Faisalabad | Faisalabad | Punjab | T2 | 31.4173 | 73.0807 |
+| 61 | DC Office Hyderabad | Hyderabad | Sindh | T2 | 25.3960 | 68.3578 |
+| 62 | DC Office Sukkur | Sukkur | Sindh | T3 | 27.7052 | 68.8573 |
+| 63 | DC Office Gujranwala | Gujranwala | Punjab | T3 | 32.1748 | 74.2037 |
+| 64 | DC Office Sialkot | Sialkot | Punjab | T3 | 32.4936 | 74.5311 |
+| 65 | DC Office Bahawalpur | Bahawalpur | Punjab | T3 | 29.3956 | 71.6836 |
+| 66 | DC Office Sargodha | Sargodha | Punjab | T3 | 32.0836 | 72.6711 |
+| 67 | DC Office Abbottabad | Abbottabad | KPK | T2 | 34.1540 | 73.2099 |
+| 68 | DC Office Mardan | Mardan | KPK | T3 | 34.1980 | 72.0440 |
+| 69 | DC Office Gwadar | Gwadar | Balochistan | T2 | 25.1210 | 62.3226 |
+| 70 | DC Office Turbat | Turbat | Balochistan | T3 | 25.9819 | 63.0640 |
+| 71 | GB Legislative Assembly Gilgit | Gilgit | GB | T2 | 35.9222 | 74.3087 |
+| 72 | AJK Legislative Assembly Muzaffarabad | Muzaffarabad | AJK | T2 | 34.3700 | 73.4710 |
+| 73 | Lahore Police Headquarters | Lahore | Punjab | T2 | 31.5601 | 74.3320 |
+| 74 | Karachi Police HQ | Karachi | Sindh | T2 | 24.8607 | 67.0173 |
+| 75 | Islamabad Police Headquarters | Islamabad | ICT | T2 | 33.7020 | 73.0490 |
+| 76 | Peshawar Police HQ | Peshawar | KPK | T2 | 34.0098 | 71.5726 |
+| 77 | CTD Punjab HQ | Lahore | Punjab | T1 | 31.5440 | 74.3200 |
+| 78 | CTD KPK HQ | Peshawar | KPK | T1 | 34.0024 | 71.5710 |
+| 79 | Intelligence Bureau HQ | Islamabad | ICT | T1 | 33.7200 | 73.0780 |
+| 80 | Ministry of Energy | Islamabad | ICT | T2 | 33.7258 | 73.0980 |
+| 81 | Ministry of IT and Telecom | Islamabad | ICT | T2 | 33.7260 | 73.0975 |
+| 82 | Ministry of National Health Services | Islamabad | ICT | T2 | 33.7265 | 73.0968 |
+| 83 | Ministry of Commerce | Islamabad | ICT | T2 | 33.7267 | 73.0960 |
+| 84 | Ministry of Education | Islamabad | ICT | T2 | 33.7269 | 73.0955 |
+| 85 | National Disaster Management Authority | Islamabad | ICT | T2 | 33.7050 | 73.0534 |
+| 86 | Environment Protection Agency Federal | Islamabad | ICT | T3 | 33.6970 | 73.0530 |
+| 87 | National Highway Authority HQ | Islamabad | ICT | T2 | 33.6863 | 73.0480 |
+| 88 | Pakistan Railways HQ | Lahore | Punjab | T2 | 31.5824 | 74.3293 |
+| 89 | Pakistan Post HQ | Islamabad | ICT | T3 | 33.7143 | 73.0552 |
+| 90 | Central Board of Revenue Islamabad | Islamabad | ICT | T2 | 33.7296 | 73.0652 |
+| 91 | Public Service Commission Federal | Islamabad | ICT | T2 | 33.7177 | 73.0565 |
+| 92 | Establishment Division | Islamabad | ICT | T2 | 33.7261 | 73.0988 |
+| 93 | Cabinet Division | Islamabad | ICT | T1 | 33.7264 | 73.0982 |
+| 94 | Ministry of Law and Justice | Islamabad | ICT | T2 | 33.7263 | 73.0976 |
+| 95 | Ministry of Human Rights | Islamabad | ICT | T2 | 33.7253 | 73.0970 |
+| 96 | National Commission on Status of Women | Islamabad | ICT | T3 | 33.7190 | 73.0605 |
+| 97 | HRCP Lahore Office | Lahore | Punjab | T3 | 31.5190 | 74.3380 |
+| 98 | Anti-Narcotics Force HQ | Rawalpindi | Punjab | T2 | 33.5989 | 73.0611 |
+| 99 | Accountant General Pakistan Revenues | Islamabad | ICT | T2 | 33.7255 | 73.0900 |
+| 100 | Federal Judicial Academy | Islamabad | ICT | T3 | 33.7249 | 73.0855 |
+
+---
+
+## 🪖 MILITARY — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | GHQ Rawalpindi | Rawalpindi | Punjab | T1 | 33.6007 | 73.0679 |
+| 2 | Joint Services Headquarters (JSHQ) | Rawalpindi | Punjab | T1 | 33.6051 | 73.0724 |
+| 3 | PAF Base Nur Khan | Rawalpindi | Punjab | T1 | 33.6167 | 73.1000 |
+| 4 | Chaklala Garrison | Rawalpindi | Punjab | T1 | 33.6104 | 73.0987 |
+| 5 | Navy Headquarters (PNS Karsaz) | Karachi | Sindh | T1 | 24.8764 | 67.1023 |
+| 6 | PAF Base Masroor | Karachi | Sindh | T1 | 24.8936 | 66.9384 |
+| 7 | PNS Faisal Naval Base | Karachi | Sindh | T1 | 24.9100 | 66.9300 |
+| 8 | Pakistan Military Academy Kakul | Abbottabad | KPK | T1 | 34.1834 | 73.2421 |
+| 9 | Command and Staff College Quetta | Quetta | Balochistan | T1 | 30.2028 | 67.0147 |
+| 10 | National Defence University (NDU) | Islamabad | ICT | T2 | 33.6441 | 73.1030 |
+| 11 | Lahore Cantt — Main Gate Mall Road | Lahore | Punjab | T1 | 31.5437 | 74.3361 |
+| 12 | Peshawar Cantt | Peshawar | KPK | T1 | 34.0024 | 71.5892 |
+| 13 | Multan Cantt | Multan | Punjab | T2 | 30.1978 | 71.4581 |
+| 14 | Sialkot Cantt | Sialkot | Punjab | T2 | 32.5219 | 74.5395 |
+| 15 | Gujranwala Cantt | Gujranwala | Punjab | T2 | 32.1748 | 74.2037 |
+| 16 | Abbottabad Cantt | Abbottabad | KPK | T2 | 34.1540 | 73.2099 |
+| 17 | Mardan Cantt | Mardan | KPK | T2 | 34.1980 | 72.0440 |
+| 18 | Kohat Cantt | Kohat | KPK | T2 | 33.5978 | 71.4504 |
+| 19 | PAF Academy Asghar Khan Risalpur | Nowshera | KPK | T1 | 34.0636 | 71.9761 |
+| 20 | PAF Base Mushaf Sargodha | Sargodha | Punjab | T1 | 32.0490 | 72.6650 |
+| 21 | PAF Base Rafiqui Shorkot | Jhang | Punjab | T1 | 30.7581 | 72.2826 |
+| 22 | PAF Base Samungli | Quetta | Balochistan | T1 | 30.2753 | 66.8579 |
+| 23 | PAF Base Minhas Kamra | Attock | Punjab | T1 | 33.8688 | 72.4008 |
+| 24 | PAF Base Shahbaz Jacobabad | Jacobabad | Sindh | T1 | 28.2842 | 68.4497 |
+| 25 | PAF Base Bholari | Thatta | Sindh | T2 | 24.9487 | 67.9005 |
+| 26 | Pakistan Aeronautical Complex Kamra | Attock | Punjab | T1 | 33.8690 | 72.4010 |
+| 27 | Army Medical Corps Centre Abbottabad | Abbottabad | KPK | T2 | 34.1650 | 73.2120 |
+| 28 | Frontier Corps (FC) KPK HQ | Peshawar | KPK | T1 | 34.0041 | 71.5801 |
+| 29 | Frontier Corps Balochistan HQ | Quetta | Balochistan | T1 | 30.1950 | 67.0130 |
+| 30 | Rangers Headquarters Punjab | Lahore | Punjab | T1 | 31.5500 | 74.3220 |
+| 31 | Rangers Headquarters Sindh | Karachi | Sindh | T1 | 24.8700 | 67.0360 |
+| 32 | Balochistan Levies HQ | Quetta | Balochistan | T2 | 30.1945 | 67.0089 |
+| 33 | Karachi Cantt — Clifton Lines | Karachi | Sindh | T2 | 24.8200 | 67.0300 |
+| 34 | Hyderabad Cantt | Hyderabad | Sindh | T2 | 25.3900 | 68.3700 |
+| 35 | Sukkur Cantt | Sukkur | Sindh | T2 | 27.7060 | 68.8560 |
+| 36 | Quetta Cantt — Staff Road | Quetta | Balochistan | T1 | 30.2041 | 67.0098 |
+| 37 | Faisalabad Cantt | Faisalabad | Punjab | T2 | 31.4350 | 73.0820 |
+| 38 | Bahawalpur Cantt | Bahawalpur | Punjab | T2 | 29.3900 | 71.6800 |
+| 39 | Nowshera Cantt | Nowshera | KPK | T2 | 34.0150 | 71.9820 |
+| 40 | Wah Cantt | Wah | Punjab | T2 | 33.7700 | 72.7600 |
+| 41 | Attock Cantt | Attock | Punjab | T2 | 33.7700 | 72.3600 |
+| 42 | Jhelum Cantt | Jhelum | Punjab | T2 | 32.9460 | 73.7260 |
+| 43 | Mangla Cantt | Mirpur | AJK | T2 | 33.1432 | 73.6440 |
+| 44 | Gilgit Cantt | Gilgit | GB | T2 | 35.9222 | 74.3087 |
+| 45 | Skardu Cantt | Skardu | GB | T2 | 35.3379 | 75.5387 |
+| 46 | Army Corps HQ Lahore | Lahore | Punjab | T1 | 31.5480 | 74.3360 |
+| 47 | Army Corps HQ Karachi | Karachi | Sindh | T1 | 24.8760 | 67.1030 |
+| 48 | Army Corps HQ Peshawar | Peshawar | KPK | T1 | 34.0050 | 71.5880 |
+| 49 | Army Corps HQ Quetta | Quetta | Balochistan | T1 | 30.2020 | 67.0120 |
+| 50 | Army Corps HQ Rawalpindi (10 Corps) | Rawalpindi | Punjab | T1 | 33.6010 | 73.0700 |
+| 51 | Army Corps HQ Multan | Multan | Punjab | T1 | 30.1990 | 71.4590 |
+| 52 | Army Corps HQ Bahawalpur | Bahawalpur | Punjab | T2 | 29.3920 | 71.6820 |
+| 53 | School of Infantry and Tactics Quetta | Quetta | Balochistan | T2 | 30.2080 | 67.0160 |
+| 54 | School of Armour and Mechanized Warfare | Nowshera | KPK | T2 | 34.0180 | 71.9760 |
+| 55 | School of Signals Rawalpindi | Rawalpindi | Punjab | T2 | 33.6020 | 73.0720 |
+| 56 | School of Electrical and Mechanical Engineering | Rawalpindi | Punjab | T2 | 33.6030 | 73.0740 |
+| 57 | Army Service Corps Centre Rawalpindi | Rawalpindi | Punjab | T2 | 33.6040 | 73.0760 |
+| 58 | Military Intelligence Directorate Rawalpindi | Rawalpindi | Punjab | T1 | 33.6060 | 73.0680 |
+| 59 | Directorate of Naval Intelligence | Karachi | Sindh | T1 | 24.8770 | 67.1040 |
+| 60 | Army Aviation Base Rawalpindi | Rawalpindi | Punjab | T2 | 33.6170 | 73.1010 |
+| 61 | Pakistan Navy War College Lahore | Lahore | Punjab | T2 | 31.5490 | 74.3370 |
+| 62 | PNS Mehran | Karachi | Sindh | T1 | 24.9137 | 67.1362 |
+| 63 | PNS Iqbal | Karachi | Sindh | T2 | 24.8850 | 67.0800 |
+| 64 | PNS Shifa Naval Hospital | Karachi | Sindh | T2 | 24.8790 | 67.0200 |
+| 65 | PNS Qasim | Karachi | Sindh | T2 | 24.7900 | 67.3100 |
+| 66 | Ordnance Factories Board Wah | Wah | Punjab | T1 | 33.7660 | 72.7640 |
+| 67 | Heavy Mechanical Complex Taxila | Taxila | Punjab | T2 | 33.7500 | 72.8400 |
+| 68 | Karachi Shipyard and Engineering Works | Karachi | Sindh | T2 | 24.8380 | 66.9950 |
+| 69 | Military Farms HQ Lahore | Lahore | Punjab | T3 | 31.5510 | 74.3310 |
+| 70 | CMH Lahore | Lahore | Punjab | T2 | 31.5450 | 74.3380 |
+| 71 | CMH Rawalpindi | Rawalpindi | Punjab | T1 | 33.5891 | 73.0521 |
+| 72 | CMH Peshawar | Peshawar | KPK | T2 | 34.0030 | 71.5870 |
+| 73 | CMH Quetta | Quetta | Balochistan | T2 | 30.2030 | 67.0140 |
+| 74 | CMH Karachi | Karachi | Sindh | T2 | 24.8740 | 67.1020 |
+| 75 | CMH Multan | Multan | Punjab | T2 | 30.1960 | 71.4600 |
+| 76 | AFIC — Armed Forces Institute of Cardiology | Rawalpindi | Punjab | T2 | 33.6090 | 73.0750 |
+| 77 | National Institute of Rehabilitation Medicine | Islamabad | ICT | T3 | 33.6440 | 73.1040 |
+| 78 | Pakistan Rangers Training Centre | Lahore | Punjab | T2 | 31.5460 | 74.3340 |
+| 79 | Coast Guard HQ Karachi | Karachi | Sindh | T2 | 24.8410 | 66.9910 |
+| 80 | AJK Regiment Centre Muzaffarabad | Muzaffarabad | AJK | T2 | 34.3680 | 73.4720 |
+| 81 | Northern Light Infantry Centre Skardu | Skardu | GB | T2 | 35.3390 | 75.5370 |
+| 82 | Baloch Regiment Centre Abbottabad | Abbottabad | KPK | T2 | 34.1580 | 73.2110 |
+| 83 | Punjab Regiment Centre Mardan | Mardan | KPK | T2 | 34.2000 | 72.0430 |
+| 84 | Sind Regiment Centre Hyderabad | Hyderabad | Sindh | T2 | 25.3890 | 68.3720 |
+| 85 | Frontier Force Regiment Abbottabad | Abbottabad | KPK | T2 | 34.1560 | 73.2130 |
+| 86 | Pakistan Army Rifle Association | Rawalpindi | Punjab | T3 | 33.6070 | 73.0760 |
+| 87 | Frontier Constabulary HQ Peshawar | Peshawar | KPK | T2 | 34.0062 | 71.5810 |
+| 88 | National Guard HQ Lahore | Lahore | Punjab | T3 | 31.5470 | 74.3350 |
+| 89 | Kazipura Garrison Rawalpindi | Rawalpindi | Punjab | T2 | 33.6020 | 73.0780 |
+| 90 | Dera Ismail Khan Cantt | DI Khan | KPK | T2 | 31.8316 | 70.9074 |
+| 91 | Bannu Cantt | Bannu | KPK | T2 | 32.9882 | 70.6033 |
+| 92 | Landi Kotal Checkpost | Khyber | KPK | T1 | 34.1005 | 71.1140 |
+| 93 | Chaman Garrison | Chaman | Balochistan | T2 | 30.9100 | 66.4510 |
+| 94 | Turbat Garrison | Turbat | Balochistan | T2 | 25.9800 | 63.0650 |
+| 95 | Gwadar Garrison | Gwadar | Balochistan | T1 | 25.1215 | 62.3234 |
+| 96 | Khuzdar Garrison | Khuzdar | Balochistan | T2 | 27.8100 | 66.6100 |
+| 97 | Sui Garrison | Dera Bugti | Balochistan | T2 | 28.6400 | 69.1870 |
+| 98 | Chilas Garrison | Diamer | GB | T2 | 35.4190 | 74.0980 |
+| 99 | Gilgit Scouts HQ | Gilgit | GB | T2 | 35.9200 | 74.3100 |
+| 100 | Siachen Base Camp Gyari | Ghanche | GB | T1 | 35.4050 | 76.8190 |
+
+---
+
+## ✈ TRANSPORT — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Islamabad International Airport (ISB) | Islamabad | ICT | T1 | 33.6167 | 72.8147 |
+| 2 | Jinnah International Airport (KHI) | Karachi | Sindh | T1 | 24.9065 | 67.1609 |
+| 3 | Allama Iqbal International Airport (LHE) | Lahore | Punjab | T1 | 31.5216 | 74.4036 |
+| 4 | Bacha Khan International Airport (PEW) | Peshawar | KPK | T1 | 33.9939 | 71.5146 |
+| 5 | Quetta International Airport (UET) | Quetta | Balochistan | T1 | 30.2513 | 66.9378 |
+| 6 | Multan International Airport (MUX) | Multan | Punjab | T2 | 30.2032 | 71.4191 |
+| 7 | Sialkot International Airport (SKT) | Sialkot | Punjab | T2 | 32.5356 | 74.3639 |
+| 8 | Faisalabad International Airport (LYP) | Faisalabad | Punjab | T2 | 31.3650 | 72.9944 |
+| 9 | Turbat International Airport (TUK) | Turbat | Balochistan | T2 | 25.9864 | 63.0302 |
+| 10 | Gwadar International Airport (GWD) | Gwadar | Balochistan | T1 | 25.2333 | 62.3295 |
+| 11 | Skardu Airport (KDU) | Skardu | GB | T2 | 35.3355 | 75.5360 |
+| 12 | Gilgit Airport (GIL) | Gilgit | GB | T2 | 35.9188 | 74.3336 |
+| 13 | Chitral Airport (CJL) | Chitral | KPK | T3 | 35.8866 | 71.8006 |
+| 14 | Sukkur Airport (SKZ) | Sukkur | Sindh | T2 | 27.7220 | 68.7917 |
+| 15 | Dera Ismail Khan Airport (DSK) | DI Khan | KPK | T3 | 31.9094 | 70.8966 |
+| 16 | Bahawalpur Airport (BHV) | Bahawalpur | Punjab | T3 | 29.3481 | 71.7180 |
+| 17 | Nawabshah Airport (WNS) | Nawabshah | Sindh | T3 | 26.2194 | 68.3901 |
+| 18 | Lahore Railway Station | Lahore | Punjab | T1 | 31.5824 | 74.3293 |
+| 19 | Karachi City Railway Station | Karachi | Sindh | T1 | 24.8587 | 67.0108 |
+| 20 | Rawalpindi Railway Station | Rawalpindi | Punjab | T1 | 33.5979 | 73.0596 |
+| 21 | Peshawar Railway Station (Peshawar Mor) | Peshawar | KPK | T2 | 34.0073 | 71.5635 |
+| 22 | Multan Railway Station | Multan | Punjab | T2 | 30.1956 | 71.4683 |
+| 23 | Faisalabad Railway Station | Faisalabad | Punjab | T2 | 31.4192 | 73.0832 |
+| 24 | Hyderabad Railway Station | Hyderabad | Sindh | T2 | 25.3762 | 68.3726 |
+| 25 | Sukkur Railway Station | Sukkur | Sindh | T2 | 27.7041 | 68.8578 |
+| 26 | Quetta Railway Station | Quetta | Balochistan | T2 | 30.1877 | 66.9982 |
+| 27 | Rohri Junction | Sukkur | Sindh | T2 | 27.6920 | 68.8980 |
+| 28 | Khanewal Junction | Khanewal | Punjab | T2 | 30.3017 | 71.9328 |
+| 29 | Lodhran Junction | Lodhran | Punjab | T3 | 29.5410 | 71.6340 |
+| 30 | Karachi Port Trust — West Wharf | Karachi | Sindh | T1 | 24.8418 | 66.9904 |
+| 31 | Port Qasim Authority | Karachi | Sindh | T1 | 24.7890 | 67.3122 |
+| 32 | Gwadar Port | Gwadar | Balochistan | T1 | 25.1210 | 62.3226 |
+| 33 | Ormara Naval Port | Ormara | Balochistan | T2 | 25.2070 | 64.6350 |
+| 34 | Pasni Port | Pasni | Balochistan | T3 | 25.2630 | 63.4700 |
+| 35 | Wagah Border Terminal | Lahore | Punjab | T1 | 31.6043 | 74.5721 |
+| 36 | Torkham Border Crossing | Khyber | KPK | T1 | 34.0965 | 71.1063 |
+| 37 | Chaman Border Crossing | Chaman | Balochistan | T1 | 30.9210 | 66.4503 |
+| 38 | Sost Dry Port (China-Pak) | Hunza | GB | T1 | 36.6596 | 74.7320 |
+| 39 | Khunjerab Pass Border | Hunza | GB | T1 | 36.8458 | 75.4233 |
+| 40 | Angoori Adda Border — Wana | South Waziristan | KPK | T2 | 32.3000 | 69.9100 |
+| 41 | Lahore Dry Port | Lahore | Punjab | T2 | 31.5700 | 74.3400 |
+| 42 | Karachi Dry Port (KICT) | Karachi | Sindh | T2 | 24.8000 | 67.2000 |
+| 43 | Faizabad Interchange | Islamabad | ICT | T2 | 33.7165 | 72.9793 |
+| 44 | Zero Point Islamabad | Islamabad | ICT | T2 | 33.6900 | 73.0487 |
+| 45 | D-Chowk | Islamabad | ICT | T2 | 33.7290 | 73.0880 |
+| 46 | Motorway M-2 Lahore Toll Plaza | Lahore | Punjab | T2 | 31.6148 | 74.2760 |
+| 47 | Motorway M-9 Karachi Toll | Karachi | Sindh | T2 | 24.9800 | 67.2700 |
+| 48 | Motorway M-1 Peshawar Toll | Peshawar | KPK | T2 | 33.9950 | 71.5100 |
+| 49 | Lahore Ring Road Northern Interchange | Lahore | Punjab | T2 | 31.5910 | 74.2100 |
+| 50 | Karachi Northern Bypass | Karachi | Sindh | T2 | 25.0200 | 67.1500 |
+| 51 | Lahore Metro Orange Line — Main Depot | Lahore | Punjab | T2 | 31.5390 | 74.3890 |
+| 52 | Lahore Metro Orange Line — Ali Town | Lahore | Punjab | T3 | 31.4710 | 74.2740 |
+| 53 | Karachi Circular Railway Depot | Karachi | Sindh | T2 | 24.9000 | 67.1100 |
+| 54 | Peshawar BRT — Chamkani Terminal | Peshawar | KPK | T2 | 33.9977 | 71.5911 |
+| 55 | Peshawar BRT — Hayatabad Terminus | Peshawar | KPK | T2 | 34.0010 | 71.4720 |
+| 56 | Rawalpindi Metro — Saddar Station | Rawalpindi | Punjab | T2 | 33.5985 | 73.0632 |
+| 57 | Multan Metro — Kumharanwala Station | Multan | Punjab | T2 | 30.1789 | 71.4556 |
+| 58 | CPEC Western Route — Zhob Highway Node | Zhob | Balochistan | T2 | 31.3417 | 69.4484 |
+| 59 | CPEC Eastern Route — Lahore-Sialkot Motorway | Sialkot | Punjab | T2 | 32.4100 | 74.3800 |
+| 60 | Sukkur Barrage Bridge | Sukkur | Sindh | T2 | 27.7052 | 68.8573 |
+| 61 | Kotri Bridge Hyderabad | Hyderabad | Sindh | T2 | 25.3598 | 68.3103 |
+| 62 | Jinnah Bridge Sukkur | Sukkur | Sindh | T3 | 27.6960 | 68.8680 |
+| 63 | Attock Bridge | Attock | Punjab | T2 | 33.7700 | 72.3600 |
+| 64 | Ravi Road Bridge Lahore | Lahore | Punjab | T2 | 31.6200 | 74.2700 |
+| 65 | New Murree Expressway Toll | Rawalpindi | Punjab | T3 | 33.7600 | 73.3200 |
+| 66 | Karakoram Highway — Chilas Node | Diamer | GB | T2 | 35.4190 | 74.0980 |
+| 67 | Karakoram Highway — Raikot Bridge | Diamer | GB | T3 | 35.2800 | 74.5300 |
+| 68 | Indus Highway — Dera Ghazi Khan Node | DG Khan | Punjab | T2 | 30.0571 | 70.6339 |
+| 69 | National Logistics Cell HQ | Rawalpindi | Punjab | T2 | 33.6000 | 73.0700 |
+| 70 | Pakistan International Airlines HQ | Karachi | Sindh | T2 | 24.9065 | 67.1609 |
+| 71 | Serene Air Hub | Lahore | Punjab | T3 | 31.5216 | 74.4036 |
+| 72 | Air Blue Operations Centre | Karachi | Sindh | T3 | 24.9065 | 67.1600 |
+| 73 | Pakistan Railways Locomotive Factory | Risalpur | KPK | T2 | 34.0620 | 71.9730 |
+| 74 | Pakistan Railways Carriage Factory | Islamabad | ICT | T2 | 33.6920 | 73.0200 |
+| 75 | Karachi South Terminal (KPT) | Karachi | Sindh | T1 | 24.8380 | 66.9960 |
+| 76 | KICT Container Terminal | Karachi | Sindh | T2 | 24.7990 | 67.3120 |
+| 77 | Engro Terminal Bin Qasim | Karachi | Sindh | T2 | 24.7850 | 67.3150 |
+| 78 | Gwadar Free Zone Gate | Gwadar | Balochistan | T1 | 25.1250 | 62.3250 |
+| 79 | Quetta Western Bypass | Quetta | Balochistan | T2 | 30.2400 | 66.9100 |
+| 80 | Zhob Airport | Zhob | Balochistan | T3 | 31.3584 | 69.4636 |
+| 81 | Panjgur Airport | Panjgur | Balochistan | T3 | 26.9545 | 64.1325 |
+| 82 | Dalbandin Airport | Dalbandin | Balochistan | T3 | 28.8763 | 64.3998 |
+| 83 | Muzaffarabad Airport | Muzaffarabad | AJK | T2 | 34.3660 | 73.5090 |
+| 84 | Mirpur Airport | Mirpur | AJK | T3 | 33.0900 | 73.7500 |
+| 85 | Islamabad Bus Terminal (Faizabad) | Islamabad | ICT | T2 | 33.7155 | 72.9815 |
+| 86 | Lahore Nisar Haveli Bus Terminal | Lahore | Punjab | T2 | 31.5900 | 74.3100 |
+| 87 | Karachi Sohrab Goth Bus Hub | Karachi | Sindh | T2 | 24.9570 | 67.0440 |
+| 88 | Peshawar Ghanta Ghar Bus Stand | Peshawar | KPK | T2 | 34.0100 | 71.5610 |
+| 89 | Faisalabad General Bus Stand | Faisalabad | Punjab | T3 | 31.4200 | 73.0820 |
+| 90 | Quetta Bus Terminal | Quetta | Balochistan | T2 | 30.1900 | 67.0000 |
+| 91 | Multan Bus Terminal | Multan | Punjab | T2 | 30.1980 | 71.4690 |
+| 92 | Hyderabad Bus Terminal | Hyderabad | Sindh | T2 | 25.3960 | 68.3578 |
+| 93 | Swat Motorway M-16 Chakdara | Dir | KPK | T2 | 34.6517 | 72.0362 |
+| 94 | Hoshab — Makran Coastal Highway Node | Kech | Balochistan | T2 | 26.0400 | 63.4700 |
+| 95 | Khuzdar Road Hub | Khuzdar | Balochistan | T2 | 27.8100 | 66.6100 |
+| 96 | Loralai Transit Node | Loralai | Balochistan | T3 | 30.3720 | 68.5966 |
+| 97 | Jacobabad Railway Junction | Jacobabad | Sindh | T2 | 28.2820 | 68.4380 |
+| 98 | Kotri Junction | Hyderabad | Sindh | T2 | 25.3596 | 68.3098 |
+| 99 | Lahore Thokar Niaz Baig Interchange | Lahore | Punjab | T2 | 31.4500 | 74.2200 |
+| 100 | ML-1 Karachi North Marshalling Yard | Karachi | Sindh | T2 | 24.9200 | 67.1300 |
+
+---
+
+## 🏢 COMMERCIAL — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Blue Area Business District | Islamabad | ICT | T2 | 33.7215 | 73.0635 |
+| 2 | Jinnah Avenue — Islamabad | Islamabad | ICT | T2 | 33.7109 | 73.0499 |
+| 3 | F-7 Markaz Super Market | Islamabad | ICT | T2 | 33.7233 | 73.0449 |
+| 4 | F-6 Markaz | Islamabad | ICT | T2 | 33.7207 | 73.0529 |
+| 5 | G-9 Karachi Company Market | Islamabad | ICT | T3 | 33.6880 | 73.0020 |
+| 6 | Centaurus Mall | Islamabad | ICT | T2 | 33.7070 | 73.0468 |
+| 7 | Kohsar Market F-6 | Islamabad | ICT | T3 | 33.7218 | 73.0530 |
+| 8 | Saidpur Village Market | Islamabad | ICT | T3 | 33.7440 | 73.0710 |
+| 9 | MM Alam Road Gulberg | Lahore | Punjab | T2 | 31.5067 | 74.3337 |
+| 10 | Liberty Market Gulberg | Lahore | Punjab | T2 | 31.5100 | 74.3350 |
+| 11 | Fortress Stadium Market | Lahore | Punjab | T2 | 31.5320 | 74.3150 |
+| 12 | Anarkali Bazaar | Lahore | Punjab | T2 | 31.5785 | 74.3209 |
+| 13 | Hall Road Electronics Market | Lahore | Punjab | T2 | 31.5670 | 74.3150 |
+| 14 | Akbari Mandi | Lahore | Punjab | T2 | 31.5830 | 74.3220 |
+| 15 | Hafeez Centre | Lahore | Punjab | T2 | 31.5054 | 74.3390 |
+| 16 | Mall of Lahore | Lahore | Punjab | T2 | 31.4683 | 74.2705 |
+| 17 | Emporium Mall | Lahore | Punjab | T2 | 31.4671 | 74.2712 |
+| 18 | Packages Mall | Lahore | Punjab | T2 | 31.5097 | 74.2872 |
+| 19 | Dolmen Mall Clifton | Karachi | Sindh | T2 | 24.8124 | 67.0282 |
+| 20 | Dolmen Mall Hyderi | Karachi | Sindh | T2 | 24.9085 | 67.0531 |
+| 21 | Lucky One Mall | Karachi | Sindh | T2 | 24.9297 | 67.0676 |
+| 22 | Tariq Road Commercial Zone | Karachi | Sindh | T2 | 24.8698 | 67.0637 |
+| 23 | Saddar Bazaar Karachi | Karachi | Sindh | T2 | 24.8607 | 67.0173 |
+| 24 | Bolton Market | Karachi | Sindh | T2 | 24.8560 | 67.0100 |
+| 25 | Zainab Market | Karachi | Sindh | T2 | 24.8610 | 67.0180 |
+| 26 | Jodia Bazaar | Karachi | Sindh | T2 | 24.8560 | 67.0080 |
+| 27 | Clifton Block 9 Commercial | Karachi | Sindh | T2 | 24.8161 | 67.0287 |
+| 28 | DHA Phase 5 Commercial Karachi | Karachi | Sindh | T2 | 24.7994 | 67.0611 |
+| 29 | Ocean Mall | Karachi | Sindh | T2 | 24.8105 | 67.0292 |
+| 30 | Forum Mall Clifton | Karachi | Sindh | T3 | 24.8121 | 67.0296 |
+| 31 | Qissa Khawani Bazaar | Peshawar | KPK | T2 | 34.0104 | 71.5618 |
+| 32 | Namak Mandi Market | Peshawar | KPK | T2 | 34.0118 | 71.5641 |
+| 33 | Chowk Yadgar Commercial | Peshawar | KPK | T2 | 34.0102 | 71.5660 |
+| 34 | Hayatabad Phase 4 Commercial | Peshawar | KPK | T3 | 33.9990 | 71.4720 |
+| 35 | Saddar Bazaar Rawalpindi | Rawalpindi | Punjab | T2 | 33.5960 | 73.0610 |
+| 36 | Raja Bazaar Rawalpindi | Rawalpindi | Punjab | T2 | 33.5989 | 73.0607 |
+| 37 | Shalimar Shopping Centre | Rawalpindi | Punjab | T3 | 33.6028 | 73.0643 |
+| 38 | Centrepoint Faisalabad | Faisalabad | Punjab | T3 | 31.4173 | 73.0807 |
+| 39 | Clock Tower Market Faisalabad | Faisalabad | Punjab | T2 | 31.4180 | 73.0790 |
+| 40 | Susan Road Commercial Faisalabad | Faisalabad | Punjab | T3 | 31.4500 | 73.1000 |
+| 41 | Hussain Agahi Bazaar Multan | Multan | Punjab | T2 | 30.1983 | 71.4748 |
+| 42 | Gol Bazaar Multan | Multan | Punjab | T2 | 30.1967 | 71.4761 |
+| 43 | Sialkot Saddar Bazaar | Sialkot | Punjab | T2 | 32.4936 | 74.5311 |
+| 44 | Sialkot Sports Industries Export Zone Market | Sialkot | Punjab | T2 | 32.5100 | 74.5100 |
+| 45 | Gujranwala Saddar | Gujranwala | Punjab | T2 | 32.1748 | 74.2000 |
+| 46 | Railway Road Gujranwala | Gujranwala | Punjab | T3 | 32.1777 | 74.1879 |
+| 47 | Bahawalpur Circular Road Market | Bahawalpur | Punjab | T3 | 29.3956 | 71.6836 |
+| 48 | Hyderabad Shahi Bazaar | Hyderabad | Sindh | T2 | 25.3950 | 68.3620 |
+| 49 | Sukkur Ghanta Ghar Bazaar | Sukkur | Sindh | T2 | 27.7041 | 68.8565 |
+| 50 | Larkana Commercial Centre | Larkana | Sindh | T3 | 27.5570 | 68.2093 |
+| 51 | Quetta Jinnah Road Commercial | Quetta | Balochistan | T2 | 30.1990 | 67.0100 |
+| 52 | Quetta Liaquat Bazaar | Quetta | Balochistan | T2 | 30.1949 | 67.0082 |
+| 53 | Turbat Commercial Centre | Turbat | Balochistan | T3 | 25.9810 | 63.0630 |
+| 54 | Gwadar New Town Market | Gwadar | Balochistan | T2 | 25.1300 | 62.3280 |
+| 55 | Gwadar Free Economic Zone Commercial | Gwadar | Balochistan | T1 | 25.1260 | 62.3260 |
+| 56 | Gilgit Main Bazaar | Gilgit | GB | T2 | 35.9208 | 74.3085 |
+| 57 | Skardu Main Bazaar | Skardu | GB | T3 | 35.3390 | 75.5350 |
+| 58 | Muzaffarabad Commercial Zone | Muzaffarabad | AJK | T2 | 34.3700 | 73.4700 |
+| 59 | Abbottabad Mansehra Road Market | Abbottabad | KPK | T3 | 34.1500 | 73.2100 |
+| 60 | Mardan Commercial Hub | Mardan | KPK | T3 | 34.1950 | 72.0430 |
+| 61 | Kohat Bazaar | Kohat | KPK | T3 | 33.5890 | 71.4430 |
+| 62 | DI Khan Circular Road Market | DI Khan | KPK | T3 | 31.8316 | 70.9000 |
+| 63 | Bannu Commercial Area | Bannu | KPK | T3 | 32.9882 | 70.5990 |
+| 64 | Swat Mingora Bazaar | Mingora | KPK | T2 | 34.7717 | 72.3600 |
+| 65 | Chitral Bazaar | Chitral | KPK | T3 | 35.8500 | 71.7900 |
+| 66 | SITE Industrial Market Karachi | Karachi | Sindh | T2 | 24.9098 | 67.0046 |
+| 67 | North Karachi Industrial Commercial | Karachi | Sindh | T2 | 24.9800 | 67.0600 |
+| 68 | Korangi Commercial Market | Karachi | Sindh | T2 | 24.8300 | 67.1300 |
+| 69 | PECHS Block 6 Commercial | Karachi | Sindh | T2 | 24.8756 | 67.0576 |
+| 70 | Sea View Commercial Strip | Karachi | Sindh | T2 | 24.8050 | 67.0290 |
+| 71 | Gulberg Galleria Lahore | Lahore | Punjab | T2 | 31.5080 | 74.3380 |
+| 72 | Lahore Centre Shopping Mall | Lahore | Punjab | T2 | 31.5300 | 74.3270 |
+| 73 | Daewoo Express Office Lahore | Lahore | Punjab | T3 | 31.5210 | 74.3440 |
+| 74 | Pace Shopping Mall Lahore | Lahore | Punjab | T2 | 31.5190 | 74.3360 |
+| 75 | Millennium Mall Karachi | Karachi | Sindh | T2 | 24.9040 | 67.0200 |
+| 76 | Park Towers Clifton | Karachi | Sindh | T2 | 24.8109 | 67.0282 |
+| 77 | Bahria Town Lahore Civic Centre | Lahore | Punjab | T3 | 31.3665 | 74.2144 |
+| 78 | Lake City Mall Lahore | Lahore | Punjab | T3 | 31.5910 | 74.2200 |
+| 79 | Johar Town Commercial Lahore | Lahore | Punjab | T2 | 31.4726 | 74.2784 |
+| 80 | Gaddafi Stadium Market | Lahore | Punjab | T2 | 31.5169 | 74.3362 |
+| 81 | Karachi Stock Exchange (PSX) | Karachi | Sindh | T1 | 24.8569 | 67.0104 |
+| 82 | PSX Lahore Office | Lahore | Punjab | T2 | 31.5527 | 74.3199 |
+| 83 | Islamabad Stock Exchange Building | Islamabad | ICT | T2 | 33.7215 | 73.0645 |
+| 84 | Peshawar City Commercial Firdous | Peshawar | KPK | T3 | 34.0080 | 71.5690 |
+| 85 | Chakwal Saddar Bazaar | Chakwal | Punjab | T3 | 32.9300 | 72.8540 |
+| 86 | Jhelum Saddar Commercial | Jhelum | Punjab | T3 | 32.9440 | 73.7260 |
+| 87 | Mianwali Commercial Hub | Mianwali | Punjab | T3 | 32.5840 | 71.5364 |
+| 88 | Rahim Yar Khan Market | Rahim Yar Khan | Punjab | T3 | 28.4202 | 70.2952 |
+| 89 | Sahiwal Main Bazaar | Sahiwal | Punjab | T3 | 30.6682 | 73.1065 |
+| 90 | Okara Commercial Area | Okara | Punjab | T3 | 30.8100 | 73.4500 |
+| 91 | Vehari Bazaar | Vehari | Punjab | T3 | 30.0450 | 72.3510 |
+| 92 | Khushab Commercial Centre | Khushab | Punjab | T3 | 32.2981 | 72.3531 |
+| 93 | Mirpur Khas Bazaar | Mirpur Khas | Sindh | T3 | 25.5270 | 69.0100 |
+| 94 | Khairpur Commercial Zone | Khairpur | Sindh | T3 | 27.5290 | 68.7580 |
+| 95 | Nawabshah Commercial Area | Nawabshah | Sindh | T3 | 26.2450 | 68.4100 |
+| 96 | Turbat Market | Turbat | Balochistan | T3 | 25.9819 | 63.0640 |
+| 97 | Chaman Market | Chaman | Balochistan | T3 | 30.9100 | 66.4520 |
+| 98 | Khuzdar Bazaar | Khuzdar | Balochistan | T3 | 27.8100 | 66.6100 |
+| 99 | Loralai Market | Loralai | Balochistan | T3 | 30.3720 | 68.5966 |
+| 100 | Panjgur Market | Panjgur | Balochistan | T3 | 26.9600 | 64.1200 |
+
+---
+
+## 🎓 EDUCATION — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Quaid-i-Azam University | Islamabad | ICT | T2 | 33.7457 | 73.1368 |
+| 2 | NUST H-12 Main Campus | Islamabad | ICT | T2 | 33.6432 | 72.9925 |
+| 3 | COMSATS University Islamabad | Islamabad | ICT | T3 | 33.6844 | 73.0479 |
+| 4 | International Islamic University | Islamabad | ICT | T2 | 33.7026 | 72.9995 |
+| 5 | Air University Islamabad | Islamabad | ICT | T2 | 33.6354 | 73.0951 |
+| 6 | Federal Urdu University Islamabad | Islamabad | ICT | T3 | 33.6920 | 73.0430 |
+| 7 | Allama Iqbal Open University | Islamabad | ICT | T3 | 33.6907 | 73.0543 |
+| 8 | Riphah International University | Islamabad | ICT | T3 | 33.6948 | 73.0503 |
+| 9 | Bahria University Islamabad | Islamabad | ICT | T3 | 33.6440 | 73.1040 |
+| 10 | Capital University of Science & Tech | Islamabad | ICT | T3 | 33.6836 | 73.0475 |
+| 11 | University of the Punjab | Lahore | Punjab | T2 | 31.5204 | 74.3587 |
+| 12 | LUMS Lahore | Lahore | Punjab | T2 | 31.4734 | 74.4065 |
+| 13 | UET Lahore | Lahore | Punjab | T2 | 31.5196 | 74.3587 |
+| 14 | GCU — Govt College University Lahore | Lahore | Punjab | T2 | 31.5672 | 74.3139 |
+| 15 | University of Health Sciences Lahore | Lahore | Punjab | T2 | 31.5280 | 74.3280 |
+| 16 | Kinnaird College for Women Lahore | Lahore | Punjab | T3 | 31.5486 | 74.3256 |
+| 17 | Forman Christian College | Lahore | Punjab | T3 | 31.5539 | 74.3310 |
+| 18 | Lahore College for Women University | Lahore | Punjab | T3 | 31.5620 | 74.3140 |
+| 19 | University of Engineering & Tech Taxila | Taxila | Punjab | T3 | 33.7457 | 72.8336 |
+| 20 | University of Sargodha | Sargodha | Punjab | T3 | 32.0836 | 72.6711 |
+| 21 | University of Agriculture Faisalabad | Faisalabad | Punjab | T2 | 31.4290 | 73.0790 |
+| 22 | University of the Punjab Faisalabad | Faisalabad | Punjab | T3 | 31.4180 | 73.0800 |
+| 23 | Islamia University Bahawalpur | Bahawalpur | Punjab | T3 | 29.4036 | 71.6786 |
+| 24 | Bahauddin Zakariya University Multan | Multan | Punjab | T2 | 30.2324 | 71.4785 |
+| 25 | NFC Institute of Engineering Multan | Multan | Punjab | T3 | 30.2100 | 71.4800 |
+| 26 | University of Gujrat | Gujrat | Punjab | T3 | 32.5740 | 74.0860 |
+| 27 | Riphah International Faisalabad | Faisalabad | Punjab | T3 | 31.4350 | 73.0850 |
+| 28 | PMAS Arid Agriculture University | Rawalpindi | Punjab | T3 | 33.6330 | 73.0690 |
+| 29 | NED University of Engineering | Karachi | Sindh | T2 | 24.9204 | 67.1148 |
+| 30 | University of Karachi | Karachi | Sindh | T2 | 24.9415 | 67.1148 |
+| 31 | Aga Khan University Karachi | Karachi | Sindh | T2 | 24.8611 | 67.0661 |
+| 32 | IBA Karachi | Karachi | Sindh | T2 | 24.9206 | 67.1110 |
+| 33 | SZABIST Karachi | Karachi | Sindh | T3 | 24.8612 | 67.0654 |
+| 34 | Hamdard University | Karachi | Sindh | T3 | 24.8920 | 67.0770 |
+| 35 | Dow University of Health Sciences | Karachi | Sindh | T2 | 24.8680 | 67.0620 |
+| 36 | Sir Syed University of Engineering | Karachi | Sindh | T3 | 24.9250 | 67.1170 |
+| 37 | Jinnah Sindh Medical University | Karachi | Sindh | T2 | 24.8850 | 67.0690 |
+| 38 | University of Sindh Jamshoro | Hyderabad | Sindh | T2 | 25.4250 | 68.2780 |
+| 39 | Mehran University of Engineering | Jamshoro | Sindh | T2 | 25.4210 | 68.2760 |
+| 40 | Liaquat University of Medical & Health | Jamshoro | Sindh | T2 | 25.4220 | 68.2770 |
+| 41 | University of Peshawar | Peshawar | KPK | T2 | 34.0094 | 71.5518 |
+| 42 | UET Peshawar | Peshawar | KPK | T2 | 33.9900 | 71.4990 |
+| 43 | Khyber Medical University | Peshawar | KPK | T2 | 34.0050 | 71.5600 |
+| 44 | University of Agriculture Peshawar | Peshawar | KPK | T3 | 34.0100 | 71.5500 |
+| 45 | Islamia College Peshawar | Peshawar | KPK | T3 | 34.0045 | 71.5511 |
+| 46 | CECOS University Peshawar | Peshawar | KPK | T3 | 34.0020 | 71.5560 |
+| 47 | Abdul Wali Khan University Mardan | Mardan | KPK | T3 | 34.1980 | 72.0440 |
+| 48 | Hazara University Mansehra | Mansehra | KPK | T3 | 34.3270 | 73.1970 |
+| 49 | University of Swat | Swat | KPK | T3 | 34.7717 | 72.3600 |
+| 50 | University of Haripur | Haripur | KPK | T3 | 33.9960 | 72.9190 |
+| 51 | University of Malakand | Malakand | KPK | T3 | 34.5800 | 71.9300 |
+| 52 | University of Balochistan | Quetta | Balochistan | T2 | 30.2041 | 67.0098 |
+| 53 | Balochistan University of IT & Management | Quetta | Balochistan | T3 | 30.2050 | 67.0110 |
+| 54 | Sardar Bahadur Khan Women University | Quetta | Balochistan | T3 | 30.1960 | 67.0060 |
+| 55 | University of Turbat | Turbat | Balochistan | T3 | 25.9840 | 63.0650 |
+| 56 | Lasbela University | Lasbela | Balochistan | T3 | 25.7800 | 66.5200 |
+| 57 | University of Azad Kashmir | Muzaffarabad | AJK | T2 | 34.3580 | 73.4730 |
+| 58 | Karakoram International University | Gilgit | GB | T2 | 35.9220 | 74.3110 |
+| 59 | Army Public School Rawalpindi | Rawalpindi | Punjab | T2 | 33.6084 | 73.0590 |
+| 60 | Army Burn Hall College Abbottabad | Abbottabad | KPK | T2 | 34.1650 | 73.2110 |
+| 61 | Cadet College Petaro | Jamshoro | Sindh | T2 | 25.5120 | 68.2640 |
+| 62 | Cadet College Hasan Abdal | Attock | Punjab | T2 | 33.8190 | 72.6890 |
+| 63 | Cadet College Kohat | Kohat | KPK | T2 | 33.5790 | 71.4460 |
+| 64 | Cadet College Skardu | Skardu | GB | T2 | 35.3370 | 75.5360 |
+| 65 | PAF College Sargodha | Sargodha | Punjab | T2 | 32.0820 | 72.6690 |
+| 66 | GCU Faisalabad | Faisalabad | Punjab | T3 | 31.4195 | 73.0815 |
+| 67 | Punjab College Lahore Main | Lahore | Punjab | T3 | 31.5300 | 74.3450 |
+| 68 | Beacon House National University | Lahore | Punjab | T3 | 31.4980 | 74.3160 |
+| 69 | National College of Arts Lahore | Lahore | Punjab | T3 | 31.5680 | 74.3100 |
+| 70 | Information Technology University Lahore | Lahore | Punjab | T3 | 31.4810 | 74.2860 |
+| 71 | University of Central Punjab | Lahore | Punjab | T3 | 31.5090 | 74.3490 |
+| 72 | University of Lahore | Lahore | Punjab | T3 | 31.5600 | 74.3150 |
+| 73 | Superior University Lahore | Lahore | Punjab | T3 | 31.5020 | 74.3460 |
+| 74 | Minhaj University Lahore | Lahore | Punjab | T3 | 31.5260 | 74.3070 |
+| 75 | University of Management & Technology | Lahore | Punjab | T3 | 31.4918 | 74.3002 |
+| 76 | University of Education Lahore | Lahore | Punjab | T3 | 31.5210 | 74.3040 |
+| 77 | Sindh Agriculture University Tandojam | Hyderabad | Sindh | T3 | 25.4230 | 68.5340 |
+| 78 | Shah Abdul Latif University Khairpur | Khairpur | Sindh | T3 | 27.5380 | 68.7620 |
+| 79 | University of Sukkur IBA | Sukkur | Sindh | T3 | 27.7100 | 68.8620 |
+| 80 | Benazir Bhutto Shaheed University Lyari | Karachi | Sindh | T3 | 24.8540 | 66.9940 |
+| 81 | Institute of Business Administration Sukkur | Sukkur | Sindh | T3 | 27.7045 | 68.8590 |
+| 82 | Quaid-e-Awam University Nawabshah | Nawabshah | Sindh | T3 | 26.2400 | 68.4060 |
+| 83 | NUST Islamabad SEECS | Islamabad | ICT | T2 | 33.6430 | 72.9930 |
+| 84 | Institute of Space Technology Islamabad | Islamabad | ICT | T2 | 33.6440 | 72.9920 |
+| 85 | Pakistan Institute of Engineering Islamabad | Islamabad | ICT | T3 | 33.6450 | 72.9910 |
+| 86 | University of Wah | Wah | Punjab | T3 | 33.7660 | 72.7650 |
+| 87 | Mirpur University of Science & Technology | Mirpur | AJK | T3 | 33.1400 | 73.7500 |
+| 88 | Pir Mehr Ali Shah Arid University Rawalpindi | Rawalpindi | Punjab | T3 | 33.6310 | 73.0700 |
+| 89 | University of Gujranwala | Gujranwala | Punjab | T3 | 32.1750 | 74.2020 |
+| 90 | University of Narowal | Narowal | Punjab | T3 | 32.1000 | 74.8700 |
+| 91 | University of Okara | Okara | Punjab | T3 | 30.8130 | 73.4500 |
+| 92 | University of Sahiwal | Sahiwal | Punjab | T3 | 30.6640 | 73.1100 |
+| 93 | University of Jhang | Jhang | Punjab | T3 | 31.2690 | 72.3170 |
+| 94 | University of Sialkot | Sialkot | Punjab | T3 | 32.5000 | 74.5300 |
+| 95 | FAST-NUCES Lahore | Lahore | Punjab | T3 | 31.5820 | 74.3350 |
+| 96 | FAST-NUCES Karachi | Karachi | Sindh | T3 | 24.8950 | 67.0780 |
+| 97 | FAST-NUCES Islamabad | Islamabad | ICT | T3 | 33.7030 | 73.0600 |
+| 98 | FAST-NUCES Peshawar | Peshawar | KPK | T3 | 34.0050 | 71.5570 |
+| 99 | Army Public School Peshawar | Peshawar | KPK | T2 | 34.0040 | 71.5570 |
+| 100 | Edwardes College Peshawar | Peshawar | KPK | T3 | 34.0042 | 71.5513 |
+
+---
+
+## 🏥 HEALTHCARE — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | PIMS Islamabad | Islamabad | ICT | T1 | 33.7213 | 73.0584 |
+| 2 | Shifa International Hospital | Islamabad | ICT | T2 | 33.7213 | 73.0695 |
+| 3 | Polyclinic Hospital Islamabad | Islamabad | ICT | T2 | 33.7260 | 73.0951 |
+| 4 | Capital Hospital Islamabad | Islamabad | ICT | T2 | 33.7210 | 73.0620 |
+| 5 | KRL Hospital Islamabad | Islamabad | ICT | T3 | 33.7006 | 73.0640 |
+| 6 | Maroof International Hospital | Islamabad | ICT | T3 | 33.7041 | 73.0481 |
+| 7 | Northwest General Hospital Peshawar | Peshawar | KPK | T2 | 33.9900 | 71.4970 |
+| 8 | Hayatabad Medical Complex | Peshawar | KPK | T1 | 34.0041 | 71.4712 |
+| 9 | Lady Reading Hospital Peshawar | Peshawar | KPK | T1 | 34.0088 | 71.5642 |
+| 10 | Khyber Teaching Hospital | Peshawar | KPK | T2 | 34.0080 | 71.5630 |
+| 11 | Mayo Hospital Lahore | Lahore | Punjab | T1 | 31.5648 | 74.3112 |
+| 12 | Lahore General Hospital | Lahore | Punjab | T2 | 31.5503 | 74.3168 |
+| 13 | Services Hospital Lahore | Lahore | Punjab | T2 | 31.5509 | 74.3260 |
+| 14 | Children's Hospital Lahore | Lahore | Punjab | T2 | 31.5641 | 74.3138 |
+| 15 | Punjab Institute of Cardiology | Lahore | Punjab | T2 | 31.5512 | 74.3105 |
+| 16 | Sir Ganga Ram Hospital Lahore | Lahore | Punjab | T2 | 31.5651 | 74.3132 |
+| 17 | Jinnah Hospital Lahore | Lahore | Punjab | T2 | 31.5499 | 74.3254 |
+| 18 | Sheikh Zayed Hospital Lahore | Lahore | Punjab | T2 | 31.4948 | 74.3278 |
+| 19 | Shaukat Khanum Cancer Hospital Lahore | Lahore | Punjab | T2 | 31.4665 | 74.2717 |
+| 20 | Ittefaq Hospital Lahore | Lahore | Punjab | T3 | 31.5160 | 74.3346 |
+| 21 | Doctors Hospital Lahore | Lahore | Punjab | T3 | 31.5004 | 74.3308 |
+| 22 | Surgimed Hospital Lahore | Lahore | Punjab | T3 | 31.5060 | 74.3410 |
+| 23 | Jinnah PGMC Karachi | Karachi | Sindh | T1 | 24.8905 | 67.0816 |
+| 24 | Aga Khan University Hospital Karachi | Karachi | Sindh | T2 | 24.8608 | 67.0661 |
+| 25 | Liaquat National Hospital Karachi | Karachi | Sindh | T2 | 24.8724 | 67.0622 |
+| 26 | Civil Hospital Karachi | Karachi | Sindh | T2 | 24.8573 | 67.0108 |
+| 27 | Abbasi Shaheed Hospital Karachi | Karachi | Sindh | T2 | 24.9061 | 67.0591 |
+| 28 | Indus Hospital Korangi | Karachi | Sindh | T2 | 24.8294 | 67.1280 |
+| 29 | South City Hospital Karachi | Karachi | Sindh | T3 | 24.8370 | 67.0390 |
+| 30 | National Institute of Cardiovascular Diseases | Karachi | Sindh | T2 | 24.8801 | 67.0668 |
+| 31 | Ziauddin Hospital North Nazimabad | Karachi | Sindh | T3 | 24.9370 | 67.0400 |
+| 32 | Patel Hospital Karachi | Karachi | Sindh | T3 | 24.8660 | 67.0480 |
+| 33 | Liaquat University Hospital Hyderabad | Hyderabad | Sindh | T2 | 25.4210 | 68.2760 |
+| 34 | Civil Hospital Hyderabad | Hyderabad | Sindh | T2 | 25.3910 | 68.3640 |
+| 35 | Civil Hospital Sukkur | Sukkur | Sindh | T2 | 27.7010 | 68.8520 |
+| 36 | Civil Hospital Larkana | Larkana | Sindh | T2 | 27.5570 | 68.2080 |
+| 37 | CMH Rawalpindi | Rawalpindi | Punjab | T1 | 33.5891 | 73.0521 |
+| 38 | Holy Family Hospital Rawalpindi | Rawalpindi | Punjab | T2 | 33.5960 | 73.0660 |
+| 39 | Benazir Bhutto Hospital Rawalpindi | Rawalpindi | Punjab | T2 | 33.5948 | 73.0662 |
+| 40 | Rawalpindi General Hospital | Rawalpindi | Punjab | T2 | 33.5956 | 73.0658 |
+| 41 | AFIC Rawalpindi | Rawalpindi | Punjab | T2 | 33.6090 | 73.0750 |
+| 42 | Nishtar Hospital Multan | Multan | Punjab | T2 | 30.1998 | 71.4679 |
+| 43 | Children's Hospital Multan | Multan | Punjab | T2 | 30.1990 | 71.4690 |
+| 44 | Allied Hospital Faisalabad | Faisalabad | Punjab | T2 | 31.4253 | 73.0864 |
+| 45 | DHQ Hospital Faisalabad | Faisalabad | Punjab | T2 | 31.4200 | 73.0820 |
+| 46 | Shaukat Khanum Peshawar | Peshawar | KPK | T2 | 33.9920 | 71.4960 |
+| 47 | DHQ Hospital Sialkot | Sialkot | Punjab | T3 | 32.5000 | 74.5270 |
+| 48 | DHQ Hospital Gujranwala | Gujranwala | Punjab | T2 | 32.1770 | 74.1990 |
+| 49 | DHQ Hospital Bahawalpur | Bahawalpur | Punjab | T2 | 29.3900 | 71.6800 |
+| 50 | Victoria Hospital Bahawalpur | Bahawalpur | Punjab | T2 | 29.3950 | 71.6840 |
+| 51 | DHQ Hospital Sargodha | Sargodha | Punjab | T2 | 32.0800 | 72.6700 |
+| 52 | DHQ Hospital Jhang | Jhang | Punjab | T3 | 31.2690 | 72.3170 |
+| 53 | DHQ Hospital Rahim Yar Khan | Rahim Yar Khan | Punjab | T2 | 28.4160 | 70.2950 |
+| 54 | Quetta Civil Hospital | Quetta | Balochistan | T2 | 30.1961 | 67.0061 |
+| 55 | Fatima Jinnah General Hospital Quetta | Quetta | Balochistan | T2 | 30.1872 | 67.0009 |
+| 56 | Bolan Medical College Hospital | Quetta | Balochistan | T2 | 30.2030 | 67.0140 |
+| 57 | CMH Quetta | Quetta | Balochistan | T2 | 30.2030 | 67.0140 |
+| 58 | DHQ Hospital Turbat | Turbat | Balochistan | T3 | 25.9800 | 63.0620 |
+| 59 | DHQ Hospital Gwadar | Gwadar | Balochistan | T2 | 25.1200 | 62.3220 |
+| 60 | Abbottabad International Medical Institute | Abbottabad | KPK | T3 | 34.1500 | 73.2090 |
+| 61 | DHQ Hospital Abbottabad | Abbottabad | KPK | T2 | 34.1510 | 73.2100 |
+| 62 | DHQ Hospital Mardan | Mardan | KPK | T2 | 34.1960 | 72.0440 |
+| 63 | DHQ Hospital Kohat | Kohat | KPK | T2 | 33.5900 | 71.4450 |
+| 64 | DHQ Hospital DI Khan | DI Khan | KPK | T2 | 31.8300 | 70.9060 |
+| 65 | DHQ Hospital Swat | Swat | KPK | T3 | 34.7710 | 72.3580 |
+| 66 | DHQ Hospital Chitral | Chitral | KPK | T3 | 35.8500 | 71.7880 |
+| 67 | Gilgit District Hospital | Gilgit | GB | T2 | 35.9200 | 74.3090 |
+| 68 | Skardu District Hospital | Skardu | GB | T2 | 35.3370 | 75.5360 |
+| 69 | DHQ Hospital Muzaffarabad | Muzaffarabad | AJK | T2 | 34.3680 | 73.4720 |
+| 70 | Shifa International Hospital Faisalabad | Faisalabad | Punjab | T3 | 31.4400 | 73.0800 |
+| 71 | Chaudhry Pervaiz Elahi Institute of Cardiology | Multan | Punjab | T2 | 30.2000 | 71.4700 |
+| 72 | Pakistan Kidney Centre Karachi | Karachi | Sindh | T3 | 24.9000 | 67.0820 |
+| 73 | Fatimid Foundation Karachi | Karachi | Sindh | T3 | 24.8754 | 67.0611 |
+| 74 | Fatimid Foundation Lahore | Lahore | Punjab | T3 | 31.5270 | 74.3400 |
+| 75 | National Institute of Child Health Karachi | Karachi | Sindh | T2 | 24.8890 | 67.0780 |
+| 76 | Edhi Foundation Hospital Karachi | Karachi | Sindh | T3 | 24.8620 | 67.0160 |
+| 77 | Layton Rahmatulla Benevolent Trust Eye Hospital Lahore | Lahore | Punjab | T3 | 31.5350 | 74.3210 |
+| 78 | LRBT Eye Hospital Karachi | Karachi | Sindh | T3 | 24.8680 | 67.0590 |
+| 79 | Cancer Foundation Hospital Karachi | Karachi | Sindh | T3 | 24.8700 | 67.0600 |
+| 80 | Shaukat Khanum Karachi | Karachi | Sindh | T2 | 24.8910 | 67.0710 |
+| 81 | PNS Shifa Hospital Karachi | Karachi | Sindh | T2 | 24.8790 | 67.0200 |
+| 82 | CMH Lahore | Lahore | Punjab | T2 | 31.5450 | 74.3380 |
+| 83 | CMH Peshawar | Peshawar | KPK | T2 | 34.0030 | 71.5870 |
+| 84 | CMH Karachi | Karachi | Sindh | T2 | 24.8740 | 67.1020 |
+| 85 | CMH Multan | Multan | Punjab | T2 | 30.1960 | 71.4600 |
+| 86 | CMH Quetta | Quetta | Balochistan | T2 | 30.2035 | 67.0145 |
+| 87 | Institute of Psychiatry Rawalpindi | Rawalpindi | Punjab | T3 | 33.5910 | 73.0540 |
+| 88 | Fountain House Lahore | Lahore | Punjab | T3 | 31.5110 | 74.3370 |
+| 89 | National Institute of Mental Health Islamabad | Islamabad | ICT | T3 | 33.7200 | 73.0600 |
+| 90 | Dialysis Centre PIMS Islamabad | Islamabad | ICT | T2 | 33.7212 | 73.0583 |
+| 91 | Nuclear Medicine Oncology Centre Lahore | Lahore | Punjab | T2 | 31.5500 | 74.3150 |
+| 92 | Nuclear Medicine Oncology Centre Karachi | Karachi | Sindh | T2 | 24.8900 | 67.0800 |
+| 93 | Balochistan Institute of Nephrology | Quetta | Balochistan | T3 | 30.1980 | 67.0070 |
+| 94 | Sandeman Provincial Hospital Quetta | Quetta | Balochistan | T2 | 30.1945 | 67.0078 |
+| 95 | Sahara Hospital Lahore | Lahore | Punjab | T3 | 31.5200 | 74.3310 |
+| 96 | Medicare Hospital Rawalpindi | Rawalpindi | Punjab | T3 | 33.6020 | 73.0650 |
+| 97 | Wazirabad Institute of Cardiology | Wazirabad | Punjab | T3 | 32.4450 | 74.1200 |
+| 98 | Al-Khidmat Hospital Karachi | Karachi | Sindh | T3 | 24.9000 | 67.0700 |
+| 99 | Al-Khidmat Hospital Peshawar | Peshawar | KPK | T3 | 34.0060 | 71.5600 |
+| 100 | Imtiaz Medical Centre Sukkur | Sukkur | Sindh | T3 | 27.7030 | 68.8560 |
+
+---
+
+## 🕌 RELIGIOUS — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Faisal Mosque | Islamabad | ICT | T1 | 33.7295 | 73.0373 |
+| 2 | Badshahi Mosque | Lahore | Punjab | T1 | 31.5880 | 74.3107 |
+| 3 | Data Darbar Shrine | Lahore | Punjab | T1 | 31.5878 | 74.3240 |
+| 4 | Wazir Khan Mosque | Lahore | Punjab | T2 | 31.5804 | 74.3267 |
+| 5 | Minhaj-ul-Quran Centre Lahore | Lahore | Punjab | T2 | 31.5260 | 74.3070 |
+| 6 | Masjid Mahabat Khan | Peshawar | KPK | T2 | 34.0103 | 71.5619 |
+| 7 | Sunehri Masjid Peshawar | Peshawar | KPK | T2 | 34.0109 | 71.5659 |
+| 8 | Masjid Tooba (Round Mosque) | Karachi | Sindh | T2 | 24.8173 | 67.0507 |
+| 9 | Masjid-e-Quba Karachi | Karachi | Sindh | T3 | 24.8640 | 67.0430 |
+| 10 | Hazrat Lal Shahbaz Qalandar Shrine | Sehwan | Sindh | T1 | 26.4220 | 67.8624 |
+| 11 | Shah Rukn-e-Alam Shrine | Multan | Punjab | T1 | 30.2110 | 71.4782 |
+| 12 | Bahauddin Zakariya Shrine | Multan | Punjab | T2 | 30.2100 | 71.4790 |
+| 13 | Shah Shams Tabrez Shrine | Multan | Punjab | T2 | 30.2080 | 71.4770 |
+| 14 | Makli Necropolis UNESCO Site | Thatta | Sindh | T2 | 24.7486 | 67.8269 |
+| 15 | Shah Jahan Mosque Thatta | Thatta | Sindh | T2 | 24.7468 | 67.9224 |
+| 16 | Kartarpur Gurdwara Darbar Sahib | Narowal | Punjab | T1 | 31.9195 | 74.5632 |
+| 17 | Panja Sahib Gurdwara Hasan Abdal | Attock | Punjab | T2 | 33.8169 | 72.6891 |
+| 18 | Gurdwara Dera Sahib Lahore | Lahore | Punjab | T2 | 31.5874 | 74.3114 |
+| 19 | Shri Varun Dev Mandir Karachi | Karachi | Sindh | T3 | 24.8400 | 66.9900 |
+| 20 | Shri Swami Narayan Mandir Karachi | Karachi | Sindh | T3 | 24.8610 | 67.0200 |
+| 21 | Church of the Holy Trinity Karachi | Karachi | Sindh | T3 | 24.8624 | 67.0175 |
+| 22 | St Patrick's Cathedral Karachi | Karachi | Sindh | T3 | 24.8630 | 67.0184 |
+| 23 | St Andrew's Church Lahore | Lahore | Punjab | T3 | 31.5674 | 74.3148 |
+| 24 | Sacred Heart Cathedral Lahore | Lahore | Punjab | T3 | 31.5680 | 74.3160 |
+| 25 | Islamabad Cathedral (Holy Trinity) | Islamabad | ICT | T3 | 33.7270 | 73.0910 |
+| 26 | Bari Imam Shrine Nurpur Shahan | Islamabad | ICT | T2 | 33.6929 | 73.1117 |
+| 27 | Raja Bazaar Mosque Rawalpindi | Rawalpindi | Punjab | T2 | 33.5989 | 73.0607 |
+| 28 | Jamia Masjid Siddiqia Islamabad | Islamabad | ICT | T3 | 33.7100 | 73.0560 |
+| 29 | Masjid Ibrahim Khyber Road Peshawar | Peshawar | KPK | T2 | 34.0017 | 71.5583 |
+| 30 | Qadamgah Mosque Peshawar | Peshawar | KPK | T3 | 34.0060 | 71.5560 |
+| 31 | Abdullah Shah Ghazi Shrine | Karachi | Sindh | T2 | 24.8130 | 67.0290 |
+| 32 | Bibi Pak Daman Shrine Lahore | Lahore | Punjab | T2 | 31.5690 | 74.3300 |
+| 33 | Syed Ali Hajveri Mazaar Lahore | Lahore | Punjab | T2 | 31.5876 | 74.3238 |
+| 34 | Baba Farid Shrine Pakpattan | Pakpattan | Punjab | T2 | 30.3440 | 73.3880 |
+| 35 | Bulleh Shah Shrine Kasur | Kasur | Punjab | T2 | 31.1170 | 74.4490 |
+| 36 | Waris Shah Shrine Jandiala Sher Khan | Sheikhupura | Punjab | T2 | 31.7530 | 74.1350 |
+| 37 | Mian Mir Shrine Lahore | Lahore | Punjab | T3 | 31.5310 | 74.3540 |
+| 38 | Madho Lal Hussain Shrine Lahore | Lahore | Punjab | T3 | 31.5600 | 74.3750 |
+| 39 | Sakhi Sarwar Shrine Dera Ghazi Khan | DG Khan | Punjab | T2 | 30.4500 | 70.6500 |
+| 40 | Lal Shahbaz Qalandar Shrine Sehwan | Sehwan | Sindh | T1 | 26.4220 | 67.8624 |
+| 41 | Ghous-ul-Azam Mosque Karachi | Karachi | Sindh | T3 | 24.9200 | 67.0700 |
+| 42 | Masjid-e-Tooba DHA Karachi | Karachi | Sindh | T2 | 24.8173 | 67.0507 |
+| 43 | Karsaz Mosque Karachi | Karachi | Sindh | T3 | 24.8764 | 67.1000 |
+| 44 | Masjid Al-Falah Defence Karachi | Karachi | Sindh | T3 | 24.8200 | 67.0500 |
+| 45 | Quaid-e-Azam University Mosque | Islamabad | ICT | T3 | 33.7450 | 73.1360 |
+| 46 | Jamia Hafsa Islamabad | Islamabad | ICT | T2 | 33.7100 | 73.0490 |
+| 47 | Lal Masjid Islamabad | Islamabad | ICT | T2 | 33.7190 | 73.0564 |
+| 48 | Masjid Bahria Town Lahore | Lahore | Punjab | T3 | 31.3660 | 74.2140 |
+| 49 | Grand Jamia Mosque Bahria Lahore | Lahore | Punjab | T2 | 31.3700 | 74.2200 |
+| 50 | Hussainia Mosque Rawalpindi | Rawalpindi | Punjab | T3 | 33.6010 | 73.0640 |
+| 51 | Masjid-e-Dua Islamabad | Islamabad | ICT | T3 | 33.7240 | 73.0430 |
+| 52 | Jamia Mosque Faisalabad | Faisalabad | Punjab | T2 | 31.4180 | 73.0780 |
+| 53 | Ghanta Ghar Mosque Faisalabad | Faisalabad | Punjab | T3 | 31.4175 | 73.0788 |
+| 54 | Jamia Mosque Multan | Multan | Punjab | T2 | 30.1977 | 71.4762 |
+| 55 | Khawaja Ghulam Farid Shrine Dera Ghazi Khan | DG Khan | Punjab | T2 | 29.9630 | 70.3370 |
+| 56 | Sehwan Sharif Complex | Sehwan | Sindh | T2 | 26.4180 | 67.8650 |
+| 57 | Shah Abdul Latif Bhitai Shrine | Matiari | Sindh | T2 | 25.8970 | 68.2820 |
+| 58 | Manghopir Shrine Karachi | Karachi | Sindh | T2 | 24.9640 | 67.0160 |
+| 59 | Empress Market Masjid Karachi | Karachi | Sindh | T3 | 24.8600 | 67.0160 |
+| 60 | Masjid Al-Azam Lahore | Lahore | Punjab | T3 | 31.5720 | 74.3500 |
+| 61 | Noor-ul-Ilm Mosque DHA Lahore | Lahore | Punjab | T3 | 31.4800 | 74.4000 |
+| 62 | Allama Iqbal Mosque Model Town Lahore | Lahore | Punjab | T3 | 31.5040 | 74.3020 |
+| 63 | Jamia Mosque DHA Islamabad | Islamabad | ICT | T3 | 33.5200 | 73.1100 |
+| 64 | Meezan Mosque G-9 Islamabad | Islamabad | ICT | T3 | 33.6890 | 73.0040 |
+| 65 | Masjid Zulfiqar Rawalpindi | Rawalpindi | Punjab | T3 | 33.6030 | 73.0760 |
+| 66 | Jamia Mosque Quetta | Quetta | Balochistan | T2 | 30.1950 | 67.0065 |
+| 67 | Masjid Meezan Quetta | Quetta | Balochistan | T3 | 30.1940 | 67.0072 |
+| 68 | Masjid Ibrahim Quetta | Quetta | Balochistan | T3 | 30.1930 | 67.0080 |
+| 69 | Bolan Mosque Quetta | Quetta | Balochistan | T3 | 30.1920 | 67.0090 |
+| 70 | Masjid Umer Mardan | Mardan | KPK | T3 | 34.1990 | 72.0450 |
+| 71 | Masjid Noor Abbottabad | Abbottabad | KPK | T3 | 34.1520 | 73.2100 |
+| 72 | Jamia Masjid Mingora | Swat | KPK | T2 | 34.7720 | 72.3600 |
+| 73 | Masjid Ghafoor Chitral | Chitral | KPK | T3 | 35.8480 | 71.7890 |
+| 74 | Gilgit Central Mosque | Gilgit | GB | T2 | 35.9215 | 74.3095 |
+| 75 | Skardu Jamia Mosque | Skardu | GB | T3 | 35.3380 | 75.5355 |
+| 76 | Eidgah Mosque Islamabad | Islamabad | ICT | T3 | 33.7310 | 73.0610 |
+| 77 | Eidgah Mosque Lahore | Lahore | Punjab | T3 | 31.5900 | 74.3200 |
+| 78 | Eidgah Mosque Peshawar | Peshawar | KPK | T2 | 34.0150 | 71.5680 |
+| 79 | Eidgah Mosque Quetta | Quetta | Balochistan | T2 | 30.2000 | 67.0120 |
+| 80 | Masjid Khyber Landi Kotal | Khyber | KPK | T3 | 34.0900 | 71.1100 |
+| 81 | Mehrabpur Mosque Sindh | Naushahro Feroze | Sindh | T3 | 26.8520 | 68.0180 |
+| 82 | Shrine of Pir Pagaro | Sanghar | Sindh | T3 | 26.0400 | 68.9700 |
+| 83 | Shahbaz Qalandar Glow Sign Sehwan | Sehwan | Sindh | T3 | 26.4230 | 67.8640 |
+| 84 | Bibi Jawindi Shrine Uch Sharif | Bahawalpur | Punjab | T2 | 29.2200 | 71.1000 |
+| 85 | Uch Sharif Heritage Shrines | Bahawalpur | Punjab | T2 | 29.2240 | 71.1040 |
+| 86 | Masjid Shuhada Lahore | Lahore | Punjab | T3 | 31.5650 | 74.3350 |
+| 87 | Daata Darbar Lahore Extension | Lahore | Punjab | T2 | 31.5875 | 74.3236 |
+| 88 | Masjid Shab-e-Barat Rawalpindi | Rawalpindi | Punjab | T3 | 33.5980 | 73.0610 |
+| 89 | Jamia Masjid Abbasia Bahawalpur | Bahawalpur | Punjab | T3 | 29.3920 | 71.6840 |
+| 90 | Khwaja Sahib Shrine Taunsa Sharif | DG Khan | Punjab | T2 | 30.7000 | 70.6500 |
+| 91 | Pir Sohawa Shrine Islamabad | Islamabad | ICT | T3 | 33.7700 | 73.1400 |
+| 92 | Rawalpindi Imam Bargah | Rawalpindi | Punjab | T2 | 33.5990 | 73.0620 |
+| 93 | Imam Bargah Ali Raza Karachi | Karachi | Sindh | T2 | 24.8700 | 67.0510 |
+| 94 | Imam Bargah Mehfil Shah Khorasan Lahore | Lahore | Punjab | T2 | 31.5700 | 74.3400 |
+| 95 | Sadhu Bela Temple Sukkur | Sukkur | Sindh | T3 | 27.6990 | 68.8380 |
+| 96 | Katas Raj Temples | Chakwal | Punjab | T2 | 32.6900 | 72.7280 |
+| 97 | Ramkali Temple Sialkot | Sialkot | Punjab | T3 | 32.4950 | 74.5350 |
+| 98 | Hinglaj Mata Temple | Lasbela | Balochistan | T2 | 25.5148 | 65.5151 |
+| 99 | Shri Ram Pir Fair Tando Allahyar | Tando Allahyar | Sindh | T3 | 25.4640 | 68.7190 |
+| 100 | Chaukhandi Tombs Karachi | Karachi | Sindh | T2 | 24.9180 | 67.3680 |
+
+---
+
+## 📍 TOURISM / HERITAGE — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Lahore Fort (Shahi Qila) | Lahore | Punjab | T1 | 31.5882 | 74.3115 |
+| 2 | Mohenjo-daro Archaeological Site | Larkana | Sindh | T1 | 27.3244 | 68.1376 |
+| 3 | Taxila Museum | Taxila | Punjab | T2 | 33.7457 | 72.8336 |
+| 4 | Pakistan Monument | Islamabad | ICT | T2 | 33.6933 | 73.0606 |
+| 5 | Minar-e-Pakistan | Lahore | Punjab | T1 | 31.5925 | 74.3092 |
+| 6 | Quaid-e-Azam Mausoleum (Mazar-e-Quaid) | Karachi | Sindh | T1 | 24.8745 | 67.0381 |
+| 7 | Allama Iqbal Mausoleum | Lahore | Punjab | T2 | 31.5882 | 74.3107 |
+| 8 | Shalimar Gardens Lahore | Lahore | Punjab | T2 | 31.5916 | 74.4001 |
+| 9 | Lahore Museum | Lahore | Punjab | T2 | 31.5679 | 74.3073 |
+| 10 | Rohtas Fort | Jhelum | Punjab | T2 | 32.9635 | 73.5838 |
+| 11 | Derawar Fort | Bahawalpur | Punjab | T2 | 28.7651 | 71.3363 |
+| 12 | Khyber Pass Viewpoint | Landi Kotal | KPK | T2 | 34.0928 | 71.1163 |
+| 13 | Attabad Lake | Hunza | GB | T2 | 36.3099 | 74.8666 |
+| 14 | Ranikot Fort | Sann | Sindh | T2 | 26.0430 | 67.8787 |
+| 15 | Nanga Parbat Base Camp | Diamer | GB | T2 | 35.2374 | 74.5891 |
+| 16 | Fairy Meadows | Diamer | GB | T2 | 35.3836 | 74.5954 |
+| 17 | Saif-ul-Malook Lake | Naran | KPK | T2 | 34.8736 | 73.6938 |
+| 18 | Frere Hall Karachi | Karachi | Sindh | T2 | 24.8625 | 67.0175 |
+| 19 | Lok Virsa Museum | Islamabad | ICT | T3 | 33.6876 | 73.0755 |
+| 20 | National Museum of Pakistan | Karachi | Sindh | T2 | 24.8644 | 67.0388 |
+| 21 | K2 Base Camp | Skardu | GB | T2 | 35.8825 | 76.5133 |
+| 22 | Baltoro Glacier | Skardu | GB | T2 | 35.7360 | 76.3760 |
+| 23 | Karakoram Highway Attabad | Hunza | GB | T2 | 36.3200 | 74.8600 |
+| 24 | Hunza Valley Viewpoint | Hunza | GB | T2 | 36.3169 | 74.6473 |
+| 25 | Altit Fort Hunza | Hunza | GB | T2 | 36.2850 | 74.6450 |
+| 26 | Baltit Fort Karimabad | Hunza | GB | T2 | 36.3119 | 74.6552 |
+| 27 | Passu Cones | Gojal | GB | T2 | 36.4800 | 74.8600 |
+| 28 | Deosai National Park | Skardu | GB | T2 | 34.9670 | 75.5350 |
+| 29 | Shangrila Resort Lower Kachura | Skardu | GB | T3 | 35.3500 | 75.4000 |
+| 30 | Naltar Valley | Gilgit | GB | T3 | 36.1000 | 74.1800 |
+| 31 | Nathia Gali | Abbottabad | KPK | T3 | 34.0716 | 73.3767 |
+| 32 | Ayubia National Park | Abbottabad | KPK | T3 | 34.0900 | 73.3800 |
+| 33 | Murree Hills | Rawalpindi | Punjab | T2 | 33.9070 | 73.3943 |
+| 34 | Patriata (New Murree) | Rawalpindi | Punjab | T3 | 33.8920 | 73.3510 |
+| 35 | Pir Sohawa Islamabad | Islamabad | ICT | T3 | 33.7700 | 73.1400 |
+| 36 | Daman-e-Koh | Islamabad | ICT | T3 | 33.7434 | 73.0608 |
+| 37 | Rose and Jasmine Garden Islamabad | Islamabad | ICT | T3 | 33.7350 | 73.0580 |
+| 38 | Shakarparian | Islamabad | ICT | T3 | 33.6933 | 73.0530 |
+| 39 | Faisalabad Agricultural University Heritage Park | Faisalabad | Punjab | T3 | 31.4290 | 73.0790 |
+| 40 | Harappa Archaeological Site | Sahiwal | Punjab | T2 | 30.6298 | 72.8657 |
+| 41 | Lahore Zoo | Lahore | Punjab | T3 | 31.5616 | 74.3125 |
+| 42 | Walled City of Lahore | Lahore | Punjab | T1 | 31.5819 | 74.3202 |
+| 43 | Delhi Gate Lahore | Lahore | Punjab | T2 | 31.5810 | 74.3261 |
+| 44 | Lahore Railway Station Heritage Building | Lahore | Punjab | T2 | 31.5824 | 74.3293 |
+| 45 | Greater Iqbal Park Lahore | Lahore | Punjab | T2 | 31.5920 | 74.3095 |
+| 46 | Kalma Chowk Lahore | Lahore | Punjab | T2 | 31.5200 | 74.3330 |
+| 47 | Clifton Beach Karachi | Karachi | Sindh | T2 | 24.8050 | 67.0280 |
+| 48 | Seaview Beach DHA | Karachi | Sindh | T2 | 24.7980 | 67.0240 |
+| 49 | French Beach Karachi | Karachi | Sindh | T3 | 24.7820 | 66.9810 |
+| 50 | Manora Island | Karachi | Sindh | T3 | 24.8039 | 66.9825 |
+| 51 | Karachi Zoo | Karachi | Sindh | T3 | 24.8662 | 67.0414 |
+| 52 | Quaid-e-Azam House Museum | Karachi | Sindh | T2 | 24.8617 | 67.0381 |
+| 53 | Mohatta Palace Museum | Karachi | Sindh | T2 | 24.8090 | 67.0326 |
+| 54 | Empress Market Heritage | Karachi | Sindh | T2 | 24.8600 | 67.0160 |
+| 55 | Clifton Amusement Park | Karachi | Sindh | T3 | 24.8060 | 67.0270 |
+| 56 | Nathia Gali Chairlift | Abbottabad | KPK | T3 | 34.0700 | 73.3760 |
+| 57 | Swat Valley Museum Saidu Sharif | Swat | KPK | T2 | 34.7380 | 72.3579 |
+| 58 | Butkara Stupa Swat | Swat | KPK | T2 | 34.7540 | 72.3670 |
+| 59 | Udegram Buddhist Monastery | Swat | KPK | T2 | 34.8100 | 72.4100 |
+| 60 | Kalam Valley | Swat | KPK | T2 | 35.4870 | 72.5850 |
+| 61 | Malam Jabba Ski Resort | Swat | KPK | T3 | 34.8060 | 72.5620 |
+| 62 | Kaghan Valley Naran | Mansehra | KPK | T2 | 34.9052 | 73.6522 |
+| 63 | Shogran Hill Station | Mansehra | KPK | T3 | 34.6042 | 73.4460 |
+| 64 | Thandiani | Abbottabad | KPK | T3 | 34.1050 | 73.4370 |
+| 65 | Besham City on Indus | Shangla | KPK | T3 | 34.9000 | 72.8700 |
+| 66 | Fort Munro | DG Khan | Punjab | T3 | 29.9800 | 70.1900 |
+| 67 | Chaukhandi Tombs Karachi | Karachi | Sindh | T2 | 24.9180 | 67.3680 |
+| 68 | Haleji Lake Bird Sanctuary | Thatta | Sindh | T3 | 24.8100 | 67.8300 |
+| 69 | Kirthar National Park | Karachi | Sindh | T2 | 25.4100 | 67.3300 |
+| 70 | Hingol National Park | Lasbela | Balochistan | T2 | 25.5010 | 65.5100 |
+| 71 | Princess of Hope Hingol | Lasbela | Balochistan | T3 | 25.4760 | 65.4960 |
+| 72 | Quetta Urak Valley | Quetta | Balochistan | T3 | 30.2900 | 67.0700 |
+| 73 | Ziarat Residency UNESCO | Ziarat | Balochistan | T2 | 30.3789 | 67.7256 |
+| 74 | Hanna Lake Quetta | Quetta | Balochistan | T2 | 30.2420 | 67.1200 |
+| 75 | Moola Chotok Waterfalls | Khuzdar | Balochistan | T3 | 27.7879 | 66.3254 |
+| 76 | Warsak Dam | Peshawar | KPK | T2 | 34.1680 | 71.3880 |
+| 77 | Tarbela Dam Visitor Area | Haripur | KPK | T2 | 34.0790 | 72.6877 |
+| 78 | Rawal Lake Islamabad | Islamabad | ICT | T2 | 33.7110 | 73.1280 |
+| 79 | Simly Dam | Islamabad | ICT | T3 | 33.8010 | 73.2520 |
+| 80 | Banjosa Lake Rawalakot | Rawalakot | AJK | T3 | 33.8500 | 73.7600 |
+| 81 | Shounter Lake AJK | Neelum | AJK | T3 | 34.6200 | 74.0300 |
+| 82 | Ratti Gali Lake AJK | Neelum | AJK | T3 | 34.5870 | 74.1200 |
+| 83 | Taobat AJK Scenic Area | Neelum | AJK | T3 | 34.7900 | 74.0800 |
+| 84 | Saddal Bridge Neelum | Neelum | AJK | T3 | 34.4500 | 73.6800 |
+| 85 | Kotli Town Historical Fort | Kotli | AJK | T3 | 33.5160 | 73.9060 |
+| 86 | Harappa Museum | Sahiwal | Punjab | T2 | 30.6310 | 72.8640 |
+| 87 | Gor Khatri Peshawar | Peshawar | KPK | T2 | 34.0130 | 71.5630 |
+| 88 | Qila Bala Hisar Peshawar | Peshawar | KPK | T2 | 34.0180 | 71.5660 |
+| 89 | Islam Garh Fort Islamabad | Islamabad | ICT | T3 | 33.6750 | 73.0290 |
+| 90 | Mangla Fort AJK | Mirpur | AJK | T3 | 33.1440 | 73.6450 |
+| 91 | Lahore Canal Walk | Lahore | Punjab | T3 | 31.5200 | 74.3450 |
+| 92 | Greater Lahore Biodiversity Park | Lahore | Punjab | T3 | 31.4960 | 74.3210 |
+| 93 | Islamabad Japanese Park | Islamabad | ICT | T3 | 33.7400 | 73.0680 |
+| 94 | Fatima Jinnah Park Islamabad | Islamabad | ICT | T3 | 33.7389 | 73.0569 |
+| 95 | Karachi Beach Park | Karachi | Sindh | T3 | 24.8100 | 67.0320 |
+| 96 | Jilani Park Lahore | Lahore | Punjab | T3 | 31.5580 | 74.3590 |
+| 97 | Nawab of Bahawalpur Heritage | Bahawalpur | Punjab | T2 | 29.4050 | 71.6850 |
+| 98 | Sadiqgarh Palace | Bahawalpur | Punjab | T2 | 29.3880 | 71.6680 |
+| 99 | Noor Mahal Bahawalpur | Bahawalpur | Punjab | T2 | 29.3941 | 71.6842 |
+| 100 | Lahore Walled City — Lohari Gate | Lahore | Punjab | T2 | 31.5800 | 74.3240 |
+
+---
+
+## 🏭 INDUSTRIAL — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | Tarbela Dam Power Station | Haripur | KPK | T1 | 34.0790 | 72.6877 |
+| 2 | Mangla Dam | Mirpur | AJK | T1 | 33.1432 | 73.6440 |
+| 3 | Neelum-Jhelum Hydropower Project | Muzaffarabad | AJK | T2 | 34.3600 | 73.5048 |
+| 4 | SNGPL Gas Terminal Sui | Dera Bugti | Balochistan | T1 | 28.6449 | 69.1889 |
+| 5 | Pakistan Steel Mills Bin Qasim | Karachi | Sindh | T2 | 24.7501 | 67.3211 |
+| 6 | Parco Refinery Mahmood Kot | Multan | Punjab | T2 | 30.3245 | 70.9846 |
+| 7 | National Refinery Korangi | Karachi | Sindh | T2 | 24.8298 | 67.1296 |
+| 8 | Attock Refinery | Attock | Punjab | T2 | 33.7660 | 72.3500 |
+| 9 | Pak-Arab Refinery (PARCO) Keamari | Karachi | Sindh | T2 | 24.8200 | 66.9900 |
+| 10 | Faisalabad Industrial Estate FIEDMC | Faisalabad | Punjab | T2 | 31.4187 | 72.9989 |
+| 11 | Hub Industrial Estate | Hub | Balochistan | T2 | 25.0630 | 66.9928 |
+| 12 | Sialkot Export Processing Zone | Sialkot | Punjab | T2 | 32.4962 | 74.5368 |
+| 13 | Gujranwala Industrial Estate | Gujranwala | Punjab | T2 | 32.1589 | 74.1878 |
+| 14 | Hattar Industrial Estate | Haripur | KPK | T2 | 33.9736 | 72.8410 |
+| 15 | SITE Karachi | Karachi | Sindh | T2 | 24.9098 | 67.0046 |
+| 16 | Bin Qasim Industrial Zone | Karachi | Sindh | T2 | 24.7843 | 67.3100 |
+| 17 | Korangi Industrial Area | Karachi | Sindh | T2 | 24.8300 | 67.1300 |
+| 18 | North Karachi Industrial Zone | Karachi | Sindh | T2 | 24.9800 | 67.0600 |
+| 19 | Landhi Industrial Area | Karachi | Sindh | T2 | 24.8460 | 67.1780 |
+| 20 | Kot Addu Power Plant | Muzaffargarh | Punjab | T2 | 30.4704 | 70.9633 |
+| 21 | Guddu Thermal Power Station | Kashmore | Sindh | T2 | 28.4080 | 69.7460 |
+| 22 | Jamshoro Power Plant | Jamshoro | Sindh | T2 | 25.4660 | 68.2760 |
+| 23 | Bin Qasim Power Plant | Karachi | Sindh | T2 | 24.7890 | 67.3130 |
+| 24 | HUBCO Power Plant | Hub | Balochistan | T2 | 25.0900 | 67.0100 |
+| 25 | Sahiwal Coal Power Plant | Sahiwal | Punjab | T2 | 30.6880 | 73.1380 |
+| 26 | Port Qasim Power Plant | Karachi | Sindh | T2 | 24.7890 | 67.3000 |
+| 27 | Engro Powergen Qadirpur | Sukkur | Sindh | T2 | 28.0000 | 69.5000 |
+| 28 | Dawood Wind Power Jhimpir | Thatta | Sindh | T2 | 24.8800 | 68.0200 |
+| 29 | Zorlu Energy Wind Farm | Thatta | Sindh | T2 | 24.8600 | 68.0100 |
+| 30 | Three Gorges Wind Farm Gharo | Thatta | Sindh | T2 | 24.7400 | 67.5800 |
+| 31 | Quaid-e-Azam Solar Park Bahawalpur | Bahawalpur | Punjab | T2 | 29.3773 | 71.7217 |
+| 32 | Lucky Cement Pezu Plant | DI Khan | KPK | T2 | 32.3360 | 71.1030 |
+| 33 | Kohat Cement Factory | Kohat | KPK | T2 | 33.5978 | 71.4504 |
+| 34 | Cherat Cement | Nowshera | KPK | T2 | 33.9800 | 71.7450 |
+| 35 | DG Khan Cement | DG Khan | Punjab | T2 | 30.4600 | 70.6600 |
+| 36 | Maple Leaf Cement | Mianwali | Punjab | T2 | 32.5840 | 71.5364 |
+| 37 | Askari Cement | Wah | Punjab | T2 | 33.7670 | 72.7640 |
+| 38 | Fecto Cement | Sangjani | Punjab | T3 | 33.7300 | 72.9700 |
+| 39 | Bestway Cement Hattar | Haripur | KPK | T2 | 33.9720 | 72.8420 |
+| 40 | Ordnance Factories Board Wah | Wah | Punjab | T1 | 33.7660 | 72.7640 |
+| 41 | Heavy Mechanical Complex Taxila | Taxila | Punjab | T2 | 33.7500 | 72.8400 |
+| 42 | Karachi Shipyard and Engineering Works | Karachi | Sindh | T2 | 24.8380 | 66.9950 |
+| 43 | Pakistan Aeronautical Complex Kamra | Attock | Punjab | T1 | 33.8690 | 72.4010 |
+| 44 | PINSTECH Islamabad | Islamabad | ICT | T2 | 33.6900 | 73.0960 |
+| 45 | Pakistan Atomic Energy Commission HQ | Islamabad | ICT | T2 | 33.7209 | 73.0543 |
+| 46 | PAEC Chashma Nuclear Power Plants | Mianwali | Punjab | T1 | 32.3920 | 71.4390 |
+| 47 | PAEC Karachi Nuclear Power Plant KANUPP | Karachi | Sindh | T1 | 24.8450 | 66.7920 |
+| 48 | NESCOM Headquarters | Islamabad | ICT | T2 | 33.6900 | 73.0500 |
+| 49 | SUPARCO Space Centre Karachi | Karachi | Sindh | T2 | 24.9240 | 67.1380 |
+| 50 | SUPARCO Satellite Ground Station | Islamabad | ICT | T2 | 33.7100 | 73.0550 |
+| 51 | Thar Coal Power Project Block-II | Tharparkar | Sindh | T2 | 24.4000 | 70.4500 |
+| 52 | Thar Coal Block-I Engro | Tharparkar | Sindh | T2 | 24.4100 | 70.4600 |
+| 53 | Mari Gas Field | Daharki | Sindh | T2 | 28.4350 | 70.0480 |
+| 54 | Qadirpur Gas Field | Sukkur | Sindh | T2 | 27.9000 | 69.2000 |
+| 55 | Adhi Gas and Oil Field | Rawalpindi | Punjab | T2 | 33.2800 | 73.2200 |
+| 56 | Dhurnal Oil Field | Attock | Punjab | T2 | 33.6500 | 72.2000 |
+| 57 | Missan Oil Field Balochistan | Dera Bugti | Balochistan | T2 | 28.9000 | 69.5000 |
+| 58 | POL Pipeline Attock | Attock | Punjab | T2 | 33.7600 | 72.3600 |
+| 59 | OGDCL HQ Islamabad | Islamabad | ICT | T2 | 33.7100 | 73.0540 |
+| 60 | PPL Headquarters Karachi | Karachi | Sindh | T2 | 24.8800 | 67.0600 |
+| 61 | LESCO Grid Station Lahore | Lahore | Punjab | T2 | 31.5004 | 74.2683 |
+| 62 | NTDC Switching Station Islamabad | Islamabad | ICT | T2 | 33.7050 | 73.0400 |
+| 63 | Dasu Hydropower Under Construction | Kohistan | KPK | T2 | 35.1400 | 73.0500 |
+| 64 | Diamer-Basha Dam Site | Diamer | GB | T1 | 35.5320 | 73.6280 |
+| 65 | Mohmand Dam Site | Mohmand | KPK | T2 | 34.3800 | 71.5600 |
+| 66 | Wapda Grid Faisalabad | Faisalabad | Punjab | T2 | 31.4200 | 73.0800 |
+| 67 | Sheikhupura Industrial Zone | Sheikhupura | Punjab | T2 | 31.7130 | 73.9870 |
+| 68 | Sundar Industrial Estate Lahore | Lahore | Punjab | T2 | 31.3800 | 74.1200 |
+| 69 | Quetta Industrial Estate | Quetta | Balochistan | T2 | 30.2200 | 67.0300 |
+| 70 | Multan Industrial Estate | Multan | Punjab | T2 | 30.1800 | 71.4500 |
+| 71 | Sargodha Industrial Estate | Sargodha | Punjab | T3 | 32.0836 | 72.6711 |
+| 72 | Peshawar Industrial Estate Hayatabad | Peshawar | KPK | T2 | 33.9900 | 71.4700 |
+| 73 | Mardan Industrial Zone | Mardan | KPK | T3 | 34.2000 | 72.0600 |
+| 74 | Abbottabad Industrial Estate | Abbottabad | KPK | T3 | 34.1600 | 73.2200 |
+| 75 | Gwadar Free Zone Industrial | Gwadar | Balochistan | T1 | 25.1260 | 62.3270 |
+| 76 | Gwadar LNG Terminal | Gwadar | Balochistan | T1 | 25.1230 | 62.3250 |
+| 77 | Hub Industrial Zone Phase 2 | Hub | Balochistan | T2 | 25.0700 | 66.9940 |
+| 78 | Khairpur Special Economic Zone | Khairpur | Sindh | T2 | 27.5200 | 68.7500 |
+| 79 | Dhabeji Special Economic Zone | Thatta | Sindh | T2 | 25.1700 | 67.6900 |
+| 80 | Rashakai Special Economic Zone | Nowshera | KPK | T2 | 34.0200 | 72.0300 |
+| 81 | Bostan Industrial Zone | Quetta | Balochistan | T2 | 30.4700 | 67.2200 |
+| 82 | China Pakistan Economic Corridor Gwadar | Gwadar | Balochistan | T1 | 25.1220 | 62.3240 |
+| 83 | CPEC Eastern Route M4 | Faisalabad | Punjab | T2 | 31.4200 | 72.9900 |
+| 84 | Bahawalpur Solar 100MW | Bahawalpur | Punjab | T2 | 29.3700 | 71.7200 |
+| 85 | Lucky Electric Bin Qasim | Karachi | Sindh | T2 | 24.7880 | 67.3150 |
+| 86 | Sahara Steel Pipes Karachi | Karachi | Sindh | T3 | 24.8100 | 67.1400 |
+| 87 | International Industries Korangi | Karachi | Sindh | T3 | 24.8290 | 67.1280 |
+| 88 | Packages Limited Lahore | Lahore | Punjab | T2 | 31.5100 | 74.2870 |
+| 89 | Fauji Fertilizer Goth Machhi | Rahim Yar Khan | Punjab | T2 | 28.9100 | 70.7900 |
+| 90 | Engro Fertilizer Daharki | Daharki | Sindh | T2 | 28.4400 | 69.6500 |
+| 91 | Fauji Fertilizer Bin Qasim | Karachi | Sindh | T2 | 24.7860 | 67.3160 |
+| 92 | Azam Textile Mills Faisalabad | Faisalabad | Punjab | T3 | 31.4300 | 73.0900 |
+| 93 | Kohinoor Textile Rawalpindi | Rawalpindi | Punjab | T3 | 33.6100 | 73.0900 |
+| 94 | Sapphire Textile Lahore | Lahore | Punjab | T3 | 31.4900 | 74.2700 |
+| 95 | Sitara Textile Faisalabad | Faisalabad | Punjab | T3 | 31.4400 | 73.0950 |
+| 96 | Ali Enterprises Factory Baldia Karachi | Karachi | Sindh | T3 | 24.9200 | 66.9700 |
+| 97 | Nishat Textile Group Faisalabad | Faisalabad | Punjab | T3 | 31.4350 | 73.0940 |
+| 98 | Treet Corporation Lahore | Lahore | Punjab | T3 | 31.5800 | 74.4200 |
+| 99 | ICI Pakistan Khewra Salt Range | Khushab | Punjab | T2 | 32.6500 | 72.3600 |
+| 100 | Khewra Salt Mine | Khushab | Punjab | T2 | 32.6500 | 72.3600 |
+
+---
+
+## 🏘 RESIDENTIAL — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | DHA Phase I Karachi | Karachi | Sindh | T2 | 24.8340 | 67.0630 |
+| 2 | DHA Phase II Karachi | Karachi | Sindh | T2 | 24.8200 | 67.0700 |
+| 3 | DHA Phase V Karachi | Karachi | Sindh | T2 | 24.7994 | 67.0611 |
+| 4 | DHA Phase VI Karachi | Karachi | Sindh | T2 | 24.7840 | 67.0750 |
+| 5 | DHA Phase VIII Karachi | Karachi | Sindh | T2 | 24.7870 | 67.0780 |
+| 6 | Clifton Block 4-9 | Karachi | Sindh | T2 | 24.8161 | 67.0287 |
+| 7 | PECHS Karachi | Karachi | Sindh | T2 | 24.8756 | 67.0576 |
+| 8 | North Nazimabad Karachi | Karachi | Sindh | T2 | 24.9320 | 67.0420 |
+| 9 | Gulshan-e-Iqbal Karachi | Karachi | Sindh | T2 | 24.9280 | 67.0900 |
+| 10 | Gulshan-e-Hadeed Karachi | Karachi | Sindh | T3 | 24.7830 | 67.3000 |
+| 11 | Bahria Town Karachi | Karachi | Sindh | T2 | 24.8590 | 66.8580 |
+| 12 | Malir Cantonment Area Karachi | Karachi | Sindh | T2 | 24.9060 | 67.2090 |
+| 13 | Korangi Housing Colony | Karachi | Sindh | T3 | 24.8330 | 67.1340 |
+| 14 | Nazimabad Karachi | Karachi | Sindh | T3 | 24.9040 | 67.0280 |
+| 15 | DHA Lahore Phase 1-5 | Lahore | Punjab | T2 | 31.4793 | 74.4025 |
+| 16 | DHA Lahore Phase 6-9 | Lahore | Punjab | T2 | 31.4500 | 74.4200 |
+| 17 | Gulberg I-IV Lahore | Lahore | Punjab | T2 | 31.5073 | 74.3394 |
+| 18 | Model Town Lahore | Lahore | Punjab | T2 | 31.5037 | 74.3025 |
+| 19 | Garden Town Lahore | Lahore | Punjab | T3 | 31.5100 | 74.3200 |
+| 20 | Johar Town Lahore | Lahore | Punjab | T2 | 31.4726 | 74.2784 |
+| 21 | Valencia Town Lahore | Lahore | Punjab | T3 | 31.5650 | 74.2000 |
+| 22 | Iqbal Town Lahore | Lahore | Punjab | T3 | 31.4895 | 74.3089 |
+| 23 | Faisal Town Lahore | Lahore | Punjab | T3 | 31.4900 | 74.2840 |
+| 24 | Bahria Town Phase IV Lahore | Lahore | Punjab | T3 | 31.3665 | 74.2144 |
+| 25 | Wapda Town Lahore | Lahore | Punjab | T3 | 31.4640 | 74.2750 |
+| 26 | Askari-10 Lahore Cantt | Lahore | Punjab | T2 | 31.4830 | 74.4150 |
+| 27 | Askari-11 Lahore | Lahore | Punjab | T3 | 31.5200 | 74.3750 |
+| 28 | PCSIR Housing Lahore | Lahore | Punjab | T3 | 31.5120 | 74.3110 |
+| 29 | Township Lahore | Lahore | Punjab | T3 | 31.4790 | 74.2800 |
+| 30 | F-6 Sector Islamabad | Islamabad | ICT | T2 | 33.7207 | 73.0529 |
+| 31 | F-7 Sector Islamabad | Islamabad | ICT | T2 | 33.7233 | 73.0449 |
+| 32 | F-8 Sector Islamabad | Islamabad | ICT | T2 | 33.7178 | 73.0348 |
+| 33 | F-10 Sector Islamabad | Islamabad | ICT | T2 | 33.7050 | 72.9960 |
+| 34 | E-7 Sector Islamabad | Islamabad | ICT | T2 | 33.7300 | 73.0670 |
+| 35 | G-9 Sector Islamabad | Islamabad | ICT | T3 | 33.6880 | 73.0020 |
+| 36 | G-11 Sector Islamabad | Islamabad | ICT | T3 | 33.6720 | 72.9990 |
+| 37 | DHA Islamabad Phase 1 | Islamabad | ICT | T2 | 33.5195 | 73.1104 |
+| 38 | DHA Islamabad Phase 2 | Islamabad | ICT | T2 | 33.5100 | 73.1200 |
+| 39 | Bahria Town Rawalpindi Phase 4 | Rawalpindi | Punjab | T3 | 33.5209 | 73.1049 |
+| 40 | Satellite Town Rawalpindi | Rawalpindi | Punjab | T3 | 33.6354 | 73.0697 |
+| 41 | Askari-14 Rawalpindi | Rawalpindi | Punjab | T2 | 33.6200 | 73.1000 |
+| 42 | New Lalazar Rawalpindi | Rawalpindi | Punjab | T3 | 33.6240 | 73.0860 |
+| 43 | Gulraiz Housing Rawalpindi | Rawalpindi | Punjab | T3 | 33.6310 | 73.0720 |
+| 44 | Hayatabad Peshawar Phase 1 | Peshawar | KPK | T2 | 33.9998 | 71.4733 |
+| 45 | Hayatabad Peshawar Phase 6 | Peshawar | KPK | T2 | 33.9940 | 71.4750 |
+| 46 | University Town Peshawar | Peshawar | KPK | T2 | 34.0050 | 71.5380 |
+| 47 | Phase 1 Peshawar Housing | Peshawar | KPK | T3 | 33.9900 | 71.4800 |
+| 48 | Warsak Road Residential | Peshawar | KPK | T3 | 34.0800 | 71.4500 |
+| 49 | Satellite Town Quetta | Quetta | Balochistan | T3 | 30.2200 | 67.0300 |
+| 50 | Chiltan Housing Scheme Quetta | Quetta | Balochistan | T3 | 30.2100 | 67.0200 |
+| 51 | Cantt Bazar Zone Quetta | Quetta | Balochistan | T2 | 30.2041 | 67.0098 |
+| 52 | DHA Quetta | Quetta | Balochistan | T2 | 30.1900 | 67.0700 |
+| 53 | Wapda Town Multan | Multan | Punjab | T3 | 30.2194 | 71.4918 |
+| 54 | DHA Multan | Multan | Punjab | T2 | 30.2800 | 71.5200 |
+| 55 | Gulgasht Colony Multan | Multan | Punjab | T3 | 30.1990 | 71.4760 |
+| 56 | State Life Colony Faisalabad | Faisalabad | Punjab | T3 | 31.4450 | 73.1050 |
+| 57 | People's Colony Faisalabad | Faisalabad | Punjab | T3 | 31.4100 | 73.0700 |
+| 58 | DHA Faisalabad | Faisalabad | Punjab | T2 | 31.4500 | 73.1100 |
+| 59 | Gulberg Greens Islamabad | Islamabad | ICT | T3 | 33.5900 | 72.9700 |
+| 60 | Eighteen Islamabad | Islamabad | ICT | T2 | 33.6700 | 72.9700 |
+| 61 | Park Enclave Islamabad | Islamabad | ICT | T3 | 33.6690 | 73.0340 |
+| 62 | Chak Shahzad Islamabad | Islamabad | ICT | T3 | 33.6600 | 73.0240 |
+| 63 | Soan Gardens Islamabad | Islamabad | ICT | T3 | 33.6530 | 73.0280 |
+| 64 | Canal Road Housing Lahore | Lahore | Punjab | T3 | 31.5050 | 74.3580 |
+| 65 | PIAHS Housing Lahore | Lahore | Punjab | T3 | 31.5200 | 74.3700 |
+| 66 | Formanites Housing Lahore | Lahore | Punjab | T3 | 31.5560 | 74.3330 |
+| 67 | Cavalry Ground Lahore | Lahore | Punjab | T2 | 31.5360 | 74.3870 |
+| 68 | Cantt Residencia Lahore | Lahore | Punjab | T3 | 31.5440 | 74.3850 |
+| 69 | Latifabad Hyderabad | Hyderabad | Sindh | T3 | 25.4050 | 68.3720 |
+| 70 | Qasimabad Hyderabad | Hyderabad | Sindh | T3 | 25.4100 | 68.3400 |
+| 71 | DHA Hyderabad | Hyderabad | Sindh | T3 | 25.4200 | 68.3300 |
+| 72 | New Sukkur Colony | Sukkur | Sindh | T3 | 27.7100 | 68.8620 |
+| 73 | Airport Housing Society Karachi | Karachi | Sindh | T3 | 24.9100 | 67.1600 |
+| 74 | Surjani Town Karachi | Karachi | Sindh | T3 | 24.9800 | 67.0400 |
+| 75 | Orangi Town Karachi | Karachi | Sindh | T3 | 24.9350 | 67.0140 |
+| 76 | Liaquatabad Karachi | Karachi | Sindh | T3 | 24.9040 | 67.0310 |
+| 77 | Federal B Area Karachi | Karachi | Sindh | T3 | 24.9320 | 67.0620 |
+| 78 | Buffer Zone Karachi | Karachi | Sindh | T3 | 24.9470 | 67.0580 |
+| 79 | Shah Faisal Colony Karachi | Karachi | Sindh | T3 | 24.8940 | 67.2000 |
+| 80 | KDA Scheme 33 Karachi | Karachi | Sindh | T3 | 24.9000 | 67.1200 |
+| 81 | Askari-4 Karachi | Karachi | Sindh | T2 | 24.8500 | 67.2200 |
+| 82 | Gizri Karachi | Karachi | Sindh | T2 | 24.8040 | 67.0530 |
+| 83 | Phase-2 Extension DHA Karachi | Karachi | Sindh | T2 | 24.8100 | 67.0700 |
+| 84 | Sialkot City Residential | Sialkot | Punjab | T3 | 32.4936 | 74.5311 |
+| 85 | Gujranwala Residential East | Gujranwala | Punjab | T3 | 32.1800 | 74.2100 |
+| 86 | Rahim Yar Khan Housing | Rahim Yar Khan | Punjab | T3 | 28.4200 | 70.2950 |
+| 87 | Bahawalpur City East Residential | Bahawalpur | Punjab | T3 | 29.4010 | 71.6870 |
+| 88 | Sargodha City Residential | Sargodha | Punjab | T3 | 32.0836 | 72.6711 |
+| 89 | Mardan City Residential | Mardan | KPK | T3 | 34.1990 | 72.0450 |
+| 90 | Abbottabad City Residential | Abbottabad | KPK | T3 | 34.1500 | 73.2100 |
+| 91 | DHA Peshawar | Peshawar | KPK | T2 | 33.9850 | 71.5100 |
+| 92 | Gilgit Model Town | Gilgit | GB | T3 | 35.9220 | 74.3090 |
+| 93 | Muzaffarabad City Residential | Muzaffarabad | AJK | T3 | 34.3680 | 73.4720 |
+| 94 | Mirpur City DHA AJK | Mirpur | AJK | T3 | 33.1400 | 73.7540 |
+| 95 | Bani Gala Islamabad | Islamabad | ICT | T3 | 33.6750 | 73.0810 |
+| 96 | Margalla Town Islamabad | Islamabad | ICT | T3 | 33.7450 | 73.0900 |
+| 97 | Tarlai Islamabad | Islamabad | ICT | T3 | 33.6300 | 73.1100 |
+| 98 | Naval Anchorage Islamabad | Islamabad | ICT | T2 | 33.5830 | 73.0680 |
+| 99 | PAF Falcon Complex Islamabad | Islamabad | ICT | T2 | 33.6350 | 73.0950 |
+| 100 | Askari-11 Lahore | Lahore | Punjab | T2 | 31.5110 | 74.3680 |
+
+---
+
+## 📡 MEDIA / TELECOM — 100 Sites
+
+| # | Site Name | City | Province | Tier | Lat | Lng |
+|---|-----------|------|----------|------|-----|-----|
+| 1 | PTV National Headquarters | Islamabad | ICT | T2 | 33.6936 | 73.0498 |
+| 2 | PTV Sports Studio | Islamabad | ICT | T3 | 33.6940 | 73.0502 |
+| 3 | PTCL HQ Islamabad | Islamabad | ICT | T2 | 33.7147 | 73.0529 |
+| 4 | PTA Headquarters | Islamabad | ICT | T2 | 33.6943 | 73.0590 |
+| 5 | NTC Headquarters | Islamabad | ICT | T2 | 33.7189 | 73.0556 |
+| 6 | APP — Associated Press of Pakistan | Islamabad | ICT | T2 | 33.7212 | 73.0600 |
+| 7 | Jazz (Mobilink) HQ Islamabad | Islamabad | ICT | T3 | 33.7156 | 73.0498 |
+| 8 | Telenor Pakistan HQ | Islamabad | ICT | T3 | 33.6980 | 73.0423 |
+| 9 | Zong HQ Islamabad | Islamabad | ICT | T3 | 33.7100 | 73.0560 |
+| 10 | Ufone HQ Islamabad | Islamabad | ICT | T3 | 33.7090 | 73.0550 |
+| 11 | SCOM Islamabad | Islamabad | ICT | T3 | 33.7080 | 73.0540 |
+| 12 | PEMRA HQ Islamabad | Islamabad | ICT | T2 | 33.7220 | 73.0590 |
+| 13 | Frequency Allocation Board | Islamabad | ICT | T2 | 33.7230 | 73.0585 |
+| 14 | ARY News HQ Karachi | Karachi | Sindh | T2 | 24.9083 | 67.0699 |
+| 15 | Geo TV Studios Karachi | Karachi | Sindh | T2 | 24.9085 | 67.0706 |
+| 16 | Dawn News Karachi | Karachi | Sindh | T2 | 24.8612 | 67.0305 |
+| 17 | Samaa TV Karachi | Karachi | Sindh | T2 | 24.9050 | 67.0690 |
+| 18 | BOL News Karachi | Karachi | Sindh | T3 | 24.9060 | 67.0680 |
+| 19 | Dunya TV Karachi | Karachi | Sindh | T3 | 24.9070 | 67.0710 |
+| 20 | HUM TV Studio Karachi | Karachi | Sindh | T3 | 24.9040 | 67.0720 |
+| 21 | A-Plus TV Karachi | Karachi | Sindh | T3 | 24.9080 | 67.0700 |
+| 22 | Express News Karachi | Karachi | Sindh | T3 | 24.9055 | 67.0685 |
+| 23 | PTV Karachi Centre | Karachi | Sindh | T2 | 24.9088 | 67.0712 |
+| 24 | PTCL Exchange Karachi | Karachi | Sindh | T2 | 24.8600 | 67.0200 |
+| 25 | Jazz Regional Karachi | Karachi | Sindh | T3 | 24.8900 | 67.0700 |
+| 26 | Telenor Regional Karachi | Karachi | Sindh | T3 | 24.8850 | 67.0680 |
+| 27 | ARY Digital Lahore | Lahore | Punjab | T2 | 31.5100 | 74.3530 |
+| 28 | Express News Lahore | Lahore | Punjab | T2 | 31.5014 | 74.3487 |
+| 29 | Samaa TV Lahore | Lahore | Punjab | T2 | 31.5044 | 74.3423 |
+| 30 | Geo TV Lahore Bureau | Lahore | Punjab | T3 | 31.5060 | 74.3440 |
+| 31 | PTV Lahore Centre | Lahore | Punjab | T2 | 31.5670 | 74.3090 |
+| 32 | Radio Pakistan Lahore | Lahore | Punjab | T2 | 31.5680 | 74.3100 |
+| 33 | PTCL Exchange Gulberg Lahore | Lahore | Punjab | T2 | 31.5080 | 74.3370 |
+| 34 | Nai Gaj Transmission Tower | Dadu | Sindh | T2 | 26.0500 | 67.8000 |
+| 35 | Radio Pakistan Islamabad | Islamabad | ICT | T2 | 33.6950 | 73.0510 |
+| 36 | Radio Pakistan Peshawar | Peshawar | KPK | T2 | 34.0100 | 71.5700 |
+| 37 | Radio Pakistan Karachi | Karachi | Sindh | T2 | 24.8750 | 67.0600 |
+| 38 | Radio Pakistan Lahore | Lahore | Punjab | T2 | 31.5680 | 74.3100 |
+| 39 | Radio Pakistan Quetta | Quetta | Balochistan | T2 | 30.1970 | 67.0050 |
+| 40 | PTV Peshawar Centre | Peshawar | KPK | T2 | 34.0095 | 71.5700 |
+| 41 | PTV Quetta Centre | Quetta | Balochistan | T2 | 30.1968 | 67.0062 |
+| 42 | PTV Rawalpindi Studio | Rawalpindi | Punjab | T3 | 33.6000 | 73.0650 |
+| 43 | Dawn Media Group HQ Karachi | Karachi | Sindh | T2 | 24.8614 | 67.0309 |
+| 44 | The News International Karachi | Karachi | Sindh | T3 | 24.8620 | 67.0315 |
+| 45 | Jang Group Karachi | Karachi | Sindh | T3 | 24.8625 | 67.0320 |
+| 46 | Jang Group Lahore | Lahore | Punjab | T3 | 31.5020 | 74.3460 |
+| 47 | Tribune Pakistan Lahore | Lahore | Punjab | T3 | 31.5030 | 74.3470 |
+| 48 | Nawa-i-Waqt Lahore | Lahore | Punjab | T3 | 31.5040 | 74.3480 |
+| 49 | Pakistan Observer Islamabad | Islamabad | ICT | T3 | 33.7150 | 73.0535 |
+| 50 | The Nation Islamabad | Islamabad | ICT | T3 | 33.7160 | 73.0540 |
+| 51 | Duniya TV Lahore HQ | Lahore | Punjab | T2 | 31.4970 | 74.3250 |
+| 52 | BOL TV Karachi | Karachi | Sindh | T3 | 24.9065 | 67.0675 |
+| 53 | 92 News HQ Lahore | Lahore | Punjab | T2 | 31.5050 | 74.3400 |
+| 54 | Neo TV Islamabad | Islamabad | ICT | T3 | 33.7140 | 73.0525 |
+| 55 | Capital TV Islamabad | Islamabad | ICT | T3 | 33.7130 | 73.0520 |
+| 56 | Channel 24 Lahore | Lahore | Punjab | T3 | 31.5060 | 74.3410 |
+| 57 | Aaj TV Karachi | Karachi | Sindh | T3 | 24.9075 | 67.0695 |
+| 58 | Khyber News Peshawar | Peshawar | KPK | T2 | 34.0110 | 71.5714 |
+| 59 | KTN TV Karachi | Karachi | Sindh | T3 | 24.9030 | 67.0660 |
+| 60 | Sindh TV Hyderabad | Hyderabad | Sindh | T3 | 25.3910 | 68.3650 |
+| 61 | Rohi TV Multan | Multan | Punjab | T3 | 30.1980 | 71.4760 |
+| 62 | Sooch News Lahore | Lahore | Punjab | T3 | 31.5070 | 74.3420 |
+| 63 | SUPARCO Earth Observation Station | Karachi | Sindh | T2 | 24.9240 | 67.1380 |
+| 64 | SUPARCO Satellite Ground Station Islamabad | Islamabad | ICT | T2 | 33.7100 | 73.0550 |
+| 65 | NTC Transmission Hub Lahore | Lahore | Punjab | T2 | 31.5680 | 74.3095 |
+| 66 | NTC Hub Karachi | Karachi | Sindh | T2 | 24.8600 | 67.0220 |
+| 67 | PTCL Data Centre Lahore | Lahore | Punjab | T2 | 31.5674 | 74.3120 |
+| 68 | PTCL Data Centre Karachi | Karachi | Sindh | T2 | 24.8590 | 67.0212 |
+| 69 | Pakistan Broadband Network Node Islamabad | Islamabad | ICT | T2 | 33.7190 | 73.0557 |
+| 70 | Jazz Tower Rawalpindi | Rawalpindi | Punjab | T3 | 33.6020 | 73.0660 |
+| 71 | Telenor Tower Lahore | Lahore | Punjab | T3 | 31.5680 | 74.3060 |
+| 72 | Zong Cell Site Karachi | Karachi | Sindh | T3 | 24.8700 | 67.0580 |
+| 73 | Ufone Tower Peshawar | Peshawar | KPK | T3 | 34.0085 | 71.5698 |
+| 74 | PTCL Regional Exchange Peshawar | Peshawar | KPK | T2 | 34.0098 | 71.5715 |
+| 75 | PTCL Regional Exchange Quetta | Quetta | Balochistan | T2 | 30.1962 | 67.0068 |
+| 76 | PTCL Regional Exchange Multan | Multan | Punjab | T2 | 30.1971 | 71.4741 |
+| 77 | PTCL Regional Exchange Faisalabad | Faisalabad | Punjab | T2 | 31.4189 | 73.0820 |
+| 78 | Microwave Tower DG Khan | DG Khan | Punjab | T2 | 30.0581 | 70.6349 |
+| 79 | Transmission Tower Sukkur | Sukkur | Sindh | T2 | 27.7055 | 68.8568 |
+| 80 | Broadband Node Gilgit | Gilgit | GB | T2 | 35.9218 | 74.3082 |
+| 81 | Jazz 5G Pilot Site Lahore | Lahore | Punjab | T3 | 31.5090 | 74.3390 |
+| 82 | Telenor 5G Test Site Islamabad | Islamabad | ICT | T3 | 33.7170 | 73.0498 |
+| 83 | Fiber Backbone Node Hyderabad | Hyderabad | Sindh | T2 | 25.3968 | 68.3586 |
+| 84 | Internet Exchange Pakistan (IXPK) Karachi | Karachi | Sindh | T1 | 24.8605 | 67.0211 |
+| 85 | IXPK Node Lahore | Lahore | Punjab | T2 | 31.5674 | 74.3118 |
+| 86 | IXPK Node Islamabad | Islamabad | ICT | T2 | 33.7190 | 73.0553 |
+| 87 | PASHA House Lahore | Lahore | Punjab | T3 | 31.5100 | 74.3430 |
+| 88 | P@SHA Islamabad | Islamabad | ICT | T3 | 33.7200 | 73.0605 |
+| 89 | Ministry of IT Islamabad | Islamabad | ICT | T2 | 33.7260 | 73.0975 |
+| 90 | E-Government Directorate Islamabad | Islamabad | ICT | T2 | 33.7120 | 73.0520 |
+| 91 | IGNITE National Technology Fund | Islamabad | ICT | T3 | 33.7130 | 73.0530 |
+| 92 | Microwave Tower Zhob | Zhob | Balochistan | T3 | 31.3400 | 69.4470 |
+| 93 | PTCL Regional Turbat | Turbat | Balochistan | T3 | 25.9820 | 63.0640 |
+| 94 | KIU Satellite Dish Gilgit | Gilgit | GB | T3 | 35.9225 | 74.3109 |
+| 95 | DigiSkills Pakistan Hub Karachi | Karachi | Sindh | T3 | 24.8700 | 67.0600 |
+| 96 | National Information Technology Board | Islamabad | ICT | T2 | 33.7200 | 73.0600 |
+| 97 | Pakistan Software Export Board | Islamabad | ICT | T3 | 33.7210 | 73.0608 |
+| 98 | CDA Fiber Ring Islamabad | Islamabad | ICT | T2 | 33.7100 | 73.0500 |
+| 99 | Broadband Node Skardu | Skardu | GB | T3 | 35.3385 | 75.5362 |
+| 100 | PTCL Muzaffarabad Exchange | Muzaffarabad | AJK | T2 | 34.3695 | 73.4712 |

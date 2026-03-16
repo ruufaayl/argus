@@ -1,0 +1,188 @@
+.mode-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mode-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(2, 8, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-badge:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mode-badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #555;
+  transition: all 0.2s ease;
+}
+
+.mode-badge--public .mode-badge__dot {
+  background: var(--color-accent-blue);
+  box-shadow: 0 0 8px var(--color-accent-blue);
+}
+
+.mode-badge--classified {
+  color: var(--color-accent-red);
+  border-color: rgba(255, 50, 50, 0.3);
+  background: rgba(255, 50, 50, 0.05);
+}
+
+.mode-badge--classified .mode-badge__dot {
+  background: var(--color-accent-red);
+  box-shadow: 0 0 8px var(--color-accent-red);
+}
+
+.mode-badge--locked {
+  color: var(--color-text-muted);
+  border-color: rgba(255, 255, 255, 0.05);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.mode-badge--locked .mode-badge__dot {
+  background: #333;
+}
+
+/* Modal Overlay */
+.pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pin-modal {
+  background: rgba(10, 14, 20, 0.95);
+  border: 1px solid rgba(255, 50, 50, 0.3);
+  width: 380px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 50, 50, 0.05);
+}
+
+.pin-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 50, 50, 0.1);
+  border-bottom: 1px solid rgba(255, 50, 50, 0.2);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--color-accent-red);
+  font-weight: 700;
+}
+
+.pin-modal__close {
+  background: transparent;
+  border: none;
+  color: var(--color-accent-red);
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.pin-modal__close:hover {
+  opacity: 1;
+}
+
+.pin-modal__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-modal__desc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.pin-inputs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pin-input {
+  width: 48px;
+  height: 64px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  font-size: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  transition: all 0.2s ease;
+}
+
+.pin-input:focus {
+  outline: none;
+  border-color: var(--color-accent-red);
+  box-shadow: inset 0 0 10px rgba(255, 50, 50, 0.2);
+}
+
+.pin-modal__error-msg {
+  height: 16px; /* reserve space */
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-accent-red);
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  animation: pulse 1s infinite;
+}
+
+.pin-modal--error .pin-inputs {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+.pin-modal--error .pin-input {
+  border-color: var(--color-accent-red);
+  background: rgba(255, 50, 50, 0.1);
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}

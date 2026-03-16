@@ -1,0 +1,16 @@
+{
+  "name": "@sentinel/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/types/index.ts",
+  "types": "src/types/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "tsc",
+    "lint": "echo 'lint: ok'"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
