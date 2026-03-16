@@ -1,6 +1,6 @@
 // ============================================================
 // City Entity Monologues — Pre-written content per city
-// Used as fallback when Claude API is not connected.
+// Used as fallback when Groq API is not connected.
 // Streams token-by-token via the useEntityVoice hook.
 // ============================================================
 

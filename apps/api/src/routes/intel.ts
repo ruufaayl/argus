@@ -116,32 +116,33 @@ app.get('/signals', async (c) => {
   
   const systemPrompt = `You are ARGUS, a real-time classified intelligence AI for Pakistan's strategic monitoring network.
 Current date: ${today}.
-You analyze REAL geopolitical events, military movements, economic indicators, and security situations.
-Your intelligence is grounded in actual knowledge of Pakistani geopolitics, regional tensions, and real infrastructural data.
+Your job is to provide the LATEST real news and strategic intelligence about Pakistan from the last 24 hours.
+Focus on: military deployments, defense policy, India-Pakistan border activity, Afghanistan-Pakistan border, CPEC developments, nuclear program updates, political decisions affecting national security, terror incidents, major protests, constitutional changes, Supreme Court orders, economic sanctions, IMF negotiations, US-Pakistan relations, China-Pakistan relations, and any events with strategic implications.
+Use your training data to provide the most recent and realistic intelligence.
 Respond ONLY with a valid JSON array. No markdown. No explanations.`;
 
-  const prompt = `Generate 6 live strategic intelligence signals for Pakistan as of ${today}.
-Ground these in REAL current geopolitical context: Pakistan-India tensions, China-Pakistan CPEC developments, Afghanistan border security, IMF economic program, domestic political situation, regional military postures.
+  const prompt = `Provide 6 real strategic intelligence items about Pakistan based on the most recent events (within the last 24 hours as of ${today}).
 
-Each signal must be realistic, specific to real locations, and include calculated threat metrics.
+These should be REAL news events grounded in actual geopolitical developments — not fictional scenarios.
+Cover: military movements, border tensions, political decisions, economic developments, security incidents, defense agreements.
 
 Return ONLY a JSON array with this exact schema for each item:
 [
   {
     "priority": "critical" | "high" | "normal",
-    "title": "<specific, factual, location-based headline — max 70 chars>",
-    "detail": "<2-3 sentence factual detail with real intelligence context>",
-    "time": "<X min ago | X hrs ago | Just now — realistic recency>",
-    "lat": <precise decimal latitude>,
-    "lng": <precise decimal longitude>,
-    "location": "<specific place name, city or region>",
-    "threatIndex": <number 0.0-10.0>,
+    "title": "<specific headline based on real events — max 70 chars>",
+    "detail": "<2-3 sentences about the real event with factual context>",
+    "time": "<X min ago | X hrs ago | Just now — approximate recency>",
+    "lat": <precise decimal latitude of the event location>,
+    "lng": <precise decimal longitude of the event location>,
+    "location": "<specific city, region or facility name>",
+    "threatIndex": <number 0.0-10.0 based on strategic significance>,
     "footTraffic": "<VERY HIGH|HIGH|MODERATE|LOW|RESTRICTED>",
     "source": "<SIGINT|HUMINT|SATIMG|OSINT|ELINT>"
   }
 ]
 
-Distribute priorities: 1 critical, 2 high, 3 normal. Use real Pakistan coordinates. Be specific with location names.`;
+Distribute priorities: 1 critical, 2 high, 3 normal. Use real Pakistan coordinates. Be specific — cite real institutions, programs, locations.`;
 
   try {
     const res = await fetch(`${GROQ_BASE_URL}/chat/completions`, {

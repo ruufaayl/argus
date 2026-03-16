@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useCommandStore } from '../../stores/commandStore';
+import { useRadarStore } from '../../stores/radarStore';
 import { audioService } from '../../services/audioService';
 
 export interface IntelItem {
@@ -21,12 +22,17 @@ export interface IntelItem {
   source?: string;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+
 async function fetchLiveSignals(): Promise<IntelItem[]> {
-  const res = await fetch('/api/intel/signals', {
+  const res = await fetch(`${API_BASE}/api/intel/signals`, {
     signal: AbortSignal.timeout(20000),
   });
   if (!res.ok) throw new Error(`Intel API ${res.status}`);
-  return await res.json();
+  const data = await res.json();
+  // API may return array directly or wrapped in object
+  if (Array.isArray(data)) return data;
+  return [];
 }
 
 function ThreatBar({ value }: { value: number }) {
@@ -82,7 +88,25 @@ export function CommandCenter() {
   const [loading, setLoading] = useState(true);
   const [maxThreat, setMaxThreat] = useState(0);
   const tacticalAlerts = useCommandStore((s) => s.tacticalAlerts);
+  const crossingEvents = useRadarStore((s) => s.crossingEvents);
   const isLocked = useCommandStore((s) => s.isLocked);
+
+  // Convert crossing events to IntelItem format
+  const crossingItems: IntelItem[] = crossingEvents
+    .filter(e => e.threatLevel === 'CRITICAL' || e.threatLevel === 'HIGH' || e.threatLevel === 'MODERATE')
+    .slice(0, 5)
+    .map(e => ({
+      priority: e.threatLevel === 'CRITICAL' ? 'critical' as const :
+                e.threatLevel === 'HIGH' ? 'high' as const : 'normal' as const,
+      title: `${e.type === 'ENTRY' ? '⮕' : '⮐'} ${e.callsign} — ${e.sector.name}`,
+      detail: `${e.aircraftType} · FL${Math.round(e.altitudeFt / 100)} · ${e.speedKts.toFixed(0)}kt · HDG ${e.headingDeg.toFixed(0)}°${e.airline ? ` · ${e.airline}` : ''}`,
+      time: e.timestamp.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+      lat: e.lat,
+      lng: e.lon,
+      location: e.sector.direction,
+      threatIndex: e.threatLevel === 'CRITICAL' ? 9.5 : e.threatLevel === 'HIGH' ? 7.5 : 5.0,
+      source: 'RADAR',
+    }));
 
   const loadIntel = useCallback(async () => {
     if (isLocked) return;
@@ -190,8 +214,8 @@ export function CommandCenter() {
           </div>
         )}
 
-        {/* Intelligence cards — tactical alerts first */}
-        {([...tacticalAlerts, ...intelFeed]).map((item, i) => (
+        {/* Intelligence cards — crossings first, then tactical, then intel */}
+        {([...crossingItems, ...tacticalAlerts, ...intelFeed]).map((item, i) => (
           <div
             key={`${i}-${item.title}`}
             className={`intel-card priority-${item.priority}`}

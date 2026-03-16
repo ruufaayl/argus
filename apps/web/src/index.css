@@ -4,6 +4,7 @@
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
   /* Core palette */
@@ -1260,7 +1261,6 @@ body::before {
 }
 
 /* ============================================================
-   FONT IMPORT — Share Tech Mono for military monospace
+   FONT IMPORT — Share Tech Mono for military monospace (MOVED TO TOP)
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 

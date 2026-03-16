@@ -1,145 +1,216 @@
 // ============================================================
-// TrafficLayer — Simulated particle flow along major highways
+// TrafficSimLayer.tsx — Simulated Street Traffic
+// Uses animated polylines along real road corridors
+// No Deck.gl dependency — pure Cesium for compatibility
 // ============================================================
 
 import { useEffect, useRef, type MutableRefObject } from 'react';
 import * as Cesium from 'cesium';
 import { useCommandStore } from '../../../stores/commandStore';
 
-// Road coordinate arrays (simplified arterial paths)
-const ROADS = [
-  {
-    name: 'Shahrah-e-Faisal Karachi',
-    coords: [
-      [67.0108, 24.8587], [67.0250, 24.8550], [67.0400, 24.8510],
-      [67.0600, 24.8470], [67.0800, 24.8430], [67.1000, 24.8400],
-      [67.1200, 24.8380], [67.1400, 24.8360], [67.1609, 24.9065],
-    ],
-  },
-  {
-    name: 'Kashmir Highway Islamabad',
-    coords: [
-      [72.9793, 33.7165], [72.9900, 33.7100], [73.0050, 33.7050],
-      [73.0200, 33.7000], [73.0350, 33.6950], [73.0487, 33.6900],
-      [73.0600, 33.6850], [73.0700, 33.6800],
-    ],
-  },
-  {
-    name: 'GT Road Lahore-Rawalpindi',
-    coords: [
-      [74.3293, 31.5824], [74.2500, 31.6200], [74.1500, 31.7000],
-      [73.9000, 31.8000], [73.6000, 32.2000], [73.3000, 32.6000],
-      [73.1000, 33.0000], [73.0596, 33.5979],
-    ],
-  },
-];
-
-const PARTICLES_PER_ROAD = 30;
-
-// Create a tiny glowing dot canvas
-function createDot(color: string, size: number = 6): HTMLCanvasElement {
-  const canvas = document.createElement('canvas');
-  canvas.width = size * 2;
-  canvas.height = size * 2;
-  const ctx = canvas.getContext('2d')!;
-  const gradient = ctx.createRadialGradient(size, size, 0, size, size, size);
-  gradient.addColorStop(0, color);
-  gradient.addColorStop(1, 'transparent');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size * 2, size * 2);
-  return canvas;
-}
-
 interface Props {
   viewerRef: MutableRefObject<Cesium.Viewer | null>;
 }
 
-export function TrafficLayer({ viewerRef }: Props) {
+interface SimVehicle {
+  id: string;
+  waypoints: [number, number][]; // [lon, lat]
+  speed: number; // degrees per second (scaled)
+  type: 0 | 1 | 2; // 0=car, 1=motorbike, 2=bus
+  currentIndex: number;
+  progress: number; // 0-1 between current waypoints
+}
+
+// Major road corridors for Pakistani cities
+const CITY_ROUTES: Record<string, [number, number][][]> = {
+  karachi: [
+    // Shahrah-e-Faisal
+    [[67.01, 24.86], [67.03, 24.87], [67.05, 24.88], [67.07, 24.87], [67.09, 24.86], [67.10, 24.85]],
+    // University Road
+    [[67.05, 24.93], [67.06, 24.92], [67.07, 24.91], [67.08, 24.90], [67.09, 24.89]],
+    // MA Jinnah Road
+    [[66.97, 24.86], [66.99, 24.86], [67.01, 24.86], [67.03, 24.86], [67.05, 24.87]],
+    // Korangi Industrial
+    [[67.12, 24.82], [67.13, 24.83], [67.14, 24.84], [67.15, 24.85], [67.16, 24.84]],
+    // Hub River Road
+    [[66.92, 24.88], [66.94, 24.87], [66.96, 24.87], [66.98, 24.86]],
+    // DHA Phase
+    [[67.05, 24.80], [67.06, 24.81], [67.07, 24.82], [67.08, 24.83]],
+  ],
+  lahore: [
+    // Mall Road
+    [[74.32, 31.55], [74.33, 31.55], [74.34, 31.55], [74.35, 31.56], [74.36, 31.56]],
+    // GT Road
+    [[74.28, 31.53], [74.30, 31.54], [74.32, 31.55], [74.34, 31.56]],
+    // Multan Road
+    [[74.35, 31.48], [74.34, 31.50], [74.34, 31.52], [74.35, 31.54]],
+    // Canal Road
+    [[74.30, 31.48], [74.31, 31.50], [74.32, 31.52], [74.33, 31.54]],
+  ],
+  islamabad: [
+    // Faisal Avenue
+    [[73.04, 33.69], [73.05, 33.70], [73.06, 33.71], [73.07, 33.72], [73.08, 33.73]],
+    // Jinnah Avenue
+    [[73.05, 33.69], [73.06, 33.69], [73.07, 33.70], [73.08, 33.70]],
+    // Margalla Road
+    [[73.03, 33.74], [73.05, 33.74], [73.07, 33.74], [73.09, 33.73]],
+  ],
+  peshawar: [
+    // GT Road Peshawar
+    [[71.70, 34.01], [71.72, 34.01], [71.74, 34.01], [71.76, 34.01]],
+    // University Road Peshawar
+    [[71.68, 34.02], [71.70, 34.02], [71.72, 34.03]],
+  ],
+};
+
+function generateVehicles(): SimVehicle[] {
+  const vehicles: SimVehicle[] = [];
+  let id = 0;
+
+  const cityVehicleCounts: Record<string, number> = {
+    karachi: 200,
+    lahore: 120,
+    islamabad: 60,
+    peshawar: 40,
+  };
+
+  for (const [city, routes] of Object.entries(CITY_ROUTES)) {
+    const count = cityVehicleCounts[city] || 30;
+    for (let i = 0; i < count; i++) {
+      const route = routes[i % routes.length];
+      const type = (i % 3) as 0 | 1 | 2;
+      const speedMultiplier = type === 0 ? 1.0 : type === 1 ? 1.3 : 0.6;
+
+      // Add slight lateral offset to spread vehicles across road width
+      const offset = (Math.random() - 0.5) * 0.003;
+      const waypoints: [number, number][] = route.map(([lon, lat]) => [
+        lon + offset + (Math.random() - 0.5) * 0.004,
+        lat + (Math.random() - 0.5) * 0.003,
+      ]);
+
+      vehicles.push({
+        id: `v-${id++}`,
+        waypoints,
+        speed: (0.00003 + Math.random() * 0.00004) * speedMultiplier,
+        type,
+        currentIndex: Math.floor(Math.random() * (waypoints.length - 1)),
+        progress: Math.random(),
+      });
+    }
+  }
+
+  return vehicles;
+}
+
+const VEHICLE_COLORS: Record<number, Cesium.Color> = {
+  0: Cesium.Color.fromCssColorString('#00C8FF').withAlpha(0.8),  // car: cyan
+  1: Cesium.Color.WHITE.withAlpha(0.5),                          // bike: white dim
+  2: Cesium.Color.fromCssColorString('#00FF88').withAlpha(0.9),  // bus: green
+};
+
+export function TrafficSimLayer({ viewerRef }: Props) {
   const isVisible = useCommandStore((s) => s.layers.traffic);
-  const bbsRef = useRef<Cesium.BillboardCollection | null>(null);
-  const progressRef = useRef<number[]>([]);
-  const removeListenerRef = useRef<(() => void) | null>(null);
+  const pointCollectionRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
+  const vehiclesRef = useRef<SimVehicle[]>([]);
+  const pointMapRef = useRef<Map<string, Cesium.PointPrimitive>>(new Map());
+  const animFrameRef = useRef<number>(0);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed()) return;
 
-    const bbs = new Cesium.BillboardCollection({ scene: viewer.scene });
-    viewer.scene.primitives.add(bbs);
-    bbsRef.current = bbs;
-
-    const cyanDot = createDot('rgba(0, 200, 255, 0.8)', 4);
-    const amberDot = createDot('rgba(255, 184, 0, 0.7)', 4);
-
-    // Initialize particles
-    const progresses: number[] = [];
-
-    ROADS.forEach((road, ri) => {
-      for (let i = 0; i < PARTICLES_PER_ROAD; i++) {
-        const progress = Math.random(); // Random start position along road
-        progresses.push(progress);
-
-        const pos = interpolateRoad(road.coords, progress);
-        bbs.add({
-          position: Cesium.Cartesian3.fromDegrees(pos[0], pos[1], 20),
-          image: ri === 0 ? amberDot : cyanDot, // Karachi in amber (heavy traffic)
-          scale: 1.0,
-          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-          verticalOrigin: Cesium.VerticalOrigin.CENTER,
-        });
-      }
-    });
-    progressRef.current = progresses;
-
-    // Animate particles along roads
-    const removeListener = viewer.scene.preUpdate.addEventListener(() => {
-      if (!bbsRef.current) return;
-
-      let idx = 0;
-      ROADS.forEach((road) => {
-        for (let i = 0; i < PARTICLES_PER_ROAD; i++) {
-          const speed = 0.0005 + Math.random() * 0.0003; // Variable speed
-          progressRef.current[idx] += speed;
-          if (progressRef.current[idx] > 1) progressRef.current[idx] = 0;
-
-          const pos = interpolateRoad(road.coords, progressRef.current[idx]);
-          const bb = bbsRef.current!.get(idx);
-          bb.position = Cesium.Cartesian3.fromDegrees(pos[0], pos[1], 20);
-          idx++;
-        }
-      });
-    });
-    removeListenerRef.current = removeListener;
+    const pc = viewer.scene.primitives.add(
+      new Cesium.PointPrimitiveCollection()
+    );
+    pointCollectionRef.current = pc;
+    vehiclesRef.current = generateVehicles();
 
     return () => {
-      removeListener();
+      cancelAnimationFrame(animFrameRef.current);
       if (!viewer.isDestroyed()) {
-        viewer.scene.primitives.remove(bbs);
+        viewer.scene.primitives.remove(pc);
       }
+      pointMapRef.current.clear();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Toggle visibility
   useEffect(() => {
-    if (bbsRef.current) {
-      bbsRef.current.show = isVisible;
+    const pc = pointCollectionRef.current;
+    const viewer = viewerRef.current;
+    if (!pc || !viewer || viewer.isDestroyed()) return;
+
+    cancelAnimationFrame(animFrameRef.current);
+
+    if (!isVisible) {
+      pc.removeAll();
+      pointMapRef.current.clear();
+      return;
     }
+
+    // Create all points
+    pc.removeAll();
+    const map = pointMapRef.current;
+    map.clear();
+
+    vehiclesRef.current.forEach((v) => {
+      const wp = v.waypoints[v.currentIndex];
+      const pos = Cesium.Cartesian3.fromDegrees(wp[0], wp[1], 5);
+      const point = pc.add({
+        position: pos,
+        pixelSize: v.type === 2 ? 4 : v.type === 0 ? 3 : 2,
+        color: VEHICLE_COLORS[v.type],
+        scaleByDistance: new Cesium.NearFarScalar(500, 1.5, 100_000, 0.3),
+        translucencyByDistance: new Cesium.NearFarScalar(200, 1.0, 50_000, 0.0),
+      });
+      map.set(v.id, point);
+    });
+
+    let lastTime = performance.now();
+
+    const animate = () => {
+      if (!viewer || viewer.isDestroyed()) return;
+
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      // Only animate when camera is close enough
+      const cameraAlt = viewer.camera.positionCartographic?.height || 800_000;
+      if (cameraAlt > 30_000) {
+        pc.show = false;
+        animFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      pc.show = true;
+
+      vehiclesRef.current.forEach((v) => {
+        v.progress += v.speed * dt * 100;
+        if (v.progress >= 1) {
+          v.progress = 0;
+          v.currentIndex = (v.currentIndex + 1) % (v.waypoints.length - 1);
+        }
+
+        const from = v.waypoints[v.currentIndex];
+        const to = v.waypoints[(v.currentIndex + 1) % v.waypoints.length];
+        const lon = from[0] + (to[0] - from[0]) * v.progress;
+        const lat = from[1] + (to[1] - from[1]) * v.progress;
+
+        const point = map.get(v.id);
+        if (point) {
+          point.position = Cesium.Cartesian3.fromDegrees(lon, lat, 5);
+        }
+      });
+
+      viewer.scene.requestRender();
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+    };
   }, [isVisible]);
 
   return null;
-}
-
-// Linear interpolation along a coordinate array
-function interpolateRoad(coords: number[][], t: number): [number, number] {
-  const n = coords.length - 1;
-  const scaledT = t * n;
-  const i = Math.floor(scaledT);
-  const frac = scaledT - i;
-
-  if (i >= n) return [coords[n][0], coords[n][1]];
-
-  const x = coords[i][0] + (coords[i + 1][0] - coords[i][0]) * frac;
-  const y = coords[i][1] + (coords[i + 1][1] - coords[i][1]) * frac;
-  return [x, y];
 }

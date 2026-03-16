@@ -8,6 +8,11 @@ import type { LayerCategory } from '../../stores/commandStore';
 
 const LAYER_DEFS: { id: LayerCategory; label: string; color: string }[] = [
   { id: 'flights', label: 'Live Air Traffic', color: '#00C8FF' },
+  { id: 'vessels', label: 'Marine Vessels', color: '#00FFCC' },
+  { id: 'satellites', label: 'Satellites', color: '#C8A0FF' },
+  { id: 'weather', label: 'Weather Radar', color: '#FF6B35' },
+  { id: 'traffic', label: 'Street Traffic', color: '#00C8FF' },
+  { id: 'population', label: 'Population Density', color: '#FF5000' },
   { id: 'military', label: 'Military', color: '#FFB800' },
   { id: 'government', label: 'Government', color: '#4A9EFF' },
   { id: 'transport', label: 'Transport', color: '#00C8FF' },
@@ -27,6 +32,7 @@ export function DataLayersMenu() {
   const toggleLayer = useCommandStore((s) => s.toggleLayer);
   const flightCount = useCommandStore((s) => s.flightCount);
   const milCount = useCommandStore((s) => s.militaryFlightCount);
+  const layerCounts = useCommandStore((s) => s.layerCounts);
 
   if (collapsed) {
     return (
@@ -69,6 +75,16 @@ export function DataLayersMenu() {
                     {flightCount}{milCount > 0 ? ` (+${milCount})` : ''}
                   </span>
                 )}
+                {layer.id === 'vessels' && isOn && layerCounts['vessels'] ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {layerCounts['vessels']}
+                  </span>
+                ) : null}
+                {layer.id === 'landmarks' && isOn && layerCounts['landmarks'] ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {layerCounts['landmarks']}
+                  </span>
+                ) : null}
                 <span className={`layer-status ${isOn ? 'on' : 'off'}`}>
                   {isOn ? 'ON' : 'OFF'}
                 </span>

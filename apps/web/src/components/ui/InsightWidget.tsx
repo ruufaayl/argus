@@ -5,7 +5,8 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
-import { useCommandStore, DEFAULT_OPTICS } from '../../stores/commandStore';
+import { useCommandStore } from '../../stores/commandStore';
+import { useVisionStore, type VisionState } from '../../stores/visionStore';
 import { audioService } from '../../services/audioService';
 
 interface BriefingData {
@@ -18,8 +19,10 @@ interface BriefingData {
   intel: string;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+
 async function fetchBriefing(name: string, city: string, category: string): Promise<BriefingData> {
-  const res = await fetch('/api/intel/briefing', {
+  const res = await fetch(`${API_BASE}/api/intel/briefing`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, city, category }),
@@ -296,41 +299,59 @@ export function InsightWidget() {
             ))}
           </div>
 
-          <div className="optics-control-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Hollywood Camera</span>
-            <button
-              className="optics-btn"
-              style={{ fontSize: '9px', padding: '3px 8px', margin: 0, letterSpacing: '0.5px' }}
-              onClick={() => setOptics({ ...DEFAULT_OPTICS, tiers: optics.tiers })}
-            >
-              ↺ RESET
-            </button>
-          </div>
-          {[
-            { id: 'bloom', label: 'Bloom' },
-            { id: 'sharpen', label: 'Sharpen' },
-            { id: 'contrast', label: 'Contrast' },
-            { id: 'brightness', label: 'Brightness' },
-            { id: 'saturation', label: 'Saturation' },
-            { id: 'gamma', label: 'Gamma' },
-            { id: 'vignette', label: 'Vignette' },
-            { id: 'aberration', label: 'Aberration' },
-            { id: 'grain', label: 'Film Grain' },
-            { id: 'distortion', label: 'Distortion' },
-          ].map((slider) => (
-            <div className="optics-item" key={slider.id}>
-              <span className="name">{slider.label}</span>
-              <input
-                type="range" min={0} max={100}
-                value={optics[slider.id as keyof typeof optics] as number}
-                className="optics-slider"
-                onChange={(e) => setOptics({ [slider.id]: +e.target.value })}
-              />
-              <span className="val">{optics[slider.id as keyof typeof optics]}</span>
-            </div>
-          ))}
+          <VisionGearPanel />
         </div>
       </div>
     </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════
+// VISION GEAR PANEL — Tactical slider names, wired to CSS
+// ════════════════════════════════════════════════════════════
+
+function VisionGearPanel() {
+  const vision = useVisionStore();
+  const setSetting = useVisionStore((s) => s.setSetting);
+  const resetAll = useVisionStore((s) => s.resetAll);
+
+  const sliders = [
+    { key: 'lightBleed',     label: 'Light Bleed' },
+    { key: 'opticClarity',   label: 'Optic Clarity' },
+    { key: 'signalContrast', label: 'Signal Contrast' },
+    { key: 'exposure',       label: 'Exposure' },
+    { key: 'spectrum',       label: 'Spectrum' },
+    { key: 'sensorGamma',    label: 'Sensor Gamma' },
+    { key: 'lensShadow',     label: 'Lens Shadow' },
+    { key: 'staticNoise',    label: 'Static Noise' },
+    { key: 'lensDrift',      label: 'Lens Drift' },
+    { key: 'opticWarp',      label: 'Optic Warp' },
+  ];
+
+  return (
+    <>
+      <div className="optics-control-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Vision Gear</span>
+        <button
+          className="optics-btn"
+          style={{ fontSize: '9px', padding: '3px 8px', margin: 0, letterSpacing: '0.5px' }}
+          onClick={resetAll}
+        >
+          ↺ RESET
+        </button>
+      </div>
+      {sliders.map((slider) => (
+        <div className="optics-item" key={slider.key}>
+          <span className="name">{slider.label}</span>
+          <input
+            type="range" min={0} max={100}
+            value={vision[slider.key as keyof typeof vision] as number}
+            className="optics-slider"
+            onChange={(e) => setSetting(slider.key as keyof VisionState, +e.target.value)}
+          />
+          <span className="val">{vision[slider.key as keyof typeof vision] as number}</span>
+        </div>
+      ))}
+    </>
   );
 }

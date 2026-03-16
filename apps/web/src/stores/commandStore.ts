@@ -23,7 +23,15 @@ export type LayerCategory =
   | 'flights'
   | 'cctv'
   | 'traffic'
-  | 'sigint';
+  | 'sigint'
+  | 'vessels'
+  | 'weather'
+  | 'population'
+  | 'satellites'
+  | 'landmarks'
+  | 'border'
+  | 'seismic'
+  | 'incidents';
 
 export interface FlightEntity {
   id: string;
@@ -139,6 +147,10 @@ interface CommandState {
   flyToTarget: { lat: number; lng: number; name: string } | null;
   setFlyToTarget: (target: { lat: number; lng: number; name: string } | null) => void;
 
+  // Browser Location
+  browserLocation: { lat: number; lng: number } | null;
+  setBrowserLocation: (loc: { lat: number; lng: number } | null) => void;
+
   // Command Palette Toggle
   paletteOpen: boolean;
   setPaletteOpen: (open: boolean) => void;
@@ -148,8 +160,19 @@ interface CommandState {
   setIsLocked: (locked: boolean) => void;
 
   // Real-time Tactical Alerts (from ADSB, etc.)
-  tacticalAlerts: any[]; // using any for IntelItem to avoid circular dep if any
+  tacticalAlerts: any[];
   addTacticalAlert: (alert: any) => void;
+
+  // Cinematic Sequence Trigger
+  triggerCinematicZoom: number;
+  incrementCinematicZoom: () => void;
+
+  // Layer counts (from data layer components)
+  layerCounts: Record<string, number>;
+  setLayerCount: (key: string, count: number) => void;
+
+  // Entity selection aliases
+  setSelectedEntity: (entity: SelectedEntity) => void;
 }
 
 export const DEFAULT_LAYERS: Record<LayerCategory, boolean> = {
@@ -168,6 +191,14 @@ export const DEFAULT_LAYERS: Record<LayerCategory, boolean> = {
   cctv: false,
   traffic: false,
   sigint: false,
+  vessels: true,
+  weather: false,
+  population: false,
+  satellites: false,
+  landmarks: true,
+  border: true,
+  seismic: false,
+  incidents: false,
 };
 
 export const DEFAULT_OPTICS: OpticsState = {
@@ -226,12 +257,24 @@ export const useCommandStore = create<CommandState>((set) => ({
   flyToTarget: null,
   setFlyToTarget: (target) => set({ flyToTarget: target }),
 
+  browserLocation: null,
+  setBrowserLocation: (loc) => set({ browserLocation: loc }),
+
   paletteOpen: false,
   setPaletteOpen: (open) => set({ paletteOpen: open }),
 
   isLocked: true, // starts locked until CommanderAuth finishes
   setIsLocked: (locked) => set({ isLocked: locked }),
 
+  triggerCinematicZoom: 0,
+  incrementCinematicZoom: () => set((state) => ({ triggerCinematicZoom: state.triggerCinematicZoom + 1 })),
+
   tacticalAlerts: [],
   addTacticalAlert: (alert) => set((s) => ({ tacticalAlerts: [alert, ...s.tacticalAlerts] })),
+
+  layerCounts: {},
+  setLayerCount: (key, count) =>
+    set((s) => ({ layerCounts: { ...s.layerCounts, [key]: count } })),
+
+  setSelectedEntity: (entity) => set({ selectedEntity: entity }),
 }));

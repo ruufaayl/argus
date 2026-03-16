@@ -16,6 +16,7 @@ import intelRoute from './routes/intel';
 import osmRoute from './routes/osm';
 import searchRoute from './routes/search';
 import tleRoute from './routes/tle';
+import vesselsRoute from './routes/vessels';
 
 type Bindings = {
   ENVIRONMENT: string;
@@ -40,15 +41,20 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Middleware
 app.use('*', logger());
-app.use(
-  '/api/*',
-  cors({
-    origin: ['http://localhost:5173', 'https://sentinel.rufayl.dev'],
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400,
-  })
-);
+app.use('*', cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',  // ← ADD THIS
+    'http://localhost:5177',  // ← AND THIS (in case Vite increments again)
+    'https://sentinel.vercel.app',
+    'https://*.vercel.app',
+  ],
+  allowMethods: ['GET', 'POST', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400,
+}));
 
 // Health check
 app.get('/api/health', (c) => {
@@ -81,6 +87,7 @@ app.route('/api/intel', intelRoute);
 app.route('/api/osm', osmRoute);
 app.route('/api/search', searchRoute);
 app.route('/api/tle', tleRoute);
+app.route('/api/vessels', vesselsRoute);
 
 // 404 handler
 app.notFound((c) => {

@@ -102,7 +102,8 @@ export function useEntityFeed(cityId: CityId): UseEntityFeedReturn {
 
     // Try live API
     try {
-      const resp = await fetch(`/api/entity/stream?city=${cityId}`, {
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+      const resp = await fetch(`${API_BASE}/api/entity/stream?city=${cityId}`, {
         signal: AbortSignal.timeout(3000),
       });
 

@@ -5,7 +5,6 @@
 // ============================================================
 
 import type { Plugin } from 'vite';
-import Anthropic from '@anthropic-ai/sdk';
 
 const CITY_CONFIG: Record<string, { name: string; tone: string; places: string; aqi: number; temp: number; outages: number; gridStress: number }> = {
   karachi: {
@@ -75,10 +74,10 @@ export function entityDevMiddleware(): Plugin {
         const cityId = url.searchParams.get('city') || 'karachi';
 
         // Load API key from process.env (Vite loads .env into process.env for server)
-        const apiKey = process.env.CLAUDE_API_KEY;
+        const apiKey = process.env.GROQ_API_KEY;
         if (!apiKey) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'CLAUDE_API_KEY not set in .env' }));
+          res.end(JSON.stringify({ error: 'GROQ_API_KEY not set in .env' }));
           return;
         }
 
@@ -93,34 +92,63 @@ export function entityDevMiddleware(): Plugin {
         const c = CITY_CONFIG[cityId] || CITY_CONFIG.karachi;
 
         try {
-          const anthropic = new Anthropic({ apiKey });
           const systemPrompt = buildPrompt(cityId);
 
-          const stream = anthropic.messages.stream({
-            model: 'claude-haiku-4-5-20251001',
-            max_tokens: 400,
-            system: systemPrompt,
-            messages: [{ role: 'user', content: 'Narrate this cycle. What is happening inside you right now at this hour.' }],
+          const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              max_tokens: 400,
+              temperature: 0.7,
+              stream: true,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: 'Narrate this cycle. What is happening inside you right now at this hour.' }
+              ]
+            })
           });
 
-          stream.on('text', (text: string) => {
-            res.write(`data: ${JSON.stringify({ text })}\n\n`);
-          });
+          if (!response.ok) {
+            throw new Error(`Groq API error: ${response.status}`);
+          }
 
-          stream.on('end', () => {
-            res.write(`data: ${JSON.stringify({ done: true, timestamp: Date.now(), aqi: c.aqi, temp: c.temp })}\n\n`);
-            res.end();
-          });
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
 
-          stream.on('error', (err: Error) => {
-            console.error('[ENTITY] Claude stream error:', err.message);
-            res.write(`data: ${JSON.stringify({ error: 'Feed interrupted: ' + err.message })}\n\n`);
-            res.end();
-          });
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              
+              const chunk = decoder.decode(value, { stream: true });
+              const lines = chunk.split('\\n');
+              
+              for (const line of lines) {
+                if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                  try {
+                    const data = JSON.parse(line.slice(6));
+                    const text = data.choices[0]?.delta?.content || '';
+                    if (text) {
+                      res.write(`data: ${JSON.stringify({ text })}\\n\\n`);
+                    }
+                  } catch (e) {
+                    // Ignore parse errors on partial chunks
+                  }
+                }
+              }
+            }
+          }
+
+          res.write(`data: ${JSON.stringify({ done: true, timestamp: Date.now(), aqi: c.aqi, temp: c.temp })}\\n\\n`);
+          res.end();
         } catch (err: unknown) {
           const msg = err instanceof Error ? err.message : 'Unknown error';
-          console.error('[ENTITY] Failed to init Claude:', msg);
-          res.write(`data: ${JSON.stringify({ error: msg })}\n\n`);
+          console.error('[ENTITY] Failed to init Groq:', msg);
+          res.write(`data: ${JSON.stringify({ error: msg })}\\n\\n`);
           res.end();
         }
       });

@@ -6,10 +6,9 @@
 // ============================================================
 
 import { Hono } from 'hono';
-import Anthropic from '@anthropic-ai/sdk';
 
 type Bindings = {
-  CLAUDE_API_KEY: string;
+  GROQ_API_KEY: string;
   NEWSDATA_API_KEY?: string;
 };
 
@@ -106,14 +105,14 @@ Rules:
 // ── SSE stream endpoint ──
 app.get('/stream', async (c) => {
   const cityId = c.req.query('city') || 'karachi';
-  const apiKey = c.env.CLAUDE_API_KEY;
+  const apiKey = c.env.GROQ_API_KEY;
 
   if (!apiKey) {
     const errorStream = new ReadableStream({
       start(controller) {
         const encoder = new TextEncoder();
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ error: 'CLAUDE_API_KEY not configured' })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ error: 'GROQ_API_KEY not configured' })}\\n\\n`)
         );
         controller.close();
       }
@@ -135,40 +134,69 @@ app.get('/stream', async (c) => {
   );
 
   const systemPrompt = buildSystemPrompt(cityId, headlines, data.aqi, data.temp, data.outages);
-  const anthropic = new Anthropic({ apiKey });
 
   // Stream response as SSE
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
       try {
-        const messageStream = anthropic.messages.stream({
-          model: 'claude-3-haiku-20240307',
-          max_tokens: 300,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: 'Narrate this cycle.' }],
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            max_tokens: 300,
+            temperature: 0.7,
+            stream: true,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: 'Narrate this cycle.' }
+            ]
+          })
         });
 
-        messageStream.on('text', (text) => {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
-        });
+        if (!response.ok) {
+          throw new Error(`Groq API error: ${response.status}`);
+        }
 
-        messageStream.on('end', () => {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ done: true, timestamp: Date.now(), aqi: data.aqi, temp: data.temp })}\n\n`)
-          );
-          controller.close();
-        });
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
 
-        messageStream.on('error', (err) => {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ error: 'Feed interrupted.' })}\n\n`)
-          );
-          controller.close();
-        });
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\\n');
+            
+            for (const line of lines) {
+              if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                try {
+                  const dataJson = JSON.parse(line.slice(6));
+                  const text = dataJson.choices[0]?.delta?.content || '';
+                  if (text) {
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\\n\\n`));
+                  }
+                } catch (e) {
+                  // Ignore JSON parse errors on partial chunks
+                }
+              }
+            }
+          }
+        }
+
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ done: true, timestamp: Date.now(), aqi: data.aqi, temp: data.temp })}\\n\\n`)
+        );
+        controller.close();
+
       } catch (err) {
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ error: 'Stream initialization failed.' })}\n\n`)
+          encoder.encode(`data: ${JSON.stringify({ error: 'Stream initialization failed.' })}\\n\\n`)
         );
         controller.close();
       }
