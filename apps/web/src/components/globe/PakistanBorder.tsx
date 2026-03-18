@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/PakistanBorder.tsx
-// ARGUS SENTINEL — Pakistan Sovereign Territory Renderer
+// ARGUS — Pakistan Sovereign Territory Renderer
 //
 // VISUAL DESIGN:
 //   3-layer glowing polyline border (outer/mid/inner glow)

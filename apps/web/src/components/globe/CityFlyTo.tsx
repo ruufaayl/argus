@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as Cesium from 'cesium';
-import type { CityId } from '@sentinel/shared';
+import type { CityId } from '@argus/shared';
 
 const CESIUM_CITY_VIEWS: Record<
   CityId,

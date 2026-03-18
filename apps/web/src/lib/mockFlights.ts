@@ -2,7 +2,7 @@
 // mockFlights — Realistic mock flights with aircraft types
 // ============================================================
 
-import type { CityId } from '@sentinel/shared';
+import type { CityId } from '@argus/shared';
 import type { Flight, FlightDetail } from '../types/flight';
 
 const CITY_BOUNDS: Record<CityId, { lomin: number; lamin: number; lomax: number; lamax: number }> = {

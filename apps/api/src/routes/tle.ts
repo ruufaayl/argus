@@ -40,7 +40,7 @@ tle.get('/', async (c) => {
 
   try {
     const response = await fetch(url, {
-      headers: { 'User-Agent': 'ARGUS-Pakistan-Intelligence/5.0 (sentinel.rufayl.dev)' },
+      headers: { 'User-Agent': 'ARGUS-Pakistan-Intelligence/5.0 (argus.rufayl.dev)' },
     });
 
     if (!response.ok) {

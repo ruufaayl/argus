@@ -3,7 +3,7 @@
 // Everything triggers on altitude. This is the core architectural decision.
 // ============================================================
 
-import type { AltitudeZone } from '@sentinel/shared';
+import type { AltitudeZone } from '@argus/shared';
 
 export const ALTITUDE_THRESHOLDS = {
   SPACE:         500_000,   // meters — Earth from orbit

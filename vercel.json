@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm turbo build --filter=@sentinel/web",
+  "buildCommand": "pnpm turbo build --filter=@argus/web",
   "outputDirectory": "apps/web/dist",
   "framework": "vite",
   "installCommand": "pnpm install",

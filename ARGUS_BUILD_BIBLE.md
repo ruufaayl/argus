@@ -1,4 +1,4 @@
-# PAKISTAN SENTINEL — MASTER BUILD BIBLE
+# ARGUS — MASTER BUILD BIBLE
 ## Professional Production System — Antigravity IDE Prompt Engineering Guide
 ### Version 1.0 | Rufayl | 2026
 
@@ -17,10 +17,10 @@ and deployed on Vercel before Phase N+1 begins.
 
 ## SECTION 1 — WHAT WE ARE BUILDING
 
-Pakistan Sentinel is a real-time urban intelligence platform for Pakistan's 4 major cities.
+ARGUS is a real-time urban intelligence platform for Pakistan's 4 major cities.
 It is two things simultaneously:
 
-**Face 1 — Public God's Eye** (`sentinel.rufayl.dev`)
+**Face 1 — Public God's Eye** (`argus.rufayl.dev`)
 Cinematic, CesiumJS-powered 3D globe experience. Karachi/Lahore/Islamabad/Rawalpindi.
 Real satellite imagery. Live data. AI city voice. Night lights from space. Built for going viral.
 
@@ -127,7 +127,7 @@ Vercel (free for personal projects, automatic from GitHub)
 
 ### Domain
 ```
-sentinel.rufayl.dev (free subdomain of your existing domain)
+argus.rufayl.dev (free subdomain of your existing domain)
 ```
 
 ### Dev Environment
@@ -197,7 +197,7 @@ OpenRouteService     → free routing + isochrones (30min travel radius circles)
 ## SECTION 4 — REPOSITORY STRUCTURE
 
 ```
-pakistan-sentinel/
+argus/
 ├── apps/
 │   ├── web/                          ← React frontend (Vite + TypeScript)
 │   │   ├── src/
@@ -567,7 +567,7 @@ TOMTOM_API_KEY=                  # Free 2500 calls/day at developer.tomtom.com
 # Infrastructure
 CLOUDFLARE_ACCOUNT_ID=
 CLOUDFLARE_API_TOKEN=
-R2_BUCKET_NAME=sentinel-tiles
+R2_BUCKET_NAME=argus-tiles
 UPSTASH_REDIS_URL=
 UPSTASH_REDIS_TOKEN=
 NEON_DATABASE_URL=
@@ -603,7 +603,7 @@ You are a senior full-stack engineer specialising in geospatial applications and
 TypeScript monorepos. You are meticulous, produce production-grade code, and never
 use placeholder comments like "// TODO: implement this".
 
-Create a complete production monorepo for a project called "Pakistan Sentinel" — a
+Create a complete production monorepo for a project called "ARGUS" — a
 real-time urban intelligence platform.
 
 MONOREPO STRUCTURE:
@@ -641,9 +641,9 @@ REQUIREMENTS:
    use vite-plugin-cesium)
 7. apps/web/tsconfig.json with strict mode enabled
 8. apps/api/wrangler.toml with:
-   - name: "sentinel-api"
+   - name: "argus-api"
    - compatibility_date current
-   - routes for sentinel.rufayl.dev/api/*
+   - routes for argus.rufayl.dev/api/*
 9. .gitignore covering node_modules, .env.local, dist, .wrangler
 10. .env.example with all variables defined in the build bible
 
@@ -666,10 +666,10 @@ You are a senior geospatial engineer with deep CesiumJS expertise. You understan
 the CesiumJS scene graph, coordinate systems (Cartesian3, Cartographic, WGS84),
 camera models, and React integration via Resium.
 
-Build the core CesiumJS globe component for Pakistan Sentinel.
+Build the core CesiumJS globe component for ARGUS.
 
 CONTEXT:
-- Project: Pakistan Sentinel — real-time urban intelligence for 4 Pakistani cities
+- Project: ARGUS — real-time urban intelligence for 4 Pakistani cities
 - Framework: React 18 + TypeScript + Resium (React wrapper for CesiumJS)
 - The globe is the primary canvas. Everything else overlays it.
 
@@ -744,7 +744,7 @@ You are a 3D graphics engineer specialising in WebGL post-processing effects for
 geospatial applications. You have deep knowledge of CesiumJS scene manipulation
 and Three.js EffectComposer.
 
-Add cinematic visual effects to the Pakistan Sentinel CesiumJS globe.
+Add cinematic visual effects to the ARGUS CesiumJS globe.
 
 CONTEXT:
 - Existing: Globe.tsx with base CesiumJS viewer from previous prompt
@@ -815,7 +815,7 @@ You are a full-stack TypeScript engineer building real-time data integrations fo
 a geospatial platform. You understand REST APIs, caching strategies, and WebGL
 rendering performance.
 
-Build the complete live flight tracking system for Pakistan Sentinel.
+Build the complete live flight tracking system for ARGUS.
 
 ARCHITECTURE:
 - Cloudflare Worker fetches OpenSky Network API every 30 seconds
@@ -872,7 +872,7 @@ DELIVERABLES:
      * Width: 1.5px
    - Hover tooltip (CesiumJS picking):
      * Show on mouseover: callsign, altitude (ft), velocity (knots), heading
-     * Dark panel tooltip matching Sentinel UI aesthetic
+     * Dark panel tooltip matching ARGUS UI aesthetic
    - Only visible when layerStore.flights === true
    - Only render when altitude zone is APPROACH or CITY
 
@@ -896,7 +896,7 @@ You are an AI systems engineer who deeply understands prompt engineering, stream
 APIs, and building character-driven AI experiences. You understand Server-Sent Events,
 React streaming patterns, and the Anthropic SDK.
 
-Build the complete AI City Entity system for Pakistan Sentinel.
+Build the complete AI City Entity system for ARGUS.
 
 CONCEPT:
 Each of Pakistan's 4 major cities has an AI persona — a first-person voice that speaks
@@ -995,7 +995,7 @@ The cursor must always be visible at the end of the last streamed character.
 You are a data engineering specialist building a real-time signals fusion pipeline.
 You understand webscraping, API integration, data normalisation, and live dashboards.
 
-Build the Signals Intelligence layer for Pakistan Sentinel — the data fusion core
+Build the Signals Intelligence layer for ARGUS — the data fusion core
 that makes this feel like Palantir.
 
 CONCEPT:
@@ -1094,7 +1094,7 @@ You are a senior frontend engineer who has built intelligence and security opera
 centre interfaces. You understand information hierarchy, data density, and the visual
 language of professional government/defence dashboards.
 
-Build the Command Dashboard — the classified mode of Pakistan Sentinel.
+Build the Command Dashboard — the classified mode of ARGUS.
 
 CONTEXT:
 When mode === 'CLASSIFIED', the interface transforms from the public cinematic
@@ -1247,8 +1247,8 @@ Environment variables to add in Vercel dashboard:
 - VITE_CESIUM_ION_TOKEN
 - VITE_API_URL (your Cloudflare Worker URL)
 
-Custom domain in Vercel: Add sentinel.rufayl.dev
-Point DNS: CNAME sentinel → cname.vercel-dns.com
+Custom domain in Vercel: Add argus.rufayl.dev
+Point DNS: CNAME argus → cname.vercel-dns.com
 
 ---
 
@@ -1261,7 +1261,7 @@ Open these in tabs and sign up. All free.
    → Enable: Cesium World Terrain, Bing Maps Aerial
 
 2. **neon.tech** — PostgreSQL database
-   → Create project "pakistan-sentinel"
+   → Create project "argus"
    → Copy connection string → NEON_DATABASE_URL
    → Enable PostGIS: run `CREATE EXTENSION postgis;`
 
@@ -1284,9 +1284,9 @@ Open these in tabs and sign up. All free.
 
 8. **cloudflare.com** — Workers + R2
    → Already using for rufayl.dev DNS
-   → Enable Workers, create R2 bucket "sentinel-tiles"
+   → Enable Workers, create R2 bucket "argus-tiles"
 
 ---
 
-*Build Bible v1.0 — Pakistan Sentinel — Rufayl 2026*
+*Build Bible v1.0 — ARGUS — Rufayl 2026*
 *"Build the thing nobody thought was possible. Then show it."*

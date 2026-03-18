@@ -1,5 +1,5 @@
 {
-  "name": "pakistan-sentinel",
+  "name": "argus",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,10 +7,10 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "dev:web": "turbo dev --filter=@sentinel/web",
-    "dev:api": "turbo dev --filter=@sentinel/api",
-    "build:web": "turbo build --filter=@sentinel/web",
-    "build:api": "turbo build --filter=@sentinel/api"
+    "dev:web": "turbo dev --filter=@argus/web",
+    "dev:api": "turbo dev --filter=@argus/api",
+    "build:web": "turbo build --filter=@argus/web",
+    "build:api": "turbo build --filter=@argus/api"
   },
   "devDependencies": {
     "turbo": "^2.4.0",

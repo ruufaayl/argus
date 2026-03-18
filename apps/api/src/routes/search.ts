@@ -49,7 +49,7 @@ search.get('/', async (c) => {
     `https://nominatim.openstreetmap.org/search?${params}`,
     {
       headers: {
-        'User-Agent': 'ARGUS-Pakistan-Intelligence/5.0 (sentinel.rufayl.dev)',
+        'User-Agent': 'ARGUS-Pakistan-Intelligence/5.0 (argus.rufayl.dev)',
         'Accept-Language': 'en,ur',
       },
     }

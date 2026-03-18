@@ -1,5 +1,5 @@
 // ============================================================
-// Stress Route — Pakistan Sentinel
+// Stress Route — ARGUS
 // Derives aggregate City Stress Score (0-10) from live data
 // ============================================================
 

@@ -1,5 +1,5 @@
 // ============================================================
-// Pakistan Sentinel — Shared Type Definitions
+// ARGUS — Shared Type Definitions
 // ============================================================
 
 /** The 4 target cities */

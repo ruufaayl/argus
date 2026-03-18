@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/workers/satellite.worker.ts
-// ARGUS SENTINEL — Orbital Mechanics Web Worker
+// ARGUS — Orbital Mechanics Web Worker
 //
 // WHY A WEB WORKER:
 //   SGP4 propagation for 10,000+ satellites every 200ms
@@ -287,10 +287,10 @@ function computePositions(): SatPosition[] {
       const pv = satellite.propagate(rec.satrec, now);
 
       // propagate returns false for error or decayed satellite
-      if (!pv.position || pv.position === true) continue;
+      if (!pv || !pv.position || typeof pv.position === 'boolean') continue;
 
       const pos = pv.position as satellite.EciVec3<number>;
-      const vel = pv.velocity as satellite.EciVec3<number>;
+      const vel = (pv.velocity && typeof pv.velocity !== 'boolean' ? pv.velocity : null) as satellite.EciVec3<number> | null;
 
       // Convert ECI to geographic
       const geo = satellite.eciToGeodetic(pos, gmst);

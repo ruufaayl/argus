@@ -17,7 +17,7 @@ export function AuditLog() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href", dataStr);
-    dlAnchorElem.setAttribute("download", `sentinel-audit-${Date.now()}.json`);
+    dlAnchorElem.setAttribute("download", `argus-audit-${Date.now()}.json`);
     dlAnchorElem.click();
     useAuditStore.getState().logAction('EXPORT_AUDIT', 'Operator downloaded session audit log');
   };

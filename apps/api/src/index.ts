@@ -48,7 +48,7 @@ app.use('*', cors({
     'http://localhost:5175',
     'http://localhost:5176',  // ← ADD THIS
     'http://localhost:5177',  // ← AND THIS (in case Vite increments again)
-    'https://sentinel.vercel.app',
+    'https://argus.vercel.app',
     'https://*.vercel.app',
   ],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
@@ -60,7 +60,7 @@ app.use('*', cors({
 app.get('/api/health', (c) => {
   return c.json({
     status: 'operational',
-    service: 'sentinel-api',
+    service: 'argus-api',
     version: '5.0.0',
     timestamp: new Date().toISOString(),
   });

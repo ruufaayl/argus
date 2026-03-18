@@ -4,7 +4,7 @@
 // Streams token-by-token via the useEntityVoice hook.
 // ============================================================
 
-import type { CityId } from '@sentinel/shared';
+import type { CityId } from '@argus/shared';
 
 export interface CityMonologue {
   cityId: CityId;

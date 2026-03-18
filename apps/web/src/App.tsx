@@ -1,7 +1,7 @@
 // ============================================================
 // File: apps/web/src/App.tsx
-// ARGUS SENTINEL V7.0 — Enterprise Command Interface
-// Pakistan Intelligence Platform
+// ARGUS v7.0 — Enterprise Command Interface
+// Intelligence Platform
 // ============================================================
 
 import { useRef, useEffect, useState } from 'react';
@@ -101,7 +101,7 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro] = useState(false);
 
   // Set globe ready immediately so layers fetch data
   useEffect(() => {
@@ -167,10 +167,10 @@ export function App() {
         <div className="loading-content">
           <img
             src="/logo/logo.png"
-            alt="ARGUS Sentinel"
+            alt="ARGUS"
             className="loading-logo"
           />
-          <div className="loading-title">ARGUS SENTINEL</div>
+          <div className="loading-title">ARGUS</div>
           <div className="sub">
             INITIALISING INTELLIGENCE GRID
           </div>

@@ -1,5 +1,5 @@
 // ============================================================
-// AQI Route — Pakistan Sentinel
+// AQI Route — ARGUS
 // Extrapolates Air Quality Index from OpenAQ PM2.5/PM10 data
 // ============================================================
 

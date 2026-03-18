@@ -5,7 +5,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { CityId } from '@sentinel/shared';
+import type { CityId } from '@argus/shared';
 import { getRandomMonologue } from '../lib/entityMonologues';
 import { CITIES } from '../lib/cities';
 

@@ -2,7 +2,7 @@
 // City Configurations — The 4 Target Cities
 // ============================================================
 
-import type { CityConfig } from '@sentinel/shared';
+import type { CityConfig } from '@argus/shared';
 
 export const CITIES: Record<string, CityConfig> = {
   karachi: {

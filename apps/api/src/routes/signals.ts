@@ -1,5 +1,5 @@
 // ============================================================
-// Signals Intelligence Route — Pakistan Sentinel
+// Signals Intelligence Route — ARGUS
 // Aggregates AQI, Weather, and Outages into unified Signals
 // ============================================================
 

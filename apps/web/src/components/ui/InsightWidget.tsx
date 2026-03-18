@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useCommandStore } from '../../stores/commandStore';
 import { useVisionStore, type VisionState } from '../../stores/visionStore';
 import { audioService } from '../../services/audioService';
+import { AircraftDossier } from '../dossier/AircraftDossier';
 
 interface BriefingData {
   analysis: string;
@@ -250,22 +251,7 @@ export function InsightWidget() {
             )}
           </>
         ) : entity?.type === 'flight' ? (
-          <>
-            <div className="insight-target-name" style={{ color: entity.data.isMilitary ? 'var(--amber)' : 'var(--cyan)' }}>
-              {entity.data.callsign || entity.data.icao24}
-            </div>
-            <div className="insight-target-sub">
-              ICAO: {entity.data.icao24} · {entity.data.isMilitary ? '⚠ MILITARY' : 'CIVIL AVIATION'}
-            </div>
-            <div className="telem-grid">
-              <MetricCard label="BARO ALT" value={`${(entity.data.altitude * 3.28084).toFixed(0)} ft`} />
-              <MetricCard label="GROUNDSPEED" value={`${(entity.data.velocity * 1.94384).toFixed(0)} kt`} />
-              <MetricCard label="TRACK" value={`${entity.data.heading?.toFixed(0)}°`} />
-              <MetricCard label="SQUAWK" value={entity.data.squawk || '——'} />
-              <MetricCard label="SOURCE" value={entity.data.source?.toUpperCase() || 'ADS-B'} color="var(--cyan)" />
-              <MetricCard label="CLASS" value={entity.data.isMilitary ? 'MILITARY' : 'COMMERCIAL'} color={entity.data.isMilitary ? 'var(--amber)' : 'var(--text-bright)'} />
-            </div>
-          </>
+          <AircraftDossier flight={entity.data} />
         ) : (
           <div className="empty-insight">
             <div className="icon" style={{ fontSize: '32px', marginBottom: '12px', opacity: 0.3 }}>◎</div>

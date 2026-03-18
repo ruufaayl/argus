@@ -5,7 +5,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as Cesium from 'cesium';
-import type { AltitudeZone } from '@sentinel/shared';
+import type { AltitudeZone } from '@argus/shared';
 import type { FlightDetail } from '../../types/flight';
 
 interface FlightLayer3DProps {

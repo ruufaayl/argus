@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/layers/SatelliteLayer.tsx
-// ARGUS SENTINEL — Satellite Constellation Renderer
+// ARGUS — Satellite Constellation Renderer
 //
 // RENDERS: 10,000+ satellites as PointPrimitiveCollection
 // COLOR FIX: Uses Cesium.Color directly — NOT fromCssColorString

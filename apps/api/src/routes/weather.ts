@@ -1,5 +1,5 @@
 // ============================================================
-// Weather Route — Pakistan Sentinel
+// Weather Route — ARGUS
 // Fetches live meteorology from Open-Meteo
 // ============================================================
 

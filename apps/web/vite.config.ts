@@ -324,7 +324,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            cesium: ['cesium'],
             maplibre: ['maplibre-gl'],
             deckgl: ['@deck.gl/core', '@deck.gl/layers', '@deck.gl/geo-layers'],
           },

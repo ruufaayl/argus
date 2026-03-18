@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
-import type { CityId, Signal, StressScore } from '@sentinel/shared';
+import type { CityId, Signal, StressScore } from '@argus/shared';
 
 export interface CityDataState {
   signals: Signal[];

@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/LandmarkLayer.tsx
-// ARGUS SENTINEL — Pakistan Intelligence Landmark System
+// ARGUS — Pakistan Intelligence Landmark System
 //
 // DATA: OpenStreetMap Overpass API via /api/osm/layer
 //   All data is real. No hardcoded coordinates.

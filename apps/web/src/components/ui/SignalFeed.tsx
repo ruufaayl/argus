@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import { useCityStore } from '../../stores/cityStore';
 import { useCityData } from '../../hooks/useCityData';
-import type { Signal } from '@sentinel/shared';
+import type { Signal } from '@argus/shared';
 import './SignalFeed.css';
 
 function formatTimeAgo(timestamp: number): string {

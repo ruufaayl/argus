@@ -1,11 +1,11 @@
-name = "sentinel-api"
+name = "argus-api"
 main = "src/index.ts"
 compatibility_date = "2024-12-30"
 compatibility_flags = ["nodejs_compat"]
 
 # Routes — uncomment and update when domain is configured
 # [routes]
-# pattern = "sentinel.rufayl.dev/api/*"
+# pattern = "argus.rufayl.dev/api/*"
 # zone_name = "rufayl.dev"
 
 [vars]
@@ -14,4 +14,4 @@ ENVIRONMENT = "production"
 # R2 bucket binding — uncomment when bucket is created
 # [[r2_buckets]]
 # binding = "TILES_BUCKET"
-# bucket_name = "sentinel-tiles"
+# bucket_name = "argus-tiles"

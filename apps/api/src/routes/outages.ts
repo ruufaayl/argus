@@ -1,5 +1,5 @@
 // ============================================================
-// Outages Route — Pakistan Sentinel
+// Outages Route — ARGUS
 // Simulated real-time power grid outages by district for live feed
 // ============================================================
 

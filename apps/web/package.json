@@ -1,5 +1,5 @@
 {
-  "name": "@sentinel/web",
+  "name": "@argus/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "@deck.gl/geo-layers": "^9.1.0",
     "@deck.gl/layers": "^9.1.0",
     "@deck.gl/react": "^9.1.0",
-    "@sentinel/shared": "workspace:*",
+    "@argus/shared": "workspace:*",
     "@turf/turf": "^7.2.0",
     "cesium": "^1.125.0",
     "h3-js": "^4.2.0",

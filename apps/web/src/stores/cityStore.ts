@@ -3,7 +3,7 @@
 // ============================================================
 
 import { create } from 'zustand';
-import type { CityId, AltitudeZone } from '@sentinel/shared';
+import type { CityId, AltitudeZone } from '@argus/shared';
 
 interface CityState {
   currentCity: CityId;

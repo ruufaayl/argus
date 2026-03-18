@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/Globe.tsx
-// ARGUS SENTINEL V7.0 — CLEAN GLOBE RENDERER
+// ARGUS V7.0 — CLEAN GLOBE RENDERER
 //
 // NO CUSTOM GLSL SHADERS. CSS-only view modes.
 // maximumScreenSpaceError: 4 for sharp Google 3D Tiles.
@@ -118,7 +118,6 @@ export function Globe({ viewerRef }: Props) {
       // true = animations freeze = aircraft never move
       const viewer = new Cesium.Viewer(container, {
         baseLayer: false,
-        imageryProvider: false,
         animation: false,
         timeline: false,
         navigationHelpButton: false,

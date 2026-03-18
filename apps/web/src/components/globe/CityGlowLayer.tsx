@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as Cesium from 'cesium';
-import type { AltitudeZone } from '@sentinel/shared';
+import type { AltitudeZone } from '@argus/shared';
 import { CITIES } from '../../lib/cities';
 
 interface CityGlowLayerProps {

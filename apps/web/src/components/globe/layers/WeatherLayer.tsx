@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/layers/WeatherLayer.tsx
-// ARGUS SENTINEL — Live Precipitation & Weather Layer
+// ARGUS — Live Precipitation & Weather Layer
 //
 // DATA SOURCES:
 //   Primary:   RainViewer API (free, no key, global radar)
@@ -45,14 +45,6 @@ const UPDATE_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const FETCH_TIMEOUT_MS = 8_000;
 const MAX_TILE_LEVEL = 12;       // Higher = more detail but more requests
 const MIN_TILE_LEVEL = 0;
-
-// Pakistan bounding region for cloud layer
-const PK_BBOX = {
-  west: Cesium.Math.toRadians(60.8),
-  south: Cesium.Math.toRadians(23.5),
-  east: Cesium.Math.toRadians(77.8),
-  north: Cesium.Math.toRadians(37.5),
-};
 
 // ── Interfaces ────────────────────────────────────────────────
 interface RadarFrame {

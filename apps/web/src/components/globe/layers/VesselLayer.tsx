@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/layers/VesselLayer.tsx
-// ARGUS SENTINEL — Maritime Intelligence Layer
+// ARGUS — Maritime Intelligence Layer
 //
 // DATA SOURCE: AISStream.io WebSocket → Worker → /api/vessels
 // RENDER: BillboardCollection (ships) + PolylineCollection (wakes)
@@ -25,7 +25,7 @@
 // 90-99:  Other
 // ============================================================
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Cesium from 'cesium';
 import { useCommandStore } from '../../../stores/commandStore';
 

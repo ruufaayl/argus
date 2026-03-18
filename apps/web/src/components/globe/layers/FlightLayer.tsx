@@ -1,6 +1,6 @@
 // ============================================================
 // File: apps/web/src/components/globe/layers/FlightLayer.tsx
-// ARGUS SENTINEL — Live Aircraft Intelligence Layer
+// ARGUS — Live Aircraft Intelligence Layer
 //
 // DATA SOURCES:
 //   Primary:   ADS-B Exchange (api.adsb.lol) — no auth needed

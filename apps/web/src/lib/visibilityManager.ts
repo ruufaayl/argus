@@ -3,7 +3,7 @@
 // Prevents clutter and GPU blowout by culling geometry at high altitudes
 // ============================================================
 
-import type { AltitudeZone } from '@sentinel/shared';
+import type { AltitudeZone } from '@argus/shared';
 import type * as Cesium from 'cesium';
 
 interface ManageableLayers {
