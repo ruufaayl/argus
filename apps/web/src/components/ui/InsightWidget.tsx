@@ -10,6 +10,7 @@ import { useVisionStore, type VisionState } from '../../stores/visionStore';
 import { audioService } from '../../services/audioService';
 import { AircraftDossier } from '../dossier/AircraftDossier';
 import { VesselDossier } from '../dossier/VesselDossier';
+import { SatelliteDossier } from '../dossier/SatelliteDossier';
 
 interface BriefingData {
   analysis: string;
@@ -255,6 +256,8 @@ export function InsightWidget() {
           <AircraftDossier flight={entity.data} />
         ) : entity?.type === 'vessel' ? (
           <VesselDossier vessel={entity.data} />
+        ) : entity?.type === 'satellite' ? (
+          <SatelliteDossier satellite={entity.data} />
         ) : (
           <div className="empty-insight">
             <div className="icon" style={{ fontSize: '32px', marginBottom: '12px', opacity: 0.3 }}>◎</div>

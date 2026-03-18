@@ -8,6 +8,8 @@
 import { useState } from 'react';
 import { useCommandStore, type VesselEntity } from '../../stores/commandStore';
 import { audioService } from '../../services/audioService';
+import { VesselHistoryCharts } from '../ui/HistoryCharts';
+import { PatternAnalysis } from '../ui/PatternAnalysis';
 
 // ── Vessel type classification helpers ──
 
@@ -191,6 +193,8 @@ export function VesselDossier({ vessel }: { vessel: VesselEntity }) {
     telemetry: true,
     position: false,
     naval: false,
+    history: false,
+    pattern: false,
   });
 
   const toggleSection = (key: string) => {
@@ -369,6 +373,27 @@ export function VesselDossier({ vessel }: { vessel: VesselEntity }) {
               </div>
             )}
           </>
+        )}
+
+        {/* ═══ HISTORY CHARTS ═══ */}
+        <SectionHeader
+          title="ACTIVITY HISTORY"
+          expanded={expandedSections.history}
+          onToggle={() => toggleSection('history')}
+        />
+        {expandedSections.history && (
+          <VesselHistoryCharts vessel={vessel} />
+        )}
+
+        {/* ═══ AI PATTERN ANALYSIS ═══ */}
+        <SectionHeader
+          title="AI PATTERN ANALYSIS"
+          expanded={expandedSections.pattern}
+          onToggle={() => toggleSection('pattern')}
+          color="var(--text-ai)"
+        />
+        {expandedSections.pattern && (
+          <PatternAnalysis entityType="vessel" entityData={vessel} />
         )}
 
         {/* ═══ DATA SOURCE FOOTER ═══ */}

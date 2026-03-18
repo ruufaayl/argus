@@ -667,7 +667,7 @@ export function FlightLayer({ viewerRef }: Props) {
                 threatReasons: threat?.reasons || [],
               },
             });
-            // Fly to aircraft
+            // Drone-zoom to aircraft — offset above altitude, -45° pitch, 2.2s
             viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
                 data.lon, data.lat,
@@ -675,10 +675,10 @@ export function FlightLayer({ viewerRef }: Props) {
               ),
               orientation: {
                 heading: Cesium.Math.toRadians(0),
-                pitch: Cesium.Math.toRadians(-35),
+                pitch: Cesium.Math.toRadians(-45),
                 roll: 0,
               },
-              duration: 2.0,
+              duration: 2.2,
               easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
             });
           }

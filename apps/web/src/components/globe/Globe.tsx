@@ -20,6 +20,9 @@ import { FlightLayer } from './layers/FlightLayer';
 import { VesselLayer } from './layers/VesselLayer';
 import { WeatherLayer } from './layers/WeatherLayer';
 import { SatelliteLayer } from './layers/SatelliteLayer';
+import { SelectionRing } from './layers/SelectionRing';
+import { IntelPinLayer } from './layers/IntelPinLayer';
+import { BorderCheckpostLayer } from './layers/BorderCheckpostLayer';
 
 // ════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -493,6 +496,9 @@ export function Globe({ viewerRef }: Props) {
       <FlightLayer viewerRef={viewerRef} />
       <VesselLayer viewerRef={viewerRef} />
       <SatelliteLayer viewerRef={viewerRef} />
+      <SelectionRing viewerRef={viewerRef} />
+      <IntelPinLayer viewerRef={viewerRef} />
+      <BorderCheckpostLayer viewerRef={viewerRef} />
     </div>
   );
 }

@@ -55,6 +55,47 @@ function ThreatBar({ value }: { value: number }) {
   );
 }
 
+function AggregrateThreatGauge({ score, itemCount }: { score: number; itemCount: number }) {
+  const color = score >= 70 ? '#F43F5E' : score >= 40 ? '#FFB800' : score >= 20 ? '#00C8FF' : '#34D399';
+  const label = score >= 70 ? 'CRITICAL' : score >= 40 ? 'HIGH' : score >= 20 ? 'ELEVATED' : 'LOW';
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference - (score / 100) * circumference;
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: '16px',
+      padding: '12px 14px', marginBottom: '12px',
+      background: `${color}08`, borderRadius: '10px',
+      border: `1px solid ${color}25`,
+    }}>
+      <svg width="96" height="96" viewBox="0 0 96 96" style={{ flexShrink: 0 }}>
+        <circle cx="48" cy="48" r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+        <circle
+          cx="48" cy="48" r={radius} fill="none" stroke={color} strokeWidth="5"
+          strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset}
+          transform="rotate(-90 48 48)"
+          style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.65,0,0.35,1), stroke 0.6s' }}
+          filter={`drop-shadow(0 0 8px ${color}60)`}
+        />
+        <text x="48" y="44" textAnchor="middle" fill={color} fontSize="22" fontWeight="700" fontFamily="var(--font-mono)">{score}</text>
+        <text x="48" y="58" textAnchor="middle" fill="var(--text-dim)" fontSize="8" fontFamily="var(--font-mono)" letterSpacing="1">{label}</text>
+      </svg>
+      <div style={{ flex: 1 }}>
+        <div style={{
+          fontSize: '10px', fontWeight: 600, color: 'var(--text-dim)',
+          letterSpacing: '1.5px', marginBottom: '6px', fontFamily: 'var(--font-mono)',
+        }}>
+          AGGREGATE THREAT
+        </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+          {itemCount} active intel signals across national grid
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SourceBadge({ source, footTraffic }: { source?: string; footTraffic?: string }) {
   if (!source && !footTraffic) return null;
   return (
@@ -201,6 +242,14 @@ export function CommandCenter() {
             </span>
           )}
         </div>
+
+        {/* Aggregate Threat Gauge */}
+        {maxThreat > 0 && (
+          <AggregrateThreatGauge
+            score={Math.round(maxThreat * 10)}
+            itemCount={crossingItems.length + tacticalAlerts.length + intelFeed.length}
+          />
+        )}
 
         {/* Empty state while loading */}
         {!loading && intelFeed.length === 0 && tacticalAlerts.length === 0 && (

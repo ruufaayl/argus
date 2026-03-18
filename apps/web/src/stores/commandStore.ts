@@ -82,12 +82,14 @@ export interface VesselEntity {
 }
 
 export interface SatelliteEntity {
-  id: string;
   name: string;
+  noradId: string;
   category: string;
-  altitude: number;
-  velocity: number;
-  period: number;
+  altKm: number;
+  velocityKms: number;
+  isOverPakistan: boolean;
+  lat: number;
+  lon: number;
 }
 
 export type SelectedEntity =

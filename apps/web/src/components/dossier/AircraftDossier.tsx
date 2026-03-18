@@ -8,6 +8,8 @@
 import { useState } from 'react';
 import { useCommandStore, type FlightEntity } from '../../stores/commandStore';
 import { audioService } from '../../services/audioService';
+import { FlightHistoryCharts } from '../ui/HistoryCharts';
+import { PatternAnalysis } from '../ui/PatternAnalysis';
 
 // ── Aircraft type classification from ICAO hex ranges ──
 function classifyAircraft(icao24: string, callsign: string): {
@@ -177,6 +179,8 @@ export function AircraftDossier({ flight }: { flight: FlightEntity }) {
     telemetry: true,
     flight: false,
     military: false,
+    history: false,
+    pattern: false,
   });
 
   const toggleSection = (key: string) => {
@@ -368,6 +372,27 @@ export function AircraftDossier({ flight }: { flight: FlightEntity }) {
               </div>
             )}
           </>
+        )}
+
+        {/* ═══ HISTORY CHARTS ═══ */}
+        <SectionHeader
+          title="ACTIVITY HISTORY"
+          expanded={expandedSections.history}
+          onToggle={() => toggleSection('history')}
+        />
+        {expandedSections.history && (
+          <FlightHistoryCharts flight={flight} />
+        )}
+
+        {/* ═══ AI PATTERN ANALYSIS ═══ */}
+        <SectionHeader
+          title="AI PATTERN ANALYSIS"
+          expanded={expandedSections.pattern}
+          onToggle={() => toggleSection('pattern')}
+          color="var(--text-ai)"
+        />
+        {expandedSections.pattern && (
+          <PatternAnalysis entityType="aircraft" entityData={flight} />
         )}
 
         {/* ═══ DATA SOURCE FOOTER ═══ */}

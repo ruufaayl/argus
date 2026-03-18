@@ -265,6 +265,78 @@ function argusApiMiddleware(): Plugin {
         });
       });
 
+      // ── /api/intel/pattern — Groq AI entity behavioral analysis ──
+      server.middlewares.use('/api/intel/pattern', async (req, res) => {
+        if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
+
+        const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
+        if (!GROQ_API_KEY) {
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'GROQ_API_KEY not set' }));
+          return;
+        }
+
+        let body = '';
+        req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+        req.on('end', async () => {
+          try {
+            const { entityType, entityData } = JSON.parse(body);
+            const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${GROQ_API_KEY}`,
+              },
+              body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                  {
+                    role: 'system',
+                    content: `You are ARGUS — an AI behavioral pattern analysis engine for Pakistan's national intelligence dashboard.
+Analyze the provided entity telemetry and produce a concise behavioral assessment.
+
+OUTPUT FORMAT (respond ONLY with this JSON):
+{
+  "pattern": "ROUTINE|ANOMALOUS|SURVEILLANCE|EVASIVE|AGGRESSIVE",
+  "confidence": 0.0-1.0,
+  "summary": "2-3 sentence behavioral assessment",
+  "indicators": ["indicator1", "indicator2", "indicator3"],
+  "recommendation": "One-line operational recommendation"
+}
+
+TONE: Military intelligence analyst. Precise. No hedging.`
+                  },
+                  {
+                    role: 'user',
+                    content: `Analyze behavioral pattern for ${entityType}: ${JSON.stringify(entityData)}`
+                  },
+                ],
+                temperature: 0.4,
+                max_tokens: 500,
+              }),
+            });
+            const data: any = await groqRes.json();
+            const content = data.choices?.[0]?.message?.content?.trim() || '{}';
+            let parsed;
+            try {
+              const startIdx = content.indexOf('{');
+              const endIdx = content.lastIndexOf('}');
+              parsed = JSON.parse(content.substring(startIdx, endIdx + 1));
+            } catch {
+              parsed = { pattern: 'UNKNOWN', confidence: 0, summary: 'Analysis unavailable.', indicators: [], recommendation: 'Monitor.' };
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(parsed));
+          } catch (err: any) {
+            console.error('[API] pattern analysis error:', err.message);
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'AI_OFFLINE' }));
+          }
+        });
+      });
+
       // ── /api/intel/signals — Groq AI intelligence feed ──
       // ── /api/intel/signals — Groq AI intelligence feed — Instant from Cache ──
       server.middlewares.use('/api/intel/signals', (req, res) => {

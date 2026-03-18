@@ -390,6 +390,20 @@ export function VesselLayer({ viewerRef }: Props) {
                 timestamp: d.timestamp,
               },
             });
+
+            // Drone-zoom to vessel — 800m alt, -45° pitch, 2.2s
+            viewer.camera.flyTo({
+              destination: Cesium.Cartesian3.fromDegrees(
+                d.lng, d.lat, 800
+              ),
+              orientation: {
+                heading: Cesium.Math.toRadians(0),
+                pitch: Cesium.Math.toRadians(-45),
+                roll: 0,
+              },
+              duration: 2.2,
+              easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+            });
           }
         } catch {
           // Ignore pick errors on tile boundaries

@@ -20,6 +20,7 @@ import { InsightWidget } from './components/ui/InsightWidget';
 import { LocationsBar } from './components/ui/LocationsBar';
 import { BottomBar } from './components/ui/BottomBar';
 import { ModeToggle } from './components/ui/ModeToggle';
+import { TimelineScrubber } from './components/ui/TimelineScrubber';
 
 // ── Auth & Overlays ──────────────────────────────────────────
 import { CommanderAuth } from './components/ui/CommanderAuth';
@@ -156,6 +157,7 @@ export function App() {
         {globeReady && <LocationsBar />}
         <BottomBar />
         <ModeToggle />
+        <TimelineScrubber />
         <FlightLockOverlay viewerRef={viewerRef} />
       </div>
 
