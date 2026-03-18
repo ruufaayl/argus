@@ -23,6 +23,7 @@ import { SatelliteLayer } from './layers/SatelliteLayer';
 import { SelectionRing } from './layers/SelectionRing';
 import { IntelPinLayer } from './layers/IntelPinLayer';
 import { BorderCheckpostLayer } from './layers/BorderCheckpostLayer';
+import { ProjectedRouteLayer } from './layers/ProjectedRouteLayer';
 
 // ════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -499,6 +500,7 @@ export function Globe({ viewerRef }: Props) {
       <SelectionRing viewerRef={viewerRef} />
       <IntelPinLayer viewerRef={viewerRef} />
       <BorderCheckpostLayer viewerRef={viewerRef} />
+      <ProjectedRouteLayer viewerRef={viewerRef} />
     </div>
   );
 }
