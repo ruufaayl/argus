@@ -361,6 +361,43 @@ export function VesselLayer({ viewerRef }: Props) {
       }
     };
 
+    // ── Click handler — select vessel entity ──────────────────
+    const clickHandler = new Cesium.ScreenSpaceEventHandler(
+      viewer.scene.canvas
+    );
+    clickHandler.setInputAction(
+      (click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        try {
+          const picked = viewer.scene.pick(click.position);
+          if (
+            Cesium.defined(picked) &&
+            picked.id?.type === 'vessel'
+          ) {
+            const d = picked.id.data;
+            useCommandStore.getState().selectEntity({
+              type: 'vessel',
+              data: {
+                mmsi: d.mmsi,
+                name: d.name,
+                type: d.type,
+                typeName: d.typeName,
+                lat: d.lat,
+                lng: d.lng,
+                speed: d.speed,
+                heading: d.heading,
+                course: d.course,
+                destination: d.destination,
+                timestamp: d.timestamp,
+              },
+            });
+          }
+        } catch {
+          // Ignore pick errors on tile boundaries
+        }
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
+
     // Initial fetch immediately on mount
     fetchAndRender();
 
@@ -374,6 +411,7 @@ export function VesselLayer({ viewerRef }: Props) {
       mountedRef.current = false;
       clearInterval(intervalRef.current);
       abortRef.current?.abort();
+      clickHandler.destroy();
 
       if (!viewer.isDestroyed()) {
         if (shipCollRef.current)

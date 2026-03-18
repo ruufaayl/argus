@@ -67,6 +67,20 @@ export interface CCTVEntity {
   status: 'ACTIVE' | 'OFFLINE' | 'SWEEP';
 }
 
+export interface VesselEntity {
+  mmsi: number;
+  name: string;
+  type: number;
+  typeName: string;
+  lat: number;
+  lng: number;
+  speed: number;
+  heading: number;
+  course: number;
+  destination?: string;
+  timestamp: string;
+}
+
 export interface SatelliteEntity {
   id: string;
   name: string;
@@ -81,6 +95,7 @@ export type SelectedEntity =
   | { type: 'landmark'; data: LandmarkEntity }
   | { type: 'cctv'; data: CCTVEntity }
   | { type: 'satellite'; data: SatelliteEntity }
+  | { type: 'vessel'; data: VesselEntity }
   | null;
 
 // ── Optics ──

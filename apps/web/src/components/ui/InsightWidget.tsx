@@ -9,6 +9,7 @@ import { useCommandStore } from '../../stores/commandStore';
 import { useVisionStore, type VisionState } from '../../stores/visionStore';
 import { audioService } from '../../services/audioService';
 import { AircraftDossier } from '../dossier/AircraftDossier';
+import { VesselDossier } from '../dossier/VesselDossier';
 
 interface BriefingData {
   analysis: string;
@@ -252,6 +253,8 @@ export function InsightWidget() {
           </>
         ) : entity?.type === 'flight' ? (
           <AircraftDossier flight={entity.data} />
+        ) : entity?.type === 'vessel' ? (
+          <VesselDossier vessel={entity.data} />
         ) : (
           <div className="empty-insight">
             <div className="icon" style={{ fontSize: '32px', marginBottom: '12px', opacity: 0.3 }}>◎</div>
