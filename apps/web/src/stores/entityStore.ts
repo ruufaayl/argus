@@ -37,12 +37,15 @@ export const useEntityStore = create<EntityState>((set) => ({
   setStreaming: (streaming) => set({ isStreaming: streaming }),
 
   addMessage: (role, content) =>
-    set((state) => ({
-      conversationHistory: [
+    set((state) => {
+      const updated = [
         ...state.conversationHistory,
         { role, content, timestamp: Date.now() },
-      ],
-    })),
+      ];
+      return {
+        conversationHistory: updated.length > 100 ? updated.slice(-100) : updated,
+      };
+    }),
 
   clearHistory: () => set({ conversationHistory: [] }),
 }));

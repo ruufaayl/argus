@@ -111,13 +111,10 @@ function createLiquidLabelCanvas(text: string, category: string, color: string):
 }
 
 // ── API endpoint ───────────────────────────────────────────────
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API = import.meta.env.VITE_API_URL ?? '';
 
 // ── Altitude thresholds (metres) ──────────────────────────────
-const T1_MAX_ALT = Infinity;    // T1 always visible
-const T2_MAX_ALT = 500_000;     // T2 below 500km
-const T3_LOAD_AT = 120_000;     // Load T3 when below 120km
-const T3_MAX_ALT = 80_000;      // T3 visible below 80km
+const T3_LOAD_AT = 500_000;     // Load T3 when below 500km
 
 // ── Landmark categories per tier ──────────────────────────────
 const T1_CATEGORIES = ['military', 'airports'] as const;
@@ -127,37 +124,53 @@ const T3_CATEGORIES = [
   'power', 'railways',
 ] as const;
 
+// ── Map OSM category → DataLayersMenu layer key ──────────────
+// This connects each landmark category to its toggle in the UI
+const CATEGORY_TO_LAYER: Record<string, string> = {
+  military: 'military',
+  airports: 'transport',
+  cities: 'landmarks',      // no dedicated toggle, use master
+  ports: 'landmarks',        // no dedicated toggle, use master
+  mountains: 'landmarks',    // no dedicated toggle, use master
+  universities: 'education',
+  hospitals: 'healthcare',
+  mosques: 'religious',
+  power: 'industrial',
+  railways: 'transport',
+};
+
+
 // ── Visual config per tier ────────────────────────────────────
 const TIER_CONFIG = {
   1: {
     color: '#FFB800',  // amber — strategic
-    pixelSize: 8,
-    labelBelowAlt: 300_000,
+    pixelSize: 14,
+    labelBelowAlt: 1_000_000,
   },
   2: {
     color: '#00C8FF',  // cyan — important
-    pixelSize: 6,
-    labelBelowAlt: 80_000,
+    pixelSize: 11,
+    labelBelowAlt: 500_000,
   },
   3: {
     color: '#FFFFFF',  // white — detail
-    pixelSize: 4,
-    labelBelowAlt: 20_000,
+    pixelSize: 8,
+    labelBelowAlt: 50_000,
   },
 } as const;
 
 // ── Category-specific colors (override tier color) ────────────
 const CATEGORY_COLORS: Record<string, string> = {
-  military: '#FFB800', // amber
-  airports: '#00AAFF', // blue
+  military: '#FFCC00', // brighter amber
+  airports: '#00CCFF', // brighter blue
   cities: '#FFFFFF', // white
-  ports: '#00FFCC', // teal
-  mountains: '#88AAFF', // sky blue
-  universities: '#00FF88', // green
-  hospitals: '#FF4444', // red
-  mosques: '#FFD700', // gold
-  power: '#FFFF00', // yellow
-  railways: '#FF8800', // orange
+  ports: '#00FFE0', // brighter teal
+  mountains: '#AACCFF', // brighter sky
+  universities: '#00FF99', // brighter green
+  hospitals: '#FF3355', // brighter red
+  mosques: '#FFE030', // brighter gold
+  power: '#FFFF44', // brighter yellow
+  railways: '#FF9922', // brighter orange
 };
 
 // ── Landmark elevation by category ────────────────────────────
@@ -195,13 +208,13 @@ const featureCache = new Map<string, OSMFeature[]>();
 // ════════════════════════════════════════════════════════════
 
 export function LandmarkLayer({ viewerRef }: Props) {
-  // ── Collection refs ────────────────────────────────────────
-  const t1PointsRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
-  const t2PointsRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
-  const t3PointsRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
-  const t1BillboardsRef = useRef<Cesium.BillboardCollection | null>(null);
-  const t2BillboardsRef = useRef<Cesium.BillboardCollection | null>(null);
-  const t3BillboardsRef = useRef<Cesium.BillboardCollection | null>(null);
+  // ── Per-category collection refs ────────────────────────────
+  // Each OSM category gets its own PointPrimitiveCollection + BillboardCollection
+  // so individual DataLayersMenu toggles can show/hide them independently
+  const categoryCollsRef = useRef<Map<string, {
+    points: Cesium.PointPrimitiveCollection;
+    billboards: Cesium.BillboardCollection;
+  }>>(new Map());
 
   // ── State tracking ─────────────────────────────────────────
   const t3LoadedRef = useRef(false);
@@ -210,32 +223,36 @@ export function LandmarkLayer({ viewerRef }: Props) {
   const altListenRef = useRef<Cesium.Event.RemoveCallback>();
 
   // ── Store ──────────────────────────────────────────────────
-  const isEnabled = useCommandStore(
-    (s) => (s as any).layers?.landmarks ?? true
-  );
+  const layers = useCommandStore((s) => (s as any).layers);
   const globeReady = useCommandStore((s) => s.globeReady);
   const setSelectedEntity = useCommandStore(
     (s) => (s as any).setSelectedEntity
   );
 
-  // ── Toggle all collections ─────────────────────────────────
+  // ── Toggle per-category collections based on layer toggles ──
   useEffect(() => {
-    if (t1PointsRef.current) t1PointsRef.current.show = isEnabled;
-    if (t2PointsRef.current) t2PointsRef.current.show = isEnabled;
-    if (t3PointsRef.current) t3PointsRef.current.show = isEnabled;
-    if (t1BillboardsRef.current) t1BillboardsRef.current.show = isEnabled;
-    if (t2BillboardsRef.current) t2BillboardsRef.current.show = isEnabled;
-    if (t3BillboardsRef.current) t3BillboardsRef.current.show = isEnabled;
-  }, [isEnabled]);
+    const masterEnabled = layers?.landmarks ?? true;
+    const colls = categoryCollsRef.current;
 
-  // ── Fetch + add category to collection ─────────────────────
+    for (const [cat, { points, billboards }] of colls) {
+      const layerKey = CATEGORY_TO_LAYER[cat] || 'landmarks';
+      // Category is visible if: master toggle ON + its specific layer toggle ON
+      const catEnabled = masterEnabled && (layers?.[layerKey] ?? true);
+      points.show = catEnabled;
+      billboards.show = catEnabled;
+    }
+  }, [layers]);
+
+  // ── Fetch + add category to its own collection ──────────────
   const loadCategory = useCallback(async (
     category: string,
     tier: 1 | 2 | 3,
-    pointsColl: Cesium.PointPrimitiveCollection,
-    billboardsColl: Cesium.BillboardCollection,
   ) => {
     if (!mountedRef.current) return;
+
+    const entry = categoryCollsRef.current.get(category);
+    if (!entry) return;
+    const { points: pointsColl, billboards: billboardsColl } = entry;
 
     // Return cached data immediately
     if (featureCache.has(category)) {
@@ -270,6 +287,11 @@ export function LandmarkLayer({ viewerRef }: Props) {
         features, category, tier, pointsColl, billboardsColl
       );
 
+      // Update landmark count in store
+      const store = useCommandStore.getState() as any;
+      const currentCount = store.layerCounts?.landmarks || 0;
+      store.setLayerCount?.('landmarks', currentCount + features.length);
+
       console.log(
         `[LANDMARKS] ${category} (T${tier}):`,
         `${features.length} features loaded`
@@ -297,9 +319,9 @@ export function LandmarkLayer({ viewerRef }: Props) {
     const translucency = new Cesium.NearFarScalar(
       100,
       1.0,
-      tier === 1 ? T1_MAX_ALT :
-        tier === 2 ? T2_MAX_ALT : T3_MAX_ALT,
-      tier === 1 ? 1.0 : 0.0     // T1 never fades, T2/T3 do
+      tier === 1 ? 20000000 :
+        tier === 2 ? 10000000 : 2000000,
+      tier === 1 ? 0.4 : 0.0     // T1 never fully fades, T2/T3 do
     );
 
     // Label translucency — tighter range than points
@@ -328,15 +350,14 @@ export function LandmarkLayer({ viewerRef }: Props) {
         color,
         pixelSize: config.pixelSize,
         outlineColor: Cesium.Color.BLACK,
-        outlineWidth: 1,
+        outlineWidth: 2,
         translucencyByDistance: translucency,
-        scaleByDistance: new Cesium.NearFarScalar(
-          500, 2.0,
-          tier === 1 ? 1800000 : 500000, 0.6
-        ),
-        disableDepthTestDistance: tier === 1
-          ? Number.POSITIVE_INFINITY   // T1 always on top
-          : 0,                          // T2/T3 depth-tested
+        scaleByDistance: tier === 1
+          ? new Cesium.NearFarScalar(500, 3.0, 20000000, 0.5)
+          : tier === 2
+            ? new Cesium.NearFarScalar(500, 2.5, 15000000, 0.3)
+            : new Cesium.NearFarScalar(500, 2.0, 5000000, 0.2),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
         id: {
           type: 'landmark',
           data: {
@@ -357,9 +378,7 @@ export function LandmarkLayer({ viewerRef }: Props) {
         image: canvas,
         pixelOffset: new Cesium.Cartesian2(0, -(config.pixelSize + 16)),
         translucencyByDistance: billboardTranslucency,
-        disableDepthTestDistance: tier === 1
-          ? Number.POSITIVE_INFINITY
-          : 500000,
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
         scaleByDistance: new Cesium.NearFarScalar(
           1000, 1.0,
           config.labelBelowAlt, 0.7
@@ -380,47 +399,40 @@ export function LandmarkLayer({ viewerRef }: Props) {
     const viewer = viewerRef.current;
     if (!viewer || viewer.isDestroyed()) return;
 
-    // ── Create collections (tier order = render order) ──────
-    const t1p = new Cesium.PointPrimitiveCollection();
-    const t2p = new Cesium.PointPrimitiveCollection();
-    const t3p = new Cesium.PointPrimitiveCollection();
-    const t1b = new Cesium.BillboardCollection();
-    const t2b = new Cesium.BillboardCollection();
-    const t3b = new Cesium.BillboardCollection();
+    // ── Create per-category collections ──────────────────────
+    // Order: T3 first (bottom), then T2, then T1 (top)
+    const orderedCats = [...T3_CATEGORIES, ...T2_CATEGORIES, ...T1_CATEGORIES];
 
-    // T3 renders first (bottom), T1 on top (most important)
-    viewer.scene.primitives.add(t3p);
-    viewer.scene.primitives.add(t3b);
-    viewer.scene.primitives.add(t2p);
-    viewer.scene.primitives.add(t2b);
-    viewer.scene.primitives.add(t1p);
-    viewer.scene.primitives.add(t1b);
+    for (const cat of orderedCats) {
+      const points = new Cesium.PointPrimitiveCollection();
+      const billboards = new Cesium.BillboardCollection();
+      viewer.scene.primitives.add(points);
+      viewer.scene.primitives.add(billboards);
 
-    t1PointsRef.current = t1p;
-    t2PointsRef.current = t2p;
-    t3PointsRef.current = t3p;
-    t1BillboardsRef.current = t1b;
-    t2BillboardsRef.current = t2b;
-    t3BillboardsRef.current = t3b;
+      // Apply initial visibility from store
+      const layerKey = CATEGORY_TO_LAYER[cat] || 'landmarks';
+      const store = useCommandStore.getState() as any;
+      const masterOn = store.layers?.landmarks ?? true;
+      const catOn = store.layers?.[layerKey] ?? true;
+      points.show = masterOn && catOn;
+      billboards.show = masterOn && catOn;
+
+      categoryCollsRef.current.set(cat, { points, billboards });
+    }
 
     // ── Load T1 immediately ──────────────────────────────────
-    // T1 is small (200 items max) — loads in < 1 second
     for (const cat of T1_CATEGORIES) {
-      loadCategory(cat, 1, t1p, t1b);
+      loadCategory(cat, 1);
     }
 
     // ── Load T2 after 2 seconds ──────────────────────────────
-    // Stagger to not compete with T1 and globe tile loading
     const t2Timer = setTimeout(() => {
       for (const cat of T2_CATEGORIES) {
-        loadCategory(cat, 2, t2p, t2b);
+        loadCategory(cat, 2);
       }
     }, 2000);
 
     // ── Load T3 lazily when camera descends ──────────────────
-    // T3 has 3000+ items — only load when user zooms in.
-    // Watch camera altitude from commandStore.
-    // Use postRender to check altitude — fires every frame.
     altListenRef.current = viewer.scene.postRender.addEventListener(
       () => {
         if (t3LoadedRef.current) return;
@@ -434,7 +446,7 @@ export function LandmarkLayer({ viewerRef }: Props) {
             '[LANDMARKS] Camera below 120km — loading T3 landmarks'
           );
           for (const cat of T3_CATEGORIES) {
-            loadCategory(cat, 3, t3p, t3b);
+            loadCategory(cat, 3);
           }
         }
       }
@@ -456,24 +468,81 @@ export function LandmarkLayer({ viewerRef }: Props) {
           ) {
             const { data } = picked.id;
 
+            // Map OSMFeature → LandmarkEntity shape
+            // OSMFeature has `lon`, store expects `lng`
+            // OSMFeature lacks `city`/`province`, derive from tags
             setSelectedEntity?.({
               type: 'landmark',
-              data,
+              data: {
+                name: data.nameEn || data.name,
+                category: data.typeName || data.category,
+                city: data.tags?.['addr:city'] || data.tags?.['is_in'] || 'Pakistan',
+                province: data.tags?.['is_in:state'] || data.tags?.['addr:state'] || '',
+                tier: `T${data.tier}`,
+                lat: data.lat,
+                lng: data.lon,  // lon → lng
+              },
             });
 
-            // Drone-zoom to landmark — 800m alt, -45° pitch, 2.2s
+            // Cancel any in-flight animation to prevent crash
+            viewer.camera.cancelFlight();
+
+            const altOffset = CATEGORY_ALT[data.typeName || data.category] ?? CATEGORY_ALT.default;
+            const colorHex = CATEGORY_COLORS[data.typeName || data.category] || TIER_CONFIG[data.tier as 1|2|3]?.color || '#00C8FF';
+
+            // Centered fly-to — straight down so landmark is centered
             viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
-                data.lon, data.lat, 800
+                data.lon, data.lat, 1500
               ),
               orientation: {
                 heading: Cesium.Math.toRadians(0),
-                pitch: Cesium.Math.toRadians(-45),
+                pitch: Cesium.Math.toRadians(-90),
                 roll: 0,
               },
               duration: 2.2,
               easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+              complete: () => {
+                if (viewer.isDestroyed()) return;
+                viewer.camera.lookAt(
+                  Cesium.Cartesian3.fromDegrees(data.lon, data.lat, altOffset),
+                  new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-90), 1500)
+                );
+                viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+              },
             });
+
+            // Glowing/blinking radius effect
+            const glowId = `landmark-glow-${Date.now()}`;
+            const startTime = Date.now();
+            viewer.entities.add({
+              id: glowId,
+              position: Cesium.Cartesian3.fromDegrees(data.lon, data.lat, altOffset),
+              ellipse: {
+                semiMajorAxis: 350,
+                semiMinorAxis: 350,
+                height: altOffset + 1,
+                material: new Cesium.ColorMaterialProperty(
+                  new Cesium.CallbackProperty(() => {
+                    const t = (Date.now() - startTime) / 1000;
+                    const alpha = 0.12 + 0.12 * Math.sin(t * 3);
+                    return Cesium.Color.fromCssColorString(colorHex).withAlpha(alpha);
+                  }, false)
+                ),
+                outline: true,
+                outlineColor: new Cesium.CallbackProperty(() => {
+                  const t = (Date.now() - startTime) / 1000;
+                  const alpha = 0.4 + 0.3 * Math.sin(t * 3);
+                  return Cesium.Color.fromCssColorString(colorHex).withAlpha(alpha);
+                }, false) as any,
+                outlineWidth: 2,
+              },
+            });
+
+            // Auto-remove glow after 10s
+            setTimeout(() => {
+              if (!viewer.isDestroyed()) viewer.entities.removeById(glowId);
+            }, 10000);
           }
         } catch {
           // Ignore pick errors on tile boundaries
@@ -492,16 +561,13 @@ export function LandmarkLayer({ viewerRef }: Props) {
 
       const v = viewerRef.current;
       if (v && !v.isDestroyed()) {
-        [t1p, t2p, t3p].forEach(c => v.scene.primitives.remove(c));
-        [t1b, t2b, t3b].forEach(c => v.scene.primitives.remove(c));
+        for (const { points, billboards } of categoryCollsRef.current.values()) {
+          v.scene.primitives.remove(points);
+          v.scene.primitives.remove(billboards);
+        }
       }
 
-      t1PointsRef.current = null;
-      t2PointsRef.current = null;
-      t3PointsRef.current = null;
-      t1BillboardsRef.current = null;
-      t2BillboardsRef.current = null;
-      t3BillboardsRef.current = null;
+      categoryCollsRef.current.clear();
     };
   }, [globeReady, loadCategory]);
 

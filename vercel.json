@@ -4,7 +4,7 @@
   "framework": "vite",
   "installCommand": "pnpm install",
   "env": {
-    "VITE_CESIUM_ION_TOKEN": "@cesium-ion-token",
-    "VITE_API_URL": "@api-url"
+    "VITE_CESIUM_ION_TOKEN": "",
+    "VITE_API_URL": ""
   }
 }

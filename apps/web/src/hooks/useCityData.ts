@@ -40,7 +40,7 @@ export function useCityData(cityId: CityId): CityDataState {
       setData(d => ({ ...d, isLoading: true }));
 
       try {
-        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+        const API_BASE = import.meta.env.VITE_API_URL ?? '';
         // Fetch in parallel
         const [signalsRes, stressRes] = await Promise.all([
           fetch(`${API_BASE}/api/signals?city=${cityId}`, { signal }).then(r => r.json() as Promise<{ signals: Signal[] }>).catch(() => null),

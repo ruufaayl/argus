@@ -3,7 +3,7 @@
 // ARGUS — Maritime Intelligence Layer
 //
 // DATA SOURCE: AISStream.io WebSocket → Worker → /api/vessels
-// RENDER: BillboardCollection (ships) + PolylineCollection (wakes)
+// RENDER: PointPrimitiveCollection (ships) + PolylineCollection (wakes)
 // UPDATE: 60s poll with position interpolation between fetches
 //
 // AIS VESSEL TYPE CLASSIFICATION:
@@ -30,37 +30,32 @@ import * as Cesium from 'cesium';
 import { useCommandStore } from '../../../stores/commandStore';
 
 // ── Constants ────────────────────────────────────────────────
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API = import.meta.env.VITE_API_URL ?? '';
 const POLL_INTERVAL_MS = 60_000;   // AIS updates slowly — 60s is correct
 const WAKE_MAX_POINTS = 12;       // Position history for wake trail
 const WAKE_MIN_DIST_M = 50;       // Minimum movement before adding wake point
 const SEA_LEVEL_M = 5;        // Small offset prevents z-fighting with terrain
 const FETCH_TIMEOUT_MS = 10_000;
 
-// ── SVG Icons ────────────────────────────────────────────────
-// All SVGs encoded using encodeURIComponent for correct WebGL loading
-
-const SVG_CARGO = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48' width='24' height='48'><path fill='%2300FFCC' d='M12 2 L20 14 L20 46 L4 46 L4 14 Z'/><rect fill='%2300FFCC' opacity='0.6' x='8' y='18' width='8' height='4'/><rect fill='%2300FFCC' opacity='0.6' x='8' y='26' width='8' height='4'/></svg>`);
-const SVG_MILITARY = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48' width='24' height='48'><polygon fill='%23FFB800' points='12,2 22,16 18,46 6,46 2,16'/><polygon fill='%23FFB800' opacity='0.4' points='12,8 18,18 6,18'/></svg>`);
-const SVG_TANKER = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48' width='24' height='48'><path fill='%23FF8800' d='M12 2 L21 15 L21 46 L3 46 L3 15 Z'/><circle fill='%23FF8800' opacity='0.5' cx='12' cy='22' r='4'/><circle fill='%23FF8800' opacity='0.5' cx='12' cy='34' r='4'/></svg>`);
-const SVG_PASSENGER = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 48' width='32' height='48'><path fill='%2300AAFF' d='M16 2 L28 14 L28 46 L4 46 L4 14 Z'/><rect fill='white' opacity='0.3' x='6' y='18' width='20' height='20' rx='2'/></svg>`);
-const SVG_DEFAULT = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 40' width='20' height='40'><path fill='%2388DDCC' d='M10 2 L18 15 L18 38 L2 38 L2 15 Z'/></svg>`);
+// SVG icons removed — using PointPrimitiveCollection with colored spheres now
 
 // ── Type helpers ──────────────────────────────────────────────
-function getVesselIcon(type: number): string {
-  if (type === 35) return SVG_MILITARY;
-  if (type >= 80 && type <= 89) return SVG_TANKER;
-  if (type >= 70 && type <= 79) return SVG_CARGO;
-  if (type >= 60 && type <= 69) return SVG_PASSENGER;
-  return SVG_DEFAULT;
-}
 
 function getVesselColor(type: number): Cesium.Color {
-  if (type === 35) return Cesium.Color.fromCssColorString('#FFB800'); // military amber
-  if (type >= 80 && type <= 89) return Cesium.Color.fromCssColorString('#FF8800'); // tanker orange
-  if (type >= 70 && type <= 79) return Cesium.Color.fromCssColorString('#00FFCC'); // cargo teal
-  if (type >= 60 && type <= 69) return Cesium.Color.fromCssColorString('#00AAFF'); // passenger blue
-  return Cesium.Color.fromCssColorString('#88DDCC');
+  if (type === 35) return new Cesium.Color(1.0, 0.3, 0.3, 1.0);  // military — crimson red
+  if (type >= 80 && type <= 89) return new Cesium.Color(1.0, 0.4, 0.7, 1.0);  // tanker — hot pink
+  if (type >= 70 && type <= 79) return new Cesium.Color(0.9, 0.2, 0.9, 1.0);  // cargo — vivid magenta
+  if (type >= 60 && type <= 69) return new Cesium.Color(1.0, 0.55, 0.85, 1.0); // passenger — rose pink
+  if (type === 30) return new Cesium.Color(0.85, 0.3, 0.65, 1.0);  // fishing — deep pink
+  return new Cesium.Color(0.8, 0.35, 0.75, 1.0);  // default — MAGENTA/PINK — vessel signature color
+}
+
+function getVesselPointSize(type: number): number {
+  if (type === 35) return 14; // military
+  if (type >= 80 && type <= 89) return 12; // tanker
+  if (type >= 70 && type <= 79) return 12; // cargo
+  if (type >= 60 && type <= 69) return 11; // passenger
+  return 9;
 }
 
 function getVesselTypeName(type: number): string {
@@ -106,11 +101,11 @@ export function VesselLayer({ viewerRef }: Props) {
   // Separate collections for ships and wakes:
   // Wakes render first (below ships visually)
   const wakeCollRef = useRef<Cesium.PolylineCollection | null>(null);
-  const shipCollRef = useRef<Cesium.BillboardCollection | null>(null);
+  const shipCollRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
   const labelCollRef = useRef<Cesium.LabelCollection | null>(null);
 
   // ── Entity maps — keyed by MMSI ───────────────────────────
-  const billboardMap = useRef<Map<number, Cesium.Billboard>>(new Map());
+  const billboardMap = useRef<Map<number, Cesium.PointPrimitive>>(new Map());
   const labelMap = useRef<Map<number, Cesium.Label>>(new Map());
   const wakeMap = useRef<Map<number, WakeEntry>>(new Map());
 
@@ -143,7 +138,7 @@ export function VesselLayer({ viewerRef }: Props) {
     // ── Create Cesium primitive collections ─────────────────
     // Add wake collection FIRST — renders underneath ships
     const wc = new Cesium.PolylineCollection();
-    const bc = new Cesium.BillboardCollection({ scene: viewer.scene });
+    const bc = new Cesium.PointPrimitiveCollection();
     const lc = new Cesium.LabelCollection();
 
     viewer.scene.primitives.add(wc);
@@ -203,49 +198,33 @@ export function VesselLayer({ viewerRef }: Props) {
             v.lng, v.lat, SEA_LEVEL_M
           );
 
-          // Heading: AIS reports 511 when unknown
-          // Fall back to course over ground, then 0
-          const headingDeg =
-            v.heading !== 511 && v.heading >= 0
-              ? v.heading
-              : (v.course || 0);
-
-          // AIS heading 0 = North, rotation 0 = East
-          // Subtract 90° to align icon North with AIS North
-          const rotation = Cesium.Math.toRadians(headingDeg - 90);
-
           const color = getVesselColor(v.type);
-          const icon = getVesselIcon(v.type);
 
           // ── Billboard update or create ───────────────────
           if (billboardMap.current.has(v.mmsi)) {
             const bb = billboardMap.current.get(v.mmsi)!;
             bb.position = position;
-            bb.rotation = rotation;
 
             // Update label position
             const lb = labelMap.current.get(v.mmsi);
             if (lb) lb.position = position;
           } else {
-            // New vessel — add billboard
+            // New vessel — add point primitive
             const bb = bc.add({
               position,
-              image: icon,
-              scale: 0.55,
-              rotation,
+              pixelSize: getVesselPointSize(v.type),
               color,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
               // CRITICAL: render on top of Google 3D Tiles
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
-              eyeOffset: new Cesium.Cartesian3(0, 0, -2000),
-              // Scale down as camera zooms out — ships are small
               scaleByDistance: new Cesium.NearFarScalar(
-                500, 1.6,   // very close: large
-                600000, 0.2 // far: tiny dot
+                500, 2.5,
+                20000000, 0.3
               ),
-              // Fade out at extreme zoom
               translucencyByDistance: new Cesium.NearFarScalar(
                 1000, 1.0,
-                800000, 0.0
+                20000000, 0.3
               ),
               id: {
                 type: 'vessel',
@@ -268,10 +247,13 @@ export function VesselLayer({ viewerRef }: Props) {
               outlineWidth: 2,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               pixelOffset: new Cesium.Cartesian2(0, -28),
-              // Only show label when zoomed fairly close
               translucencyByDistance: new Cesium.NearFarScalar(
                 1000, 1.0,
-                150000, 0.0
+                1500000, 0.0
+              ),
+              scaleByDistance: new Cesium.NearFarScalar(
+                500, 1.0,
+                1500000, 0.5
               ),
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
               id: { type: 'vessel-label', mmsi: v.mmsi },
@@ -391,7 +373,8 @@ export function VesselLayer({ viewerRef }: Props) {
               },
             });
 
-            // Drone-zoom to vessel — 800m alt, -45° pitch, 2.2s
+            // Drone-zoom to vessel — cancel any in-flight first
+            viewer.camera.cancelFlight();
             viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
                 d.lng, d.lat, 800
@@ -412,6 +395,57 @@ export function VesselLayer({ viewerRef }: Props) {
       Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
+    // ── Hover handler — vessel tooltip ─────────────────────
+    let vesselTooltipId: string | null = null;
+
+    const hoverHandler = new Cesium.ScreenSpaceEventHandler(
+      viewer.scene.canvas
+    );
+
+    hoverHandler.setInputAction(
+      (move: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+        try {
+          const picked = viewer.scene.pick(move.endPosition);
+
+          if (vesselTooltipId) {
+            viewer.entities.removeById(vesselTooltipId);
+            vesselTooltipId = null;
+          }
+
+          if (
+            Cesium.defined(picked) &&
+            picked.id?.type === 'vessel'
+          ) {
+            const d = picked.id.data;
+            const tipId = `vessel-tip-${Date.now()}`;
+            vesselTooltipId = tipId;
+
+            viewer.entities.add({
+              id: tipId,
+              position: Cesium.Cartesian3.fromDegrees(d.lng, d.lat, 10),
+              label: {
+                text: `${d.name || 'UNKNOWN'}\n${d.typeName} · ${d.speed}kts · HDG ${d.heading}°\n${d.destination ? '→ ' + d.destination : ''}`,
+                font: '11px "JetBrains Mono", monospace',
+                fillColor: Cesium.Color.WHITE,
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 3,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                pixelOffset: new Cesium.Cartesian2(16, -12),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                showBackground: true,
+                backgroundColor: Cesium.Color.fromCssColorString('rgba(8,14,26,0.92)'),
+                backgroundPadding: new Cesium.Cartesian2(10, 6),
+              },
+            });
+            viewer.scene.canvas.style.cursor = 'pointer';
+          } else if (!Cesium.defined(picked) || picked.id?.type !== 'flight') {
+            viewer.scene.canvas.style.cursor = 'default';
+          }
+        } catch { /* ignore */ }
+      },
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    );
+
     // Initial fetch immediately on mount
     fetchAndRender();
 
@@ -426,6 +460,8 @@ export function VesselLayer({ viewerRef }: Props) {
       clearInterval(intervalRef.current);
       abortRef.current?.abort();
       clickHandler.destroy();
+      hoverHandler.destroy();
+      if (vesselTooltipId && !viewer.isDestroyed()) viewer.entities.removeById(vesselTooltipId);
 
       if (!viewer.isDestroyed()) {
         if (shipCollRef.current)

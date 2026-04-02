@@ -4,7 +4,7 @@
 // Intelligence Platform
 // ============================================================
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import * as Cesium from 'cesium';
 import { useCommandStore } from './stores/commandStore';
 import { audioService } from './services/audioService';
@@ -25,7 +25,9 @@ import { TimelineScrubber } from './components/ui/TimelineScrubber';
 // ── Auth & Overlays ──────────────────────────────────────────
 import { CommanderAuth } from './components/ui/CommanderAuth';
 import { FlightLockOverlay } from './components/globe/FlightLockOverlay';
+import { CommandPalette } from './components/ui/CommandPalette';
 
+import { usePlayback } from './hooks/usePlayback';
 import './App.css';
 
 // ── Type declarations ────────────────────────────────────────
@@ -37,6 +39,7 @@ declare global {
 }
 
 export function App() {
+  usePlayback();
   const viewerRef = useRef<Cesium.Viewer | null>(null);
 
   // ── Store selectors ────────────────────────────────────────
@@ -68,6 +71,12 @@ export function App() {
 
       const store = useCommandStore.getState();
 
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        store.setPaletteOpen(!store.paletteOpen);
+        return;
+      }
+
       switch (e.key) {
         case '1': store.setViewMode?.('NORMAL'); break;
         case '2': store.setViewMode?.('NVG'); break;
@@ -79,7 +88,7 @@ export function App() {
           if (viewerRef.current) {
             viewerRef.current.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
-                69.1912, 31.2836, 2000000
+                69.1912, 31.2836, 4500000
               ),
               orientation: {
                 heading: 0,
@@ -101,8 +110,6 @@ export function App() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
-
-  const [showIntro] = useState(false);
 
   // Set globe ready immediately so layers fetch data
   useEffect(() => {
@@ -140,12 +147,12 @@ export function App() {
       <div
         className={[
           'ui-layer',
-          isLocked || showIntro ? 'ui-locked' : '',
+          isLocked ? 'ui-locked' : '',
           cleanUI ? 'ui-hidden' : '',
         ].filter(Boolean).join(' ')}
         style={{
-          opacity: isLocked || showIntro ? 0 : 1,
-          pointerEvents: isLocked || showIntro ? 'none' : 'auto',
+          opacity: isLocked ? 0 : 1,
+          pointerEvents: isLocked ? 'none' : 'auto',
           transition: 'opacity 600ms ease',
         }}
         aria-label="ARGUS Command Interface"
@@ -159,6 +166,7 @@ export function App() {
         <ModeToggle />
         <TimelineScrubber />
         <FlightLockOverlay viewerRef={viewerRef} />
+        <CommandPalette viewerRef={viewerRef} />
       </div>
 
       {/* Boot loading screen */}
@@ -180,10 +188,10 @@ export function App() {
             <div className="loading-bar" />
           </div>
           <div className="loading-systems">
-            <span>GOOGLE 3D TILES</span>
+            <span>ESRI IMAGERY</span>
             <span>ADS-B UPLINK</span>
             <span>AIS STREAM</span>
-            <span>INTELLIGENCE FEEDS</span>
+            <span>GROQ AI ENGINE</span>
           </div>
         </div>
       </div>

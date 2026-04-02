@@ -45,7 +45,7 @@ export function IntelPinLayer({ viewerRef }: Props) {
     pointCollRef.current = pc;
     labelCollRef.current = lc;
 
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+    const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
     const fetchAndRender = async () => {
       try {

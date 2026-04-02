@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr:*)",
+      "Bash(curl -v http://localhost:5173/)",
+      "mcp__Claude_Preview__preview_start",
+      "Read(//c/dev/argus/**)",
+      "Bash(find C:/dev/argus/node_modules/.pnpm -maxdepth 5 -path */cesium/Build -type d)"
+    ]
+  }
+}

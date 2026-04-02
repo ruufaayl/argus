@@ -23,19 +23,20 @@ export function TopBar() {
 
   return (
     <div className="topbar-container">
-      <div className="topbar-main liquid-panel" style={{ position: 'relative' }}>
-        <div className="topbar-left" style={{ flex: 1, display: 'flex', gap: '20px', paddingRight: '100px', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <span className="digital-clock" style={{ width: '100px', display: 'inline-block', textAlign: 'left' }}>{time} PKT</span>
-          <span className="digital-date" style={{ width: '130px', display: 'inline-block', textAlign: 'left' }}>{dateStr.toUpperCase()}</span>
+      <div className="topbar-main" style={{ position: 'relative' }}>
+        <div className="topbar-left" style={{ flex: 1, display: 'flex', gap: '16px', paddingRight: '80px', alignItems: 'center', whiteSpace: 'nowrap' }}>
+          <span className="digital-clock">{time} PKT</span>
+          <span className="digital-date">{dateStr.toUpperCase()}</span>
           {unreadCount > 0 && (
             <span
               onClick={markAllRead}
+              className="alert-badge-pulse"
               style={{
                 fontSize: '10px', fontWeight: 700,
-                color: '#000', background: '#F43F5E',
-                padding: '2px 7px', borderRadius: '10px',
+                color: '#000', background: '#F25F5C',
+                padding: '2px 8px', borderRadius: 'var(--r-pill)',
                 cursor: 'pointer', letterSpacing: '0.5px',
-                animation: 'pulse 1.5s ease-in-out infinite',
+                animation: 'alertPulse 2s ease-in-out infinite',
               }}
             >
               {unreadCount} ALERT{unreadCount > 1 ? 'S' : ''}
@@ -43,14 +44,14 @@ export function TopBar() {
           )}
         </div>
 
-        {/* Center Overlapping Logo — Borderless 2x */}
+        {/* Center Logo */}
         <div className="topbar-center-logo">
           <img src="/logo/logo.png" alt="ARGUS" />
         </div>
 
-        <div className="topbar-right" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '20px', paddingLeft: '100px', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          <span className="alt-badge" style={{ width: '120px', display: 'inline-block', textAlign: 'right' }}>ALT {altStr}</span>
-          <span className="coords" style={{ width: '190px', display: 'inline-block', textAlign: 'right' }}>
+        <div className="topbar-right" style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingLeft: '80px', alignItems: 'center', whiteSpace: 'nowrap' }}>
+          <span className="alt-badge">ALT {altStr}</span>
+          <span className="coords">
             {mouseCoords ? `${mouseCoords.lat.toFixed(4)}°N ${mouseCoords.lng.toFixed(4)}°E` : '—'}
           </span>
           <button

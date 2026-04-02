@@ -18,11 +18,11 @@ interface BriefingData {
   strategicImportance: string;
   footTrafficLevel: string;
   lastIncident: string;
-  yearsStable: number;
+  builtDate: string;
   intel: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 async function fetchBriefing(name: string, city: string, category: string): Promise<BriefingData> {
   const res = await fetch(`${API_BASE}/api/intel/briefing`, {
@@ -54,7 +54,7 @@ function ThreatGauge({ value }: { value: number }) {
         <span style={{ fontSize: '9px', color: 'var(--text-dim)', letterSpacing: '1px' }}>THREAT INDEX</span>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
           <span style={{ fontSize: '22px', fontWeight: 700, color, fontFamily: 'monospace', lineHeight: 1 }}>
-            {value.toFixed(1)}
+            {safeValue.toFixed(1)}
           </span>
           <span style={{ fontSize: '10px', color: 'var(--text-dim)' }}>/10</span>
         </div>
@@ -68,7 +68,7 @@ function ThreatGauge({ value }: { value: number }) {
       </div>
       <span style={{
         fontSize: '9px', fontWeight: 700, letterSpacing: '2px', color,
-        animation: value >= 8 ? 'pulse 1.5s ease-in-out infinite' : 'none',
+        animation: safeValue >= 8 ? 'pulse 1.5s ease-in-out infinite' : 'none',
       }}>{label}</span>
     </div>
   );
@@ -96,28 +96,38 @@ export function InsightWidget() {
   const lastFetchedRef = useRef('');
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Reset state when entity changes — but do NOT auto-fetch briefing
   useEffect(() => {
     if (!entity || entity.type !== 'landmark') {
       setDisplayedText('');
       setIsTyping(false);
       setBriefing(null);
+      setBriefingLoading(false);
       lastFetchedRef.current = '';
       if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
       return;
     }
+    // New landmark selected — reset briefing state
+    if (lastFetchedRef.current !== entity.data.name) {
+      setDisplayedText('');
+      setIsTyping(false);
+      setBriefing(null);
+      setBriefingLoading(false);
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+    }
+  }, [entity]);
 
+  // Manual briefing generation — triggered by button
+  const handleGenerateBriefing = () => {
+    if (!entity || entity.type !== 'landmark') return;
     const name = entity.data.name;
-    if (lastFetchedRef.current === name) return;
     lastFetchedRef.current = name;
-
-    setDisplayedText('');
-    setIsTyping(false);
-    setBriefing(null);
     setBriefingLoading(true);
+    setDisplayedText('');
+    setBriefing(null);
     if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
 
     let cancelled = false;
-
     fetchBriefing(name, entity.data.city, entity.data.category)
       .then((data) => {
         if (cancelled) return;
@@ -144,11 +154,9 @@ export function InsightWidget() {
         if (!cancelled) setBriefingLoading(false);
       });
 
-    return () => {
-      cancelled = true;
-      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
-    };
-  }, [entity]);
+    // Cleanup on unmount
+    return () => { cancelled = true; };
+  };
 
   const importanceColor = (imp: string) => {
     if (imp === 'CRITICAL') return 'var(--red)';
@@ -157,20 +165,30 @@ export function InsightWidget() {
     return 'var(--green)';
   };
 
-  const stableColor = (years: number) => {
-    if (years >= 10) return 'var(--green)';
-    if (years >= 5) return 'var(--cyan)';
-    if (years >= 2) return 'var(--amber)';
-    return 'var(--red)';
-  };
+  const [collapsed, setCollapsed] = useState(false);
+
+  if (collapsed) {
+    return (
+      <div
+        className="insight-widget liquid-panel"
+        style={{ cursor: 'pointer', width: '48px', minHeight: '48px', maxHeight: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
+        onClick={() => { setCollapsed(false); audioService.playClick(); }}
+      >
+        <span style={{ fontSize: '10px', letterSpacing: '1px', color: 'var(--text-dim)', writingMode: 'vertical-rl' }}>INTEL</span>
+      </div>
+    );
+  }
 
   return (
     <div className="insight-widget liquid-panel">
       <div className="insight-header">
         <span className="insight-title" style={{ fontFamily: 'var(--font-mono)' }}>INTELLIGENCE</span>
-        {entity && (
-          <button className="cc-toggle" onClick={() => { clearSelection(); audioService.playClick(); }}>✕</button>
-        )}
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button className="cc-toggle" onClick={() => { setCollapsed(true); audioService.playClick(); }} title="Collapse">▼</button>
+          {entity && (
+            <button className="cc-toggle" onClick={() => { clearSelection(); audioService.playClick(); }}>✕</button>
+          )}
+        </div>
       </div>
 
       <div className="insight-body">
@@ -207,10 +225,9 @@ export function InsightWidget() {
                   label="FOOT TRAFFIC" 
                   value={briefing.footTrafficLevel} 
                 />
-                <MetricCard 
-                  label="YEARS STABLE" 
-                  value={`${briefing.yearsStable} YRS`} 
-                  color={stableColor(briefing.yearsStable)} 
+                <MetricCard
+                  label="ESTABLISHED"
+                  value={briefing.builtDate || 'Unknown'}
                 />
                 <MetricCard 
                   label="LAST INCIDENT" 
@@ -237,6 +254,32 @@ export function InsightWidget() {
               <MetricCard label="LATITUDE" value={`${entity.data.lat.toFixed(5)}°`} />
               <MetricCard label="LONGITUDE" value={`${entity.data.lng.toFixed(5)}°`} />
             </div>
+
+            {/* Generate Briefing Button — only shown when no briefing loaded */}
+            {!briefing && !briefingLoading && (
+              <button
+                onClick={handleGenerateBriefing}
+                style={{
+                  width: '100%', padding: '10px 16px', marginBottom: '12px',
+                  background: 'rgba(0, 200, 255, 0.06)',
+                  border: '1px solid rgba(0, 200, 255, 0.25)',
+                  borderRadius: '8px', color: 'var(--cyan)',
+                  fontSize: '10px', fontWeight: 600, letterSpacing: '1.5px',
+                  cursor: 'pointer', fontFamily: 'var(--font-mono)',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(0, 200, 255, 0.12)';
+                  (e.target as HTMLElement).style.borderColor = 'rgba(0, 200, 255, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(0, 200, 255, 0.06)';
+                  (e.target as HTMLElement).style.borderColor = 'rgba(0, 200, 255, 0.25)';
+                }}
+              >
+                ⬡ GENERATE BRIEFING
+              </button>
+            )}
 
             {/* AI Analysis Stream */}
             {(displayedText || isTyping) && (

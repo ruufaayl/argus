@@ -287,7 +287,10 @@ export const useCommandStore = create<CommandState>((set) => ({
   incrementCinematicZoom: () => set((state) => ({ triggerCinematicZoom: state.triggerCinematicZoom + 1 })),
 
   tacticalAlerts: [],
-  addTacticalAlert: (alert) => set((s) => ({ tacticalAlerts: [alert, ...s.tacticalAlerts] })),
+  addTacticalAlert: (alert) => set((s) => {
+    const updated = [alert, ...s.tacticalAlerts];
+    return { tacticalAlerts: updated.length > 200 ? updated.slice(0, 200) : updated };
+  }),
 
   layerCounts: {},
   setLayerCount: (key, count) =>

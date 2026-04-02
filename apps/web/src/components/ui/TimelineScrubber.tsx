@@ -117,7 +117,7 @@ export function TimelineScrubber() {
   return (
     <div style={{
       position: 'fixed', bottom: '40px', left: '50%', transform: 'translateX(-50%)',
-      width: 'min(90vw, 900px)', zIndex: 200,
+      width: 'min(calc(100vw - 720px), 900px)', zIndex: 200,
       background: 'var(--glass-fill-default)',
       backdropFilter: 'blur(var(--blur-md))',
       border: '1px solid var(--glass-border)',

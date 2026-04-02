@@ -7,23 +7,20 @@ import { useCommandStore } from '../../stores/commandStore';
 import type { LayerCategory } from '../../stores/commandStore';
 
 const LAYER_DEFS: { id: LayerCategory; label: string; color: string }[] = [
-  { id: 'flights', label: 'Live Air Traffic', color: '#00C8FF' },
-  { id: 'vessels', label: 'Marine Vessels', color: '#00FFCC' },
-  { id: 'satellites', label: 'Satellites', color: '#C8A0FF' },
-  { id: 'weather', label: 'Weather Radar', color: '#FF6B35' },
-  { id: 'traffic', label: 'Street Traffic', color: '#00C8FF' },
-  { id: 'population', label: 'Population Density', color: '#FF5000' },
-  { id: 'military', label: 'Military', color: '#FFB800' },
-  { id: 'government', label: 'Government', color: '#4A9EFF' },
-  { id: 'transport', label: 'Transport', color: '#00C8FF' },
-  { id: 'education', label: 'Education', color: '#9B59B6' },
-  { id: 'healthcare', label: 'Healthcare', color: '#F43F5E' },
-  { id: 'industrial', label: 'Industrial', color: '#95A5A6' },
-  { id: 'commercial', label: 'Commercial', color: '#B8B8B8' },
-  { id: 'religious', label: 'Religious', color: '#F39C12' },
-  { id: 'tourism', label: 'Tourism', color: '#34D399' },
-  { id: 'media', label: 'Media/Telecom', color: '#E74C3C' },
-  { id: 'residential', label: 'Residential', color: '#1ABC9C' },
+  { id: 'flights', label: 'Live Air Traffic', color: '#2A8CFF' },    // vivid blue
+  { id: 'vessels', label: 'Marine Vessels', color: '#E833E8' },       // vivid magenta
+  { id: 'satellites', label: 'Satellites', color: '#FFD633' },        // gold/amber
+  { id: 'weather', label: 'Weather Radar', color: '#FF6B35' },       // orange
+  { id: 'military', label: 'Military', color: '#FFCC00' },           // bright amber
+  { id: 'transport', label: 'Transport', color: '#00CCFF' },         // cyan
+  { id: 'education', label: 'Education', color: '#00FF99' },         // mint green
+  { id: 'healthcare', label: 'Healthcare', color: '#FF3355' },       // bright red
+  { id: 'industrial', label: 'Industrial', color: '#FFFF44' },       // yellow
+  { id: 'religious', label: 'Religious', color: '#FFE030' },         // gold
+  { id: 'cctv', label: 'CCTV Surveillance', color: '#00FF80' },      // green
+  { id: 'sigint', label: 'SIGINT Emissions', color: '#FF3040' },     // red
+  { id: 'landmarks', label: 'All Landmarks', color: '#FFFFFF' },     // white
+  { id: 'border', label: 'Pakistan Border', color: '#00FF88' },      // green
 ];
 
 export function DataLayersMenu() {
@@ -71,17 +68,22 @@ export function DataLayersMenu() {
                 />
                 <span className="layer-label">{layer.label}</span>
                 {layer.id === 'flights' && isOn && (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     {flightCount}{milCount > 0 ? ` (+${milCount})` : ''}
                   </span>
                 )}
                 {layer.id === 'vessels' && isOn && layerCounts['vessels'] ? (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     {layerCounts['vessels']}
                   </span>
                 ) : null}
+                {layer.id === 'satellites' && isOn && layerCounts['satellites'] ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    {layerCounts['satellites']}{layerCounts['satellitesOverPK'] ? ` (${layerCounts['satellitesOverPK']} PK)` : ''}
+                  </span>
+                ) : null}
                 {layer.id === 'landmarks' && isOn && layerCounts['landmarks'] ? (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                     {layerCounts['landmarks']}
                   </span>
                 ) : null}

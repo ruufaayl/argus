@@ -28,6 +28,9 @@ interface RadarStore {
   clearEvents:         () => void;
 }
 
+// NOTE: aircraftStates uses Map which doesn't serialize, but this store
+// is only consumed via getState() (imperative reads), not subscriptions,
+// so Map mutation triggers work correctly with the new Map() copy pattern.
 export const useRadarStore = create<RadarStore>((set, get) => ({
   aircraftStates:  new Map(),
   crossingEvents:  [],

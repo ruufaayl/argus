@@ -41,7 +41,7 @@ import {
 } from '../../../lib/borderDetection';
 
 // ── Constants ────────────────────────────────────────────────
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API = import.meta.env.VITE_API_URL ?? '';
 const POLL_MS = 15_000;   // ADS-B updates every 5-15s
 const FETCH_TIMEOUT_MS = 8_000;
 const MIN_ALT_M = 1000;     // Never render below 1km — clips into Google tiles
@@ -70,13 +70,7 @@ const SENSITIVE_SITES = [
   { name: 'GHQ', lat: 33.5987, lon: 73.0551 }, // Army HQ
 ];
 
-// ── Aircraft SVG icons ────────────────────────────────────────
-// All encoded inline with encodeURIComponent to ensure WebGL can load the texture.
-// Icons designed pointing East (right) at 0° rotation.
-
-const SVG_COMMERCIAL = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='40' height='40'><g transform='translate(20,20)'><path fill='white' d='M0,-18 L4,-6 L18,0 L4,2 L6,14 L0,10 L-6,14 L-4,2 L-18,0 L-4,-6 Z'/></g></svg>`);
-const SVG_MILITARY = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='40' height='40'><g transform='translate(20,20)'><polygon fill='%23FFB800' points='0,-18 14,10 0,4 -14,10'/><polygon fill='%23FFB800' opacity='0.5' points='0,-10 8,4 0,0 -8,4'/></g></svg>`);
-const SVG_UNKNOWN = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='40' height='40'><g transform='translate(20,20)'><polygon fill='%23FF3040' points='0,-16 10,0 0,16 -10,0'/></g></svg>`);
+// ── Threat ring SVGs ────────────────────────────────────────
 const SVG_RING_AMBER = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' width='60' height='60'><circle cx='30' cy='30' r='26' fill='none' stroke='%23FFB800' stroke-width='2' opacity='0.8'/><circle cx='30' cy='30' r='20' fill='none' stroke='%23FFB800' stroke-width='1' opacity='0.4'/></svg>`);
 const SVG_RING_RED = `data:image/svg+xml,` + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' width='60' height='60'><circle cx='30' cy='30' r='26' fill='none' stroke='%23FF3040' stroke-width='2.5' opacity='0.9'/><circle cx='30' cy='30' r='18' fill='none' stroke='%23FF3040' stroke-width='1.5' opacity='0.5'/><circle cx='30' cy='30' r='10' fill='none' stroke='%23FF3040' stroke-width='1' opacity='0.3'/></svg>`);
 
@@ -209,20 +203,26 @@ function computeThreatScore(f: Flight): ThreatResult {
   return { score: clampedScore, level, reasons };
 }
 
-// ── Aircraft icon selector ────────────────────────────────────
-function getAircraftIcon(f: Flight): string {
-  if (f.isMilitary) return SVG_MILITARY;
-  if (!f.callsign || f.callsign.trim() === '') return SVG_UNKNOWN;
-  return SVG_COMMERCIAL;
+// ── Pakistan bounding box for "over Pakistan" check ─────────
+const PK_LAT_MIN = 23.6;
+const PK_LAT_MAX = 37.1;
+const PK_LON_MIN = 60.8;
+const PK_LON_MAX = 77.8;
+
+function isOverPakistan(lat: number, lon: number): boolean {
+  return lat >= PK_LAT_MIN && lat <= PK_LAT_MAX &&
+         lon >= PK_LON_MIN && lon <= PK_LON_MAX;
 }
+
+// Aircraft icon selector removed — using PointPrimitiveCollection now
 
 // ── Aircraft color by source / military ──────────────────────
 function getAircraftColor(f: Flight, threat: ThreatResult): Cesium.Color {
-  if (threat.level === 'CRITICAL') return Cesium.Color.fromCssColorString('#FF3040');
-  if (threat.level === 'HIGH') return Cesium.Color.fromCssColorString('#FF6020');
-  if (f.isMilitary) return Cesium.Color.fromCssColorString('#FFB800');
-  if (f.source === 'both') return Cesium.Color.fromCssColorString('#00FF88');
-  return Cesium.Color.WHITE;
+  if (threat.level === 'CRITICAL') return new Cesium.Color(1.0, 0.1, 0.15, 1.0);  // bright red
+  if (threat.level === 'HIGH') return new Cesium.Color(1.0, 0.35, 0.05, 1.0);     // hot orange
+  if (f.isMilitary) return new Cesium.Color(1.0, 0.72, 0.0, 1.0);                 // military amber
+  if (f.source === 'both') return new Cesium.Color(0.3, 0.6, 1.0, 1.0);           // sky blue
+  return new Cesium.Color(0.15, 0.55, 1.0, 1.0);                                  // VIVID BLUE — flight signature color
 }
 
 // ════════════════════════════════════════════════════════════
@@ -233,11 +233,11 @@ export function FlightLayer({ viewerRef }: Props) {
   // ── Primitive collection refs ─────────────────────────────
   const trailCollRef = useRef<Cesium.PolylineCollection | null>(null);
   const ringCollRef = useRef<Cesium.BillboardCollection | null>(null);
-  const shipCollRef = useRef<Cesium.BillboardCollection | null>(null);
+  const shipCollRef = useRef<Cesium.PointPrimitiveCollection | null>(null);
   const labelCollRef = useRef<Cesium.LabelCollection | null>(null);
 
   // ── Entity maps — keyed by icao24 ────────────────────────
-  const billboardMap = useRef<Map<string, Cesium.Billboard>>(new Map());
+  const billboardMap = useRef<Map<string, Cesium.PointPrimitive>>(new Map());
   const ringMap = useRef<Map<string, Cesium.Billboard>>(new Map());
   const labelMap = useRef<Map<string, Cesium.Label>>(new Map());
   const trailMap = useRef<Map<string, TrailEntry>>(new Map());
@@ -274,7 +274,7 @@ export function FlightLayer({ viewerRef }: Props) {
     // Render order: trails → rings → aircraft → labels
     const tc = new Cesium.PolylineCollection();
     const rc = new Cesium.BillboardCollection({ scene: viewer.scene });
-    const bc = new Cesium.BillboardCollection({ scene: viewer.scene });
+    const bc = new Cesium.PointPrimitiveCollection();
     const lc = new Cesium.LabelCollection();
 
     viewer.scene.primitives.add(tc); // trails — bottom
@@ -343,26 +343,17 @@ export function FlightLayer({ viewerRef }: Props) {
             f.lon, f.lat, altM
           );
 
-          // ── Heading → rotation ──────────────────────────
-          // ADS-B heading 0 = North, Cesium rotation 0 = East
-          // Subtract 90° to align aircraft icon with heading
-          const rotation = Cesium.Math.toRadians(
-            (f.headingDeg || 0) - 90
-          );
-
           // ── Threat assessment ────────────────────────────
           const threat = computeThreatScore(f);
           if (threat.level !== 'NORMAL') amberCount++;
 
           const color = getAircraftColor(f, threat);
-          const icon = getAircraftIcon(f);
 
           // ── Update or create billboard ───────────────────
           if (billboardMap.current.has(f.icao24)) {
             // Update existing — fast path, no allocation
             const bb = billboardMap.current.get(f.icao24)!;
             bb.position = position;
-            bb.rotation = rotation;
             bb.color = color;
 
             // Update label position
@@ -379,26 +370,23 @@ export function FlightLayer({ viewerRef }: Props) {
           } else {
             // ── New aircraft — add all primitives ───────────
 
-            // Main aircraft billboard
+            // Main aircraft point primitive — big glowing sphere
             const bb = bc.add({
               position,
-              image: icon,
-              scale: f.isMilitary ? 0.65 : 0.50,
-              rotation,
+              pixelSize: 14,
               color,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
               // CRITICAL: render on top of Google 3D Tiles
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
-              // Small Z offset so icons render above terrain
-              eyeOffset: new Cesium.Cartesian3(0, 0, -8000),
-              // Scale down gracefully with altitude
+              // Scale down gracefully with altitude — visible at 20,000km
               scaleByDistance: new Cesium.NearFarScalar(
-                1000, 1.8,   // 1km away: 1.8x scale
-                900000, 0.3    // 900km away: tiny
+                1000, 2.5,
+                20000000, 0.4
               ),
-              // Fade out at extreme zoom out
               translucencyByDistance: new Cesium.NearFarScalar(
                 1000, 1.0,
-                1500000, 0.0
+                25000000, 0.3
               ),
               id: {
                 type: 'flight',
@@ -441,10 +429,13 @@ export function FlightLayer({ viewerRef }: Props) {
               outlineWidth: 2,
               style: Cesium.LabelStyle.FILL_AND_OUTLINE,
               pixelOffset: new Cesium.Cartesian2(0, -22),
-              // Only show labels when zoomed in
               translucencyByDistance: new Cesium.NearFarScalar(
                 500, 1.0,
-                300000, 0.0
+                2000000, 0.0
+              ),
+              scaleByDistance: new Cesium.NearFarScalar(
+                1000, 1.0,
+                2000000, 0.5
               ),
               // Always render on top — never occluded by terrain
               disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -662,12 +653,14 @@ export function FlightLayer({ viewerRef }: Props) {
                 altitude: data.altitudeFt * 0.3048,
                 velocity: data.speedKts * 0.514444,
                 heading: data.headingDeg,
+                isOverPakistan: isOverPakistan(data.lat, data.lon),
                 threatLevel: threat?.level || 'NORMAL',
                 threatScore: threat?.score || 0,
                 threatReasons: threat?.reasons || [],
               },
             });
-            // Drone-zoom to aircraft — offset above altitude, -45° pitch, 2.2s
+            // Drone-zoom to aircraft — cancel any in-flight first
+            viewer.camera.cancelFlight();
             viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromDegrees(
                 data.lon, data.lat,
@@ -689,12 +682,68 @@ export function FlightLayer({ viewerRef }: Props) {
       Cesium.ScreenSpaceEventType.LEFT_CLICK
     );
 
+    // ── Hover handler — flight tooltip ─────────────────────
+    let flightTooltipId: string | null = null;
+
+    const hoverHandler = new Cesium.ScreenSpaceEventHandler(
+      viewer.scene.canvas
+    );
+
+    hoverHandler.setInputAction(
+      (move: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+        try {
+          const picked = viewer.scene.pick(move.endPosition);
+
+          if (flightTooltipId) {
+            viewer.entities.removeById(flightTooltipId);
+            flightTooltipId = null;
+          }
+
+          if (
+            Cesium.defined(picked) &&
+            picked.id?.type === 'flight'
+          ) {
+            const d = picked.id.data;
+            const threat = picked.id.threat;
+            const tipId = `flight-tip-${Date.now()}`;
+            flightTooltipId = tipId;
+
+            const altM = Math.max((d.altitudeFt || 35000) * 0.3048, 1000);
+
+            viewer.entities.add({
+              id: tipId,
+              position: Cesium.Cartesian3.fromDegrees(d.lon, d.lat, altM),
+              label: {
+                text: `${d.callsign || d.icao24}\n${d.type || 'UNKNOWN'} · FL${Math.round(d.altitudeFt / 100)} · ${d.speedKts}kts\n${threat?.level !== 'NORMAL' ? '⚠ ' + threat?.level : 'NORMAL'}`,
+                font: '11px "JetBrains Mono", monospace',
+                fillColor: Cesium.Color.WHITE,
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 3,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                pixelOffset: new Cesium.Cartesian2(16, -12),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                showBackground: true,
+                backgroundColor: Cesium.Color.fromCssColorString('rgba(8,14,26,0.92)'),
+                backgroundPadding: new Cesium.Cartesian2(10, 6),
+              },
+            });
+            viewer.scene.canvas.style.cursor = 'pointer';
+          } else if (!Cesium.defined(picked) || picked.id?.type !== 'vessel') {
+            viewer.scene.canvas.style.cursor = 'default';
+          }
+        } catch { /* ignore */ }
+      },
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE
+    );
+
     // ── Cleanup ───────────────────────────────────────────
     return () => {
       mountedRef.current = false;
       clearInterval(intervalRef.current);
       abortRef.current?.abort();
       clickHandler.destroy();
+      hoverHandler.destroy();
+      if (flightTooltipId && !viewer.isDestroyed()) viewer.entities.removeById(flightTooltipId);
 
       if (!viewer.isDestroyed()) {
         if (trailCollRef.current)

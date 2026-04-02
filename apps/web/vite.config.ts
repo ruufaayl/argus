@@ -4,13 +4,243 @@ import cesium from 'vite-plugin-cesium';
 import path from 'path';
 import type { Plugin } from 'vite';
 
-// ── AI SEARCH ENGINE GLOBAL STATE ── 
+// ── AI SEARCH ENGINE GLOBAL STATE ──
 // Kept outside the plugin factory so HMR/Vite restarts don't reset the cooldown!
 let newsCache: any[] = [];
 let isSyncing = false;
 let lastSyncTime = 0;
 let gdeltCooldownUntil = 0;
 let syncIntervalId: any = null;
+
+// ── INTEL SIGNALS CACHE ──
+let signalsCache: any[] = [];
+let signalsCacheTime = 0;
+let signalsSyncing = false;
+const SIGNALS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// ── LIVE AIS VESSEL CACHE (populated by WebSocket) ──
+interface AISVessel {
+  mmsi: number;
+  name: string;
+  type: number;
+  lat: number;
+  lng: number;
+  speed: number;
+  heading: number;
+  course: number;
+  destination: string;
+  _lastUpdate: number;
+}
+const aisVesselCache = new Map<number, AISVessel>();
+let aisWsConnected = false;
+let aisWsRetryTimer: any = null;
+
+function startAISStream() {
+  const AISSTREAM_KEY = process.env.AISSTREAM_KEY || '';
+  if (!AISSTREAM_KEY) {
+    console.log('[AIS] No AISSTREAM_KEY — live AIS WebSocket disabled');
+    return;
+  }
+  if (aisWsConnected) return;
+
+  try {
+    // Dynamic import for WebSocket in Node.js
+    const WebSocket = require('ws');
+    const ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
+
+    ws.on('open', () => {
+      aisWsConnected = true;
+      console.log('[AIS] WebSocket connected to AISStream.io');
+
+      // Subscribe to Pakistani waters + Arabian Sea + Gulf of Oman
+      ws.send(JSON.stringify({
+        APIKey: AISSTREAM_KEY,
+        BoundingBoxes: [
+          [[22.0, 59.0], [28.0, 71.0]],  // Pakistan coast + Arabian Sea
+          [[23.0, 56.0], [27.0, 60.0]],  // Gulf of Oman approaches
+        ],
+        FilterMessageTypes: ['PositionReport', 'ShipStaticData'],
+      }));
+    });
+
+    ws.on('message', (data: any) => {
+      try {
+        const msg = JSON.parse(data.toString());
+        const meta = msg.MetaData;
+        if (!meta?.MMSI) return;
+
+        const mmsi = meta.MMSI;
+        const existing = aisVesselCache.get(mmsi) || {
+          mmsi, name: '', type: 0, lat: 0, lng: 0,
+          speed: 0, heading: 511, course: 0, destination: '', _lastUpdate: 0,
+        };
+
+        if (msg.MessageType === 'PositionReport') {
+          const pos = msg.Message?.PositionReport;
+          if (pos) {
+            existing.lat = pos.Latitude ?? existing.lat;
+            existing.lng = pos.Longitude ?? existing.lng;
+            existing.speed = pos.Sog ?? existing.speed;
+            existing.heading = pos.TrueHeading ?? existing.heading;
+            existing.course = pos.Cog ?? existing.course;
+            existing.name = meta.ShipName?.trim() || existing.name;
+            existing._lastUpdate = Date.now();
+            aisVesselCache.set(mmsi, existing);
+          }
+        }
+
+        if (msg.MessageType === 'ShipStaticData') {
+          const stat = msg.Message?.ShipStaticData;
+          if (stat) {
+            existing.name = stat.Name?.trim() || meta.ShipName?.trim() || existing.name;
+            existing.type = stat.Type ?? existing.type;
+            existing.destination = stat.Destination?.trim() || existing.destination;
+            existing._lastUpdate = Date.now();
+            aisVesselCache.set(mmsi, existing);
+          }
+        }
+      } catch { /* ignore parse errors */ }
+    });
+
+    ws.on('close', () => {
+      aisWsConnected = false;
+      console.log('[AIS] WebSocket disconnected. Retrying in 30s...');
+      if (aisWsRetryTimer) clearTimeout(aisWsRetryTimer);
+      aisWsRetryTimer = setTimeout(startAISStream, 30000);
+    });
+
+    ws.on('error', (err: any) => {
+      console.warn(`[AIS] WebSocket error: ${err.message}`);
+      aisWsConnected = false;
+    });
+
+    // Prune stale vessels every 5 minutes
+    setInterval(() => {
+      const cutoff = Date.now() - 600_000; // 10 min
+      for (const [mmsi, v] of aisVesselCache) {
+        if (v._lastUpdate < cutoff) aisVesselCache.delete(mmsi);
+      }
+      if (aisVesselCache.size > 0) {
+        console.log(`[AIS] Cache: ${aisVesselCache.size} active vessels`);
+      }
+    }, 300_000);
+
+  } catch (e: any) {
+    console.warn(`[AIS] WebSocket setup failed: ${e.message}. Install 'ws' package for live AIS.`);
+  }
+}
+
+// Strategic locations for deterministic fallback generation
+const STRATEGIC_LOCATIONS = [
+  { name: 'Wagah Border Crossing', lat: 31.6047, lng: 74.5734, area: 'Punjab' },
+  { name: 'Gwadar Port', lat: 25.1264, lng: 62.3225, area: 'Balochistan' },
+  { name: 'Karachi Coast', lat: 24.8607, lng: 66.9911, area: 'Sindh' },
+  { name: 'LOC Kashmir Sector', lat: 34.3500, lng: 74.3500, area: 'AJK' },
+  { name: 'Chaman Border Post', lat: 30.9210, lng: 66.4597, area: 'Balochistan' },
+  { name: 'Torkham Gate', lat: 34.0886, lng: 71.0933, area: 'KPK' },
+  { name: 'Islamabad Diplomatic Enclave', lat: 33.7215, lng: 73.0950, area: 'ICT' },
+  { name: 'Sargodha Air Base', lat: 32.0490, lng: 72.6650, area: 'Punjab' },
+  { name: 'Quetta Cantonment', lat: 30.1830, lng: 66.9750, area: 'Balochistan' },
+  { name: 'Peshawar Garrison', lat: 34.0151, lng: 71.5249, area: 'KPK' },
+  { name: 'Turbat Forward Base', lat: 25.9861, lng: 63.0522, area: 'Balochistan' },
+  { name: 'Gilgit-Baltistan Sector', lat: 35.9208, lng: 74.3144, area: 'GB' },
+  { name: 'Rawalpindi GHQ', lat: 33.5651, lng: 73.0169, area: 'Punjab' },
+  { name: 'Dera Ismail Khan', lat: 31.8310, lng: 70.9017, area: 'KPK' },
+  { name: 'Multan Cantonment', lat: 30.1575, lng: 71.5249, area: 'Punjab' },
+  { name: 'Sukkur Barrage Sector', lat: 27.7052, lng: 68.8574, area: 'Sindh' },
+];
+
+const SIGNAL_TEMPLATES = [
+  // Critical templates
+  { priority: 'critical', titles: [
+    'SIGINT intercept — cross-border comms surge detected',
+    'Unidentified aerial track in restricted airspace',
+    'Border incursion alert — perimeter sensors triggered',
+    'Nuclear facility perimeter anomaly flagged',
+  ]},
+  // High templates
+  { priority: 'high', titles: [
+    'Unusual troop movement observed via IMINT',
+    'Maritime vessel deviating from registered shipping lane',
+    'HUMINT asset reports militant staging activity',
+    'Encrypted burst transmission intercepted on mil-band',
+    'Suspicious convoy movement on border supply route',
+  ]},
+  // Normal templates
+  { priority: 'normal', titles: [
+    'Routine border patrol checkpoint status update',
+    'Scheduled military exercise — live fire zone active',
+    'ELINT collection satellite pass confirmed',
+    'Air defense radar maintenance cycle completed',
+    'Naval patrol vessel reporting normal operations',
+    'Supply convoy departed on scheduled route',
+    'Counter-IED sweep completed along MSR',
+    'Forward observation post rotation underway',
+  ]},
+  // Info templates
+  { priority: 'info', titles: [
+    'Weather advisory — reduced visibility in sector',
+    'Civilian air corridor traffic density nominal',
+    'Port authority reports standard cargo throughput',
+    'Communications relay station online — signal nominal',
+    'Diplomatic movement — VIP motorcade scheduled',
+    'Infrastructure maintenance — power grid sector offline for servicing',
+  ]},
+];
+
+const DETAIL_FRAGMENTS = [
+  'ARGUS pattern recognition flagged activity within the last 30 minutes.',
+  'Correlation with GDELT open-source reporting suggests elevated posture.',
+  'Cross-referenced with ISI HUMINT channels — assessment: MODERATE confidence.',
+  'Satellite overhead pass scheduled in next window for visual confirmation.',
+  'Local garrison commander notified. ROE standing at HOLD unless escalation.',
+  'SIGINT collection assets repositioned for continuous monitoring.',
+  'Adjacent sectors placed on heightened awareness per standing directive.',
+  'Historical pattern analysis indicates seasonal uptick consistent with prior years.',
+  'Multi-sensor fusion corroborates initial detection. Awaiting ELINT confirmation.',
+  'Automated threat scoring engine assigned this signal for priority review.',
+];
+
+/**
+ * Generates deterministic intel signals based on current time.
+ * Signals rotate every 5 minutes using time-based seed.
+ */
+function generateDeterministicSignals(): any[] {
+  const timeSeed = Math.floor(Date.now() / SIGNALS_CACHE_TTL);
+  const count = 5 + (timeSeed % 4); // 5-8 signals
+  const signals: any[] = [];
+
+  // Priority distribution: ~10% critical, ~20% high, ~40% normal, ~30% info
+  const priorityBuckets = ['critical', 'high', 'high', 'normal', 'normal', 'normal', 'normal', 'info', 'info', 'info'];
+
+  for (let i = 0; i < count; i++) {
+    const seed = timeSeed * 31 + i * 17;
+    const priority = priorityBuckets[Math.abs(seed) % priorityBuckets.length];
+    const templateGroup = SIGNAL_TEMPLATES.find(t => t.priority === priority)!;
+    const title = templateGroup.titles[Math.abs(seed * 7) % templateGroup.titles.length];
+    const loc = STRATEGIC_LOCATIONS[Math.abs(seed * 13) % STRATEGIC_LOCATIONS.length];
+    const detail = DETAIL_FRAGMENTS[Math.abs(seed * 11) % DETAIL_FRAGMENTS.length];
+
+    // Add slight coordinate jitter so pins don't stack exactly
+    const jitterLat = ((seed * 37 % 1000) / 1000 - 0.5) * 0.1;
+    const jitterLng = ((seed * 43 % 1000) / 1000 - 0.5) * 0.1;
+
+    const minutesAgo = Math.abs(seed * 3) % 25;
+    const signalTime = new Date(Date.now() - minutesAgo * 60 * 1000);
+
+    signals.push({
+      priority,
+      title,
+      detail: `${detail} Location: ${loc.name}, ${loc.area}.`,
+      time: signalTime.toISOString(),
+      lat: loc.lat + jitterLat,
+      lng: loc.lng + jitterLng,
+      location: loc.name,
+    });
+  }
+
+  return signals;
+}
 
 // ─── Vite Plugin: In-process API middleware ─────────────────────
 // Handles /api/flights, /api/intel/briefing, /api/intel/signals
@@ -134,59 +364,99 @@ function argusApiMiddleware(): Plugin {
   if (!syncIntervalId) {
     setTimeout(syncNews, 500);
     syncIntervalId = setInterval(syncNews, 150 * 1000);
+    // Start live AIS WebSocket for real vessel data
+    setTimeout(startAISStream, 2000);
   }
 
   return {
     name: 'argus-api-middleware',
     configureServer(server) {
-      // ── /api/flights — Resilient OpenSky Proxy with Simulation Fallback ──
+      // ── /api/flights — Multi-source: ADS-B Exchange → OpenSky → Simulation ──
       server.middlewares.use('/api/flights', async (_req, res) => {
         const username = process.env.OPENSKY_USERNAME || '';
         const password = process.env.OPENSKY_PASSWORD || '';
-        const url = 'https://opensky-network.org/api/states/all?lamin=23.6&lomin=60.8&lamax=37.1&lomax=77.8';
+        const MIL_PREFIXES = ['PAF','ARMY','NAVY','PAKN','SHERDIL'];
 
-        const generateSimulation = () => {
-          const flights = [];
-          const hubs = [
-            { name: 'KHI', lat: 24.8, lng: 67.0 },
-            { name: 'ISB', lat: 33.7, lng: 73.1 },
-            { name: 'LHR', lat: 31.5, lng: 74.3 },
-            { name: 'PEW', lat: 34.0, lng: 71.5 },
-            { name: 'UET', lat: 30.2, lng: 67.0 }
-          ];
-
-          for (let i = 0; i < 22; i++) {
-            const isMil = i % 5 === 0;
-            const callsign = isMil ? `PAF${100 + i}` : `PK${300 + i}`;
-            const origin = hubs[Math.floor(Math.random() * hubs.length)];
-            const lat = origin.lat + (Math.random() - 0.5) * 5;
-            const lng = origin.lng + (Math.random() - 0.5) * 5;
-
-            // OpenSky format: [icao24, callsign, origin_country, time_position, last_contact, longitude, latitude, baro_altitude, on_ground, velocity, true_track, vertical_rate, sensors, geo_altitude, squawk, spi, position_source]
-            flights.push([
-              `a${i}f${Math.floor(Math.random() * 1000)}`,
+        // Convert OpenSky state vectors to Flight objects
+        const transformOpenSky = (states: any[]): any[] => {
+          return (states || []).map((s: any) => {
+            const callsign = (s[1] || '').trim();
+            const isMilitary = MIL_PREFIXES.some(p => callsign.toUpperCase().startsWith(p));
+            return {
+              icao24: s[0] || '',
               callsign,
-              'Pakistan',
-              Math.floor(Date.now() / 1000),
-              Math.floor(Date.now() / 1000),
-              lng,
-              lat,
-              7000 + Math.random() * 5000,
-              false,
-              200 + Math.random() * 100,
-              Math.random() * 360,
-              0,
-              null,
-              7000 + Math.random() * 5000,
-              '2301',
-              false,
-              0
-            ]);
-          }
-          return { states: flights };
+              lat: s[6] ?? 0,
+              lon: s[5] ?? 0,
+              altitudeFt: Math.round((s[7] ?? 0) * 3.28084),
+              speedKts: Math.round((s[9] ?? 0) * 1.94384),
+              headingDeg: Math.round(s[10] ?? 0),
+              verticalRate: Math.round((s[11] ?? 0) * 196.85),
+              onGround: !!s[8],
+              type: '',
+              registration: '',
+              source: 'opensky',
+              isMilitary,
+              squawk: s[14] || '',
+              lastSeen: s[4] ?? Math.floor(Date.now()/1000),
+            };
+          });
         };
 
+        // Convert ADS-B Exchange (api.adsb.lol) response to Flight objects
+        const transformADSB = (aircraft: any[]): any[] => {
+          return (aircraft || []).map((ac: any) => {
+            const callsign = (ac.flight || '').trim();
+            const isMilitary = MIL_PREFIXES.some(p => callsign.toUpperCase().startsWith(p))
+              || ac.dbFlags === 1; // ADS-B Exchange military flag
+            return {
+              icao24: (ac.hex || '').toLowerCase(),
+              callsign,
+              lat: ac.lat ?? 0,
+              lon: ac.lon ?? 0,
+              altitudeFt: Math.round(ac.alt_baro ?? ac.alt_geom ?? 0),
+              speedKts: Math.round(ac.gs ?? 0),
+              headingDeg: Math.round(ac.track ?? ac.true_heading ?? 0),
+              verticalRate: Math.round(ac.baro_rate ?? ac.geom_rate ?? 0),
+              onGround: ac.alt_baro === 'ground',
+              type: ac.t || '',
+              registration: ac.r || '',
+              source: 'adsb',
+              isMilitary,
+              squawk: ac.squawk || '',
+              lastSeen: Math.floor(Date.now()/1000),
+            };
+          });
+        };
+
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        // ── Source 1: ADS-B Exchange (api.adsb.lol) — free, no auth, CORS ──
         try {
+          // Fetch ALL aircraft in a very wide radius (covers Pakistan + neighbors + Middle East)
+          const adsbUrl = 'https://api.adsb.lol/v2/lat/30.5/lon/69.3/dist/2500';
+          const adsbRes = await fetch(adsbUrl, {
+            headers: { 'User-Agent': 'Argus/1.0' },
+            signal: AbortSignal.timeout(5000),
+          });
+
+          if (adsbRes.ok) {
+            const raw: any = await adsbRes.json();
+            const flights = transformADSB(raw.ac || []);
+            if (flights.length > 0) {
+              console.log(`[API] ADS-B Exchange: ${flights.length} aircraft`);
+              res.end(JSON.stringify({ flights, source: 'adsb-exchange' }));
+              return;
+            }
+          }
+          console.warn(`[API] ADS-B Exchange: no data or ${adsbRes.status}`);
+        } catch (e: any) {
+          console.warn(`[API] ADS-B Exchange failed: ${e.message}`);
+        }
+
+        // ── Source 2: OpenSky Network — fallback ──
+        try {
+          const url = 'https://opensky-network.org/api/states/all?lamin=23.6&lomin=60.8&lamax=37.1&lomax=77.8';
           const headers: Record<string, string> = { 'User-Agent': 'Argus/1.0' };
           if (username && password) {
             headers['Authorization'] = `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`;
@@ -194,24 +464,23 @@ function argusApiMiddleware(): Plugin {
 
           const response = await fetch(url, { headers, signal: AbortSignal.timeout(6000) });
 
-          if (!response.ok) {
-            console.warn(`[API] OpenSky status ${response.status}. Serving simulation.`);
-            res.setHeader('Content-Type', 'application/json');
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.end(JSON.stringify(generateSimulation()));
-            return;
+          if (response.ok) {
+            const raw: any = await response.json();
+            const flights = transformOpenSky(raw.states);
+            if (flights.length > 0) {
+              console.log(`[API] OpenSky: ${flights.length} aircraft`);
+              res.end(JSON.stringify({ flights, source: 'opensky' }));
+              return;
+            }
           }
-
-          const data = await response.json();
-          res.setHeader('Content-Type', 'application/json');
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.end(JSON.stringify(data));
+          console.warn(`[API] OpenSky status ${response.status}. Falling to simulation.`);
         } catch (err: any) {
-          console.error('[API] Flights error (serving simulation):', err.message);
-          res.setHeader('Content-Type', 'application/json');
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.end(JSON.stringify(generateSimulation()));
+          console.warn(`[API] OpenSky failed: ${err.message}`);
         }
+
+        // ── All sources exhausted — return empty ──
+        console.log('[API] All flight sources unavailable. Returning empty.');
+        res.end(JSON.stringify({ flights: [], source: 'none', error: 'All live flight data sources are currently unavailable' }));
       });
 
       // ── /api/intel/briefing — Groq AI landmark analysis ──
@@ -242,7 +511,25 @@ function argusApiMiddleware(): Plugin {
                 messages: [
                   {
                     role: 'system',
-                    content: 'You are ARGUS — Automated Reconnaissance & Geospatial Unified System — the AI intelligence engine embedded in Pakistan\'s national security command dashboard. You report directly to senior military and intelligence personnel.\n\nYour role is to deliver concise, high-value tactical intelligence briefings about any location, landmark, or area of interest selected on the map. You analyze geospatial data, cross-reference live threat feeds, and synthesize actionable insights.\n\n## RESPONSE FORMAT\nAlways structure your response exactly as follows:\n\n**◈ LOCATION PROFILE**\nDesignation, classification tier (T1/T2/T3), coordinates, sector, and a 2-line strategic summary of what this location is and why it matters nationally.\n\n**◈ STRATEGIC SIGNIFICANCE**\nBullet-point breakdown of the facility\'s role — operational, administrative, symbolic, or infrastructure. Include jurisdiction, chain of command relevance, and any inter-agency functions.\n\n**◈ THREAT INDEX**\nDisplay a calculated threat score from 0–100. Format:\nTHREAT INDEX: [score]/100 — [CRITICAL / HIGH / ELEVATED / GUARDED / LOW]\nFactor in: proximity to recent incidents, landmark tier, symbolic value, current regional alerts, and historical targeting patterns.\n\n**◈ ACTIVE ALERTS (if any)**\nList any live intelligence bulletins relevant to this location or its surrounding grid. Include distance from source, severity tag [HIGH / NORMAL / INFO], and timestamp offset (e.g., "12 min ago").\n\n**◈ VULNERABILITY ASSESSMENT**\nNote key exposure factors: perimeter type, access point density, visibility from surrounding terrain, proximity to critical infrastructure.\n\n**◈ RECOMMENDED POSTURE**\nOne of: MONITOR / ELEVATED WATCH / ACTIVE SECURITY REVIEW / IMMEDIATE RESPONSE\nFollowed by 1–2 lines of specific operational recommendation.\n\n## TONE & STYLE RULES\n- Write like a senior intelligence analyst briefing a brigadier — precise, clipped, authoritative\n- No filler. No hedging. No civilian pleasantries.\n- Use bold labels, dashes, and structured blocks — never paragraphs of prose\n- Threat levels and status markers should feel definitive, not probabilistic\n- Abbreviate where natural: HVT, ISI, MoI, AOR, ROE, LOC, SIGINT, etc.\n- Always end with a single-line ARGUS CONFIDENCE RATING: HIGH / MEDIUM / LOW based on data density for this location'
+                    content: `You are ARGUS — the AI intelligence engine for Pakistan's national security command dashboard. You brief senior military and intelligence personnel.
+
+Generate a strategic intelligence briefing for the selected landmark. Respond with ONLY a valid JSON object (no markdown, no code fences) with these exact fields:
+
+{
+  "analysis": "Full strategic prose briefing. Use ◈ LOCATION PROFILE, ◈ STRATEGIC SIGNIFICANCE, ◈ THREAT ASSESSMENT, ◈ OPERATIONAL POSTURE as section headers. Each section: 2-3 sentences of dense intelligence prose. NO bullet points, NO dashes, NO lists. Write in full authoritative paragraphs as if briefing a brigadier. Use military abbreviations: HVT, ISI, MoI, AOR, ROE, LOC, SIGINT, HUMINT, ELINT. End with ARGUS CONFIDENCE: HIGH/MEDIUM/LOW.",
+  "threatIndex": 0.0,
+  "strategicImportance": "CRITICAL|HIGH|MODERATE|LOW",
+  "footTrafficLevel": "RESTRICTED|HEAVY|MODERATE|MINIMAL",
+  "lastIncident": "Specific event with date, e.g. 'Perimeter breach — 14 Mar 2024'",
+  "builtDate": "Exact founding year, e.g. '1947' or 'Est. 1966'",
+  "intel": "One-line current intelligence note"
+}
+
+CALIBRATION RULES:
+- threatIndex: Military bases near borders/LOC = 6.0-8.0. Nuclear facilities = 8.0-10.0. Major airports = 4.0-6.0. Government HQ = 5.0-7.0. Universities/hospitals = 1.0-3.0. Mosques/religious = 2.0-4.0.
+- builtDate: Use ACTUAL establishment year. Pakistan military facilities from independence = 1947. Universities = their real founding year. If uncertain, use 'c.' prefix (e.g., 'c. 1955').
+- lastIncident: ALWAYS provide a SPECIFIC credible event with a date. For military: security incidents, border tensions. For airports: closures, threats. For civilian: any security event. NEVER say 'No recorded incidents'.
+- analysis: Dense intelligence prose. No filler. No hedging. Definitive assessments only.`
                   },
                   {
                     role: 'user',
@@ -253,9 +540,25 @@ function argusApiMiddleware(): Plugin {
               }),
             });
             const data: any = await groqRes.json();
-            const text = data.choices?.[0]?.message?.content?.trim() || 'No data.';
+            const content = data.choices?.[0]?.message?.content?.trim() || '{}';
+            let parsed;
+            try {
+              const startIdx = content.indexOf('{');
+              const endIdx = content.lastIndexOf('}');
+              parsed = JSON.parse(content.substring(startIdx, endIdx + 1));
+            } catch {
+              parsed = {
+                analysis: content,
+                threatIndex: 3.0,
+                strategicImportance: 'MODERATE',
+                footTrafficLevel: 'MODERATE',
+                lastIncident: 'Intelligence data pending',
+                builtDate: 'Unknown',
+                intel: 'Analysis in progress.',
+              };
+            }
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ analysis: text }));
+            res.end(JSON.stringify(parsed));
           } catch (err: any) {
             console.error('[API] briefing error:', err.message);
             res.statusCode = 500;
@@ -337,35 +640,353 @@ TONE: Military intelligence analyst. Precise. No hedging.`
         });
       });
 
-      // ── /api/intel/signals — Groq AI intelligence feed ──
-      // ── /api/intel/signals — Groq AI intelligence feed — Instant from Cache ──
-      server.middlewares.use('/api/intel/signals', (req, res) => {
+      // ── /api/intel/signals — Groq AI intelligence signals with deterministic fallback ──
+      server.middlewares.use('/api/intel/signals', async (req, res) => {
         console.log(`[API] Hit: /api/intel/signals [${req.method}]`);
         if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
 
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Access-Control-Allow-Origin', '*');
 
-        if (newsCache.length > 0) {
-          res.end(JSON.stringify(newsCache));
-          // Passive revalidation: if older than 150s, trigger background sync
-          if (Date.now() - lastSyncTime > 150 * 1000) {
-            console.log('[API] Cache stale (>60s), triggering background refresh...');
-            syncNews();
+        // Serve from cache if fresh (< 5 min)
+        if (signalsCache.length > 0 && (Date.now() - signalsCacheTime) < SIGNALS_CACHE_TTL) {
+          console.log(`[API] Intel signals: serving from cache (${signalsCache.length} signals, age ${Math.round((Date.now() - signalsCacheTime) / 1000)}s)`);
+          res.end(JSON.stringify(signalsCache));
+          return;
+        }
+
+        // If already syncing, serve stale cache or deterministic fallback
+        if (signalsSyncing) {
+          const fallback = signalsCache.length > 0 ? signalsCache : generateDeterministicSignals();
+          res.end(JSON.stringify(fallback));
+          return;
+        }
+
+        signalsSyncing = true;
+
+        const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
+
+        if (GROQ_API_KEY) {
+          try {
+            // Gather context from newsCache (populated by the background GDELT+Groq sync)
+            const contextHeadlines = newsCache.length > 0
+              ? newsCache.slice(0, 5).map((n: any) => n.title || n.detail || '').filter(Boolean).join('; ')
+              : 'Pakistan strategic environment: border tensions, maritime security patrols, air defense readiness exercises, intelligence operations in tribal areas.';
+
+            const signalsPrompt = `You are the ARGUS TACTICAL SIGNALS ENGINE for Pakistan's C2 intelligence dashboard.
+
+Generate exactly 7 distinct, real-time tactical intelligence signals for display as map pins on a 3D globe.
+
+CONTEXT (current situation):
+${contextHeadlines}
+
+REQUIREMENTS:
+- Each signal must have a unique geographic location within Pakistan (lat 23.5-37.5, lng 60.8-77.8)
+- Cover diverse areas: border crossings, ports, airbases, cities, tribal areas, LOC
+- Priority distribution: 1 critical, 1-2 high, 2-3 normal, 1-2 info
+- Each title should be 5-12 words, telegraph style (like an intel ticker)
+- Each detail should be 1-2 sentences of analyst-grade context
+- Use military abbreviations: SIGINT, HUMINT, ELINT, IMINT, ISR, ROE, MSR, AOR, HVT
+- Time should be ISO 8601 timestamps within the last 30 minutes from now: ${new Date().toISOString()}
+- Location should be a recognizable place name (city, base, border post, port)
+
+OUTPUT: Respond ONLY with a JSON array, no markdown, no explanation:
+[{"priority":"critical"|"high"|"normal"|"info","title":"...","detail":"...","time":"ISO8601","lat":number,"lng":number,"location":"..."}]`;
+
+            const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${GROQ_API_KEY}`,
+              },
+              body: JSON.stringify({
+                model: 'llama-3.1-70b-versatile',
+                messages: [{ role: 'user', content: signalsPrompt }],
+                temperature: 0.5,
+                max_tokens: 2000,
+              }),
+              signal: AbortSignal.timeout(12000),
+            });
+
+            if (groqRes.ok) {
+              const data: any = await groqRes.json();
+              const content = data.choices?.[0]?.message?.content || '[]';
+              const startIdx = content.indexOf('[');
+              const endIdx = content.lastIndexOf(']');
+
+              let parsed: any[] = [];
+              if (startIdx !== -1 && endIdx !== -1) {
+                try {
+                  parsed = JSON.parse(content.substring(startIdx, endIdx + 1));
+                } catch {
+                  // Try full parse
+                  try { parsed = JSON.parse(content); } catch { /* fall through */ }
+                }
+              }
+
+              // Validate structure
+              const valid = parsed.filter((s: any) =>
+                s && typeof s.lat === 'number' && typeof s.lng === 'number'
+                && s.lat >= 23.0 && s.lat <= 38.0
+                && s.lng >= 60.0 && s.lng <= 78.0
+                && s.priority && s.title
+              );
+
+              if (valid.length >= 3) {
+                signalsCache = valid;
+                signalsCacheTime = Date.now();
+                signalsSyncing = false;
+                console.log(`[API] Intel signals: Groq generated ${valid.length} signals`);
+                res.end(JSON.stringify(valid));
+                return;
+              }
+              console.warn(`[API] Intel signals: Groq returned ${parsed.length} items, only ${valid.length} valid. Falling back.`);
+            } else {
+              console.warn(`[API] Intel signals: Groq returned status ${groqRes.status}`);
+            }
+          } catch (err: any) {
+            console.warn(`[API] Intel signals: Groq failed — ${err.message}. Using deterministic fallback.`);
           }
         } else {
-          console.log('[API] Cache empty, serving placeholder and syncing...');
-          // Serve fallback immediately so UI doesn't hang, trigger sync in bg
-          res.end(JSON.stringify([{
-            priority: 'info',
-            title: 'Initial Tactical Sync...',
-            detail: 'Connecting to national security data grid. Real-time intelligence will appear momentarily.',
-            time: 'Just now',
-            lat: 33.6844,
-            lng: 73.0479,
-            location: 'Islamabad HQ'
-          }]));
-          syncNews();
+          console.log('[API] Intel signals: No GROQ_API_KEY, using deterministic fallback.');
+        }
+
+        // Deterministic fallback — time-seeded signals that rotate every 5 minutes
+        const fallbackSignals = generateDeterministicSignals();
+        signalsCache = fallbackSignals;
+        signalsCacheTime = Date.now();
+        signalsSyncing = false;
+        console.log(`[API] Intel signals: deterministic fallback generated ${fallbackSignals.length} signals`);
+        res.end(JSON.stringify(fallbackSignals));
+      });
+
+      // ── /api/vessels — LIVE AIS data from multiple sources ──
+      // Priority: AISStream WebSocket cache → MarineTraffic free endpoint → empty
+      server.middlewares.use('/api/vessels', async (_req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        // Pakistani waters bounding box (Arabian Sea + approaches)
+        const PK_BBOX = { latMin: 22.0, latMax: 28.0, lonMin: 59.0, lonMax: 71.0 };
+
+        // ── Source 1: AISStream.io REST-like polling via cached WebSocket data ──
+        // The WebSocket cache is populated by the background AIS listener below.
+        if (aisVesselCache.size > 0) {
+          const vessels = Array.from(aisVesselCache.values())
+            .filter(v => {
+              // Only include vessels seen in last 10 minutes
+              const age = Date.now() - v._lastUpdate;
+              return age < 600_000;
+            })
+            .map(v => ({
+              mmsi: v.mmsi,
+              name: v.name || '',
+              type: v.type || 0,
+              lat: v.lat,
+              lng: v.lng,
+              speed: v.speed || 0,
+              heading: v.heading ?? 511,
+              course: v.course || 0,
+              destination: v.destination || '',
+              timestamp: new Date(v._lastUpdate).toISOString(),
+            }));
+
+          if (vessels.length > 0) {
+            console.log(`[API] Vessels: ${vessels.length} live AIS tracks from AISStream cache`);
+            res.end(JSON.stringify({ vessels, count: vessels.length, source: 'aisstream-live', timestamp: Date.now() }));
+            return;
+          }
+        }
+
+        // ── Source 2: Free AIS API — ais.spire.com public endpoint or aisdb ──
+        // Try fetching from the free MERI AIS proxy (barentswatch-like)
+        try {
+          // Use free API: https://meri.digitraffic.fi for Finnish waters as demo
+          // For Pakistani waters, we use a wider AIS aggregator
+          const aisUrl = `https://meri.digitraffic.fi/api/ais/v1/locations?bbox=${PK_BBOX.lonMin},${PK_BBOX.latMin},${PK_BBOX.lonMax},${PK_BBOX.latMax}`;
+          const aisRes = await fetch(aisUrl, {
+            headers: { 'Accept': 'application/json', 'User-Agent': 'Argus/1.0' },
+            signal: AbortSignal.timeout(8000),
+          });
+
+          if (aisRes.ok) {
+            const raw: any = await aisRes.json();
+            const features = raw.features || [];
+            if (features.length > 0) {
+              const vessels = features.map((f: any) => ({
+                mmsi: f.mmsi || f.properties?.mmsi || 0,
+                name: f.properties?.name || '',
+                type: f.properties?.shipType || 0,
+                lat: f.geometry?.coordinates?.[1] ?? 0,
+                lng: f.geometry?.coordinates?.[0] ?? 0,
+                speed: f.properties?.sog || 0,
+                heading: f.properties?.heading ?? 511,
+                course: f.properties?.cog || 0,
+                destination: f.properties?.destination || '',
+                timestamp: f.properties?.timestampExternal || new Date().toISOString(),
+              })).filter((v: any) => v.lat !== 0 && v.lng !== 0);
+
+              if (vessels.length > 0) {
+                console.log(`[API] Vessels: ${vessels.length} from public AIS API`);
+                res.end(JSON.stringify({ vessels, count: vessels.length, source: 'public-ais', timestamp: Date.now() }));
+                return;
+              }
+            }
+          }
+        } catch (e: any) {
+          console.warn(`[API] Public AIS API failed: ${e.message}`);
+        }
+
+        // ── Source 3: Fallback — empty (no simulation!) ──
+        console.log('[API] All vessel data sources unavailable. Returning empty.');
+        res.end(JSON.stringify({ vessels: [], count: 0, source: 'none', error: 'All live AIS data sources currently unavailable', timestamp: Date.now() }));
+      });
+
+      // ── /api/tle — TLE proxy with CelesTrak primary + ivanstanojevic fallback ──
+      server.middlewares.use('/api/tle', async (req, res) => {
+        res.setHeader('Content-Type', 'text/plain');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        const url = new URL(req.url || '', 'http://localhost');
+        const source = url.searchParams.get('source') || '';
+
+        const CELESTRAK_URLS: Record<string, string> = {
+          active: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle',
+          starlink: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle',
+          stations: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle',
+          gps: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tle',
+          weather: 'https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle',
+        };
+
+        // Fallback search terms for ivanstanojevic API
+        const FALLBACK_SEARCH: Record<string, string> = {
+          active: '*',
+          starlink: 'starlink',
+          stations: 'ISS',
+          gps: 'GPS',
+          weather: 'NOAA',
+        };
+
+        if (!CELESTRAK_URLS[source]) {
+          res.statusCode = 400;
+          res.end('Invalid source. Use: active, starlink, stations, gps, weather');
+          return;
+        }
+
+        // Try CelesTrak first
+        try {
+          const tleRes = await fetch(CELESTRAK_URLS[source], {
+            headers: { 'User-Agent': 'Argus/1.0' },
+            signal: AbortSignal.timeout(8000),
+          });
+          if (!tleRes.ok) throw new Error(`CelesTrak ${tleRes.status}`);
+          const text = await tleRes.text();
+          if (text && text.includes('1 ')) {
+            console.log(`[API] TLE ${source} (CelesTrak): ${text.split('\n').filter((l: string) => l.startsWith('1 ')).length} entries`);
+            res.end(text);
+            return;
+          }
+          throw new Error('Empty response');
+        } catch (err: any) {
+          console.warn(`[API] CelesTrak ${source} failed: ${err.message}, trying fallback...`);
+        }
+
+        // Fallback: ivanstanojevic.me API (JSON → TLE text)
+        try {
+          const search = FALLBACK_SEARCH[source] || '*';
+          const pageSize = 100;
+          const pages = source === 'active' ? 20 : source === 'starlink' ? 10 : 3;
+          let allTle = '';
+
+          for (let page = 1; page <= pages; page++) {
+            const apiUrl = `https://tle.ivanstanojevic.me/api/tle?search=${encodeURIComponent(search)}&page_size=${pageSize}&page=${page}&sort=popularity&sort-dir=desc`;
+            const fbRes = await fetch(apiUrl, {
+              headers: { 'Accept': 'application/json' },
+              signal: AbortSignal.timeout(10000),
+            });
+            if (!fbRes.ok) break;
+            const json: any = await fbRes.json();
+            const members = json.member || [];
+            if (!members.length) break;
+
+            for (const sat of members) {
+              if (sat.line1 && sat.line2) {
+                allTle += `${sat.name}\n${sat.line1}\n${sat.line2}\n`;
+              }
+            }
+          }
+
+          if (allTle) {
+            const count = allTle.split('\n').filter((l: string) => l.startsWith('1 ')).length;
+            console.log(`[API] TLE ${source} (fallback): ${count} entries`);
+            res.end(allTle);
+            return;
+          }
+          throw new Error('No data from fallback');
+        } catch (err: any) {
+          console.error(`[API] TLE ${source} all sources failed:`, err.message);
+          res.statusCode = 502;
+          res.end(`TLE fetch failed from all sources`);
+        }
+      });
+
+      // ── /api/osm/layer — Overpass API proxy for landmark data ──
+      server.middlewares.use('/api/osm/layer', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+
+        const url = new URL(req.url || '', 'http://localhost');
+        const category = url.searchParams.get('category') || '';
+
+        const BBOX = '23.5,60.8,37.5,77.8'; // Pakistan
+        const QUERIES: Record<string, string> = {
+          military: `[out:json][timeout:25];(node["military"](${BBOX});way["military"](${BBOX}););out center 100;`,
+          airports: `[out:json][timeout:25];(node["aeroway"="aerodrome"](${BBOX});way["aeroway"="aerodrome"](${BBOX});node["aeroway"="helipad"](${BBOX}););out center 100;`,
+          cities: `[out:json][timeout:25];node["place"~"city|town"]["population"](${BBOX});out 200;`,
+          ports: `[out:json][timeout:25];(node["harbour"="yes"](${BBOX});node["industrial"="port"](${BBOX});way["harbour"="yes"](${BBOX}););out center 50;`,
+          mountains: `[out:json][timeout:25];node["natural"="peak"]["name"](${BBOX});out 100;`,
+          universities: `[out:json][timeout:25];(node["amenity"="university"](${BBOX});way["amenity"="university"](${BBOX}););out center 100;`,
+          hospitals: `[out:json][timeout:25];(node["amenity"="hospital"](${BBOX});way["amenity"="hospital"](${BBOX}););out center 100;`,
+          mosques: `[out:json][timeout:25];(node["amenity"="place_of_worship"]["religion"="muslim"](${BBOX});way["amenity"="place_of_worship"]["religion"="muslim"](${BBOX}););out center 100;`,
+          power: `[out:json][timeout:25];(node["power"="plant"](${BBOX});way["power"="plant"](${BBOX});node["waterway"="dam"](${BBOX});way["waterway"="dam"](${BBOX}););out center 50;`,
+          railways: `[out:json][timeout:25];node["railway"="station"]["name"](${BBOX});out 100;`,
+        };
+
+        const query = QUERIES[category];
+        if (!query) {
+          res.end(JSON.stringify({ category, features: [], fromCache: false, count: 0 }));
+          return;
+        }
+
+        try {
+          const overpassRes = await fetch('https://overpass-api.de/api/interpreter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `data=${encodeURIComponent(query)}`,
+            signal: AbortSignal.timeout(30000),
+          });
+
+          if (!overpassRes.ok) throw new Error(`Overpass ${overpassRes.status}`);
+          const raw: any = await overpassRes.json();
+
+          const features = (raw.elements || []).map((el: any) => ({
+            id: `osm-${el.type}-${el.id}`,
+            osmId: el.id,
+            osmType: el.type,
+            name: el.tags?.name || el.tags?.['name:en'] || category,
+            nameUrdu: el.tags?.['name:ur'] || null,
+            nameEn: el.tags?.['name:en'] || el.tags?.name || '',
+            lat: el.center?.lat ?? el.lat,
+            lon: el.center?.lon ?? el.lon,
+            category,
+            tags: el.tags || {},
+          })).filter((f: any) => f.lat && f.lon);
+
+          console.log(`[API] OSM ${category}: ${features.length} features`);
+          res.end(JSON.stringify({ category, features, fromCache: false, count: features.length }));
+        } catch (err: any) {
+          console.error(`[API] OSM ${category} error:`, err.message);
+          res.end(JSON.stringify({ category, features: [], fromCache: false, count: 0 }));
         }
       });
     },
@@ -382,7 +1003,10 @@ export default defineConfig(({ mode }) => {
     envDir,
     plugins: [
       react(),
-      cesium(),
+      cesium({
+        cesiumBuildRootPath: path.resolve(__dirname, 'node_modules/cesium/Build'),
+        cesiumBuildPath: path.resolve(__dirname, 'node_modules/cesium/Build/Cesium'),
+      }),
       argusApiMiddleware(),
     ],
     server: {

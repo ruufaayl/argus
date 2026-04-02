@@ -44,34 +44,33 @@ const PK_LON_MIN = 60.8;
 const PK_LON_MAX = 77.8;
 
 // ── TLE proxy endpoint ────────────────────────────────────────
-// Worker cannot use import.meta.env — hardcode API base
-// The proxy adds CORS headers and caches for 6 hours
-const API_BASE = 'http://localhost:8787';
+// Worker fetches TLE data via Vite dev server proxy (/api/tle)
+// This avoids CORS issues that occur with direct CelesTrak fetch from Web Workers
 
 // ── TLE source list ───────────────────────────────────────────
 const TLE_SOURCES = [
   {
-    url: 'https://celestrak.org/GPGP/groups/active.txt',
+    url: '/api/tle?source=active',
     category: 'other' as const,
     label: 'Active satellites',
   },
   {
-    url: 'https://celestrak.org/GPGP/groups/starlink.txt',
+    url: '/api/tle?source=starlink',
     category: 'starlink' as const,
     label: 'Starlink constellation',
   },
   {
-    url: 'https://celestrak.org/GPGP/groups/stations.txt',
+    url: '/api/tle?source=stations',
     category: 'iss' as const,
     label: 'Space stations',
   },
   {
-    url: 'https://celestrak.org/GPGP/groups/gps-ops.txt',
+    url: '/api/tle?source=gps',
     category: 'gps' as const,
     label: 'GPS constellation',
   },
   {
-    url: 'https://celestrak.org/GPGP/groups/weather.txt',
+    url: '/api/tle?source=weather',
     category: 'weather' as const,
     label: 'Weather satellites',
   },
@@ -202,12 +201,8 @@ async function fetchTLESource(
   label: string
 ): Promise<SatRecord[]> {
   try {
-    const proxyUrl =
-      `${API_BASE}/api/tle?url=${encodeURIComponent(url)}`;
-
-    const res = await fetch(proxyUrl, {
-      headers: { 'Accept': 'text/plain' },
-    });
+    // Fetch via Vite dev server proxy (CORS-safe)
+    const res = await fetch(url);
 
     if (!res.ok) {
       console.warn(

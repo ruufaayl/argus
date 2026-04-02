@@ -24,6 +24,8 @@ import { SelectionRing } from './layers/SelectionRing';
 import { IntelPinLayer } from './layers/IntelPinLayer';
 import { BorderCheckpostLayer } from './layers/BorderCheckpostLayer';
 import { ProjectedRouteLayer } from './layers/ProjectedRouteLayer';
+import { CCTVLayer } from './layers/CCTVLayer';
+import { SigintLayer } from './layers/SigintLayer';
 
 // ════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -31,11 +33,10 @@ import { ProjectedRouteLayer } from './layers/ProjectedRouteLayer';
 
 const PK_LON = 69.1912;
 const PK_LAT = 31.2836;
-const PK_OPEN_ALT = 2000000;
-const PK_MAX_ALT = 2500000;
+const PK_OPEN_ALT = 4500000;
+const PK_MAX_ALT = 40000000;  // 40,000km — see all satellites
 const PK_MIN_ALT = 150;
-const PK_DRIFT_KM = 1400;
-const GOOGLE_CDN_REQS = 18;
+const IDLE_TIMEOUT_MS = 15_000;  // 15s idle → auto zoom out
 
 // ── View mode CSS filters ────────────────────────────────────
 // Applied to #cesiumContainer div — NOT GLSL shaders.
@@ -60,22 +61,6 @@ function buildVisionCSS(v: VisionState): string {
   ].join(' ');
 }
 
-// ── Haversine distance ───────────────────────────────────────
-function haversineKm(
-  lat1: number, lon1: number,
-  lat2: number, lon2: number
-): number {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
 // ════════════════════════════════════════════════════════════
 // PROPS
 // ════════════════════════════════════════════════════════════
@@ -98,8 +83,11 @@ export function Globe({ viewerRef }: Props) {
   // Internal refs
   const mouseHandlerRef = useRef<Cesium.ScreenSpaceEventHandler>();
   const bloomRef = useRef<any>(null);
-  const boundaryLockRef = useRef(false);
+  // boundaryLockRef removed (unused)
   const tilesetRef = useRef<Cesium.Cesium3DTileset | null>(null);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const isFlyingRef = useRef(false);
+  const trackedEntityRef = useRef<{lon: number; lat: number; alt: number; type: string} | null>(null);
 
   // ── Main initialisation ────────────────────────────────────
   useEffect(() => {
@@ -112,10 +100,8 @@ export function Globe({ viewerRef }: Props) {
         return;
       }
 
-      // ── 1. Google CDN throughput ───────────────────────────
-      Cesium.RequestScheduler.requestsByServer[
-        'tile.googleapis.com:443'
-      ] = GOOGLE_CDN_REQS;
+      // ── 1. Disable Cesium Ion completely ────────────────
+      Cesium.Ion.defaultAccessToken = '';
 
       // ── 2. Cesium Viewer ───────────────────────────────────
       // requestRenderMode: false — NON-NEGOTIABLE
@@ -151,75 +137,71 @@ export function Globe({ viewerRef }: Props) {
       // Resolution scale for HiDPI displays
       viewer.resolutionScale = window.devicePixelRatio || 1;
 
-      // ── 3. Google Photorealistic 3D Tiles ─────────────────
+      // ── 3. Globe imagery — multi-source with fallback ──
+      viewer.scene.globe.show = true;
+      viewer.scene.globe.baseColor =
+        Cesium.Color.fromCssColorString('#0A1628');
+
+      // Remove ALL default imagery layers (Ion-based or otherwise)
+      viewer.imageryLayers.removeAll();
+
+      // ── Render error recovery (must be set BEFORE adding imagery) ──
+      viewer.scene.renderError.addEventListener((_scene: any, error: any) => {
+        const msg = error?.message || String(error);
+        console.warn('[ARGUS] Render error (recovering):', msg);
+        if (!viewer.useDefaultRenderLoop) {
+          setTimeout(() => {
+            if (!viewer.isDestroyed() && !viewer.useDefaultRenderLoop) {
+              console.warn('[ARGUS] Restarting render loop...');
+              viewer.useDefaultRenderLoop = true;
+            }
+          }, 100);
+        }
+      });
+
+      // ── Global imagery error interceptor ──────────────────
+      viewer.imageryLayers.layerAdded.addEventListener((layer: Cesium.ImageryLayer) => {
+        const provider = layer.imageryProvider;
+        if (provider?.errorEvent) {
+          provider.errorEvent.addEventListener(() => false);
+        }
+      });
+
+      // ── Add imagery: Cesium built-in NaturalEarth base + Esri overlay ──
+      // NaturalEarthII ships with Cesium static assets (served by vite-plugin-cesium)
+      // This gives us a guaranteed base layer even if external tiles fail.
       try {
-        const googleTileset = await Cesium.Cesium3DTileset.fromUrl(
-          `https://tile.googleapis.com/v1/3dtiles/root.json` +
-          `?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}`,
-          {
-            maximumScreenSpaceError: 4,  // SHARP (default 16 = blurry)
-            dynamicScreenSpaceError: true,
-            dynamicScreenSpaceErrorDensity: 0.00278,
-            dynamicScreenSpaceErrorFactor: 4.0,
-            dynamicScreenSpaceErrorHeightFalloff: 0.25,
-            skipLevelOfDetail: true,
-            skipScreenSpaceErrorFactor: 16,
-            skipLevels: 1,
-            immediatelyLoadDesiredLevelOfDetail: false,
-            loadSiblings: false,
-            preloadWhenHidden: false,
-            cullWithChildrenBounds: true,
-            showCreditsOnScreen: true,
-          }
+        const naturalEarth = await Cesium.TileMapServiceImageryProvider.fromUrl(
+          Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
         );
-
-        if (!destroyed) {
-          viewer.scene.primitives.add(googleTileset);
-          viewer.scene.globe.show = false;
-          tilesetRef.current = googleTileset;
-          console.log('[ARGUS] Google 3D Tiles: ONLINE');
-        }
-      } catch (e) {
-        console.error('[ARGUS] Google 3D Tiles failed:', e);
-        viewer.scene.globe.show = true;
-        viewer.scene.globe.baseColor =
-          Cesium.Color.fromCssColorString('#0A1628');
-        try {
-          viewer.imageryLayers.addImageryProvider(
-            await Cesium.IonImageryProvider.fromAssetId(2)
-          );
-          console.log('[ARGUS] Bing fallback: ONLINE');
-        } catch {
-          viewer.imageryLayers.addImageryProvider(
-            new Cesium.UrlTemplateImageryProvider({
-              url:
-                'https://services.arcgisonline.com/arcgis' +
-                '/rest/services/World_Imagery/MapServer' +
-                '/tile/{z}/{y}/{x}',
-              maximumLevel: 19,
-            })
-          );
-          console.log('[ARGUS] Esri fallback: ONLINE');
-        }
+        naturalEarth.errorEvent.addEventListener(() => false);
+        viewer.imageryLayers.addImageryProvider(naturalEarth);
+        console.log('[ARGUS] NaturalEarth base imagery: ONLINE');
+      } catch (neErr) {
+        console.warn('[ARGUS] NaturalEarth failed:', neErr);
       }
 
-      // ── 4. World Terrain + Water ───────────────────────────
-      try {
-        viewer.terrainProvider =
-          await Cesium.createWorldTerrainAsync({
-            requestWaterMask: true,
-            requestVertexNormals: true,
-          });
-        viewer.scene.globe.showWaterEffect = true;
-        console.log('[ARGUS] Terrain + water: ONLINE');
-      } catch (e) {
-        console.warn('[ARGUS] Terrain failed:', e);
-      }
+      // Esri World Imagery overlay (high-res satellite tiles)
+      const esriProvider = new Cesium.UrlTemplateImageryProvider({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        maximumLevel: 19,
+        credit: 'Esri, Maxar, Earthstar Geographics',
+      });
+      esriProvider.errorEvent.addEventListener(() => false);
+      const esriLayer = viewer.imageryLayers.addImageryProvider(esriProvider);
+      esriLayer.alpha = 1.0;
+      console.log('[ARGUS] Esri World Imagery overlay: ONLINE');
+
+      console.log('[ARGUS] Imagery layers:', viewer.imageryLayers.length);
+
+      // ── 4. Terrain — ellipsoid (flat, no Ion required) ───
+      viewer.scene.globe.showWaterEffect = false;
+      console.log('[ARGUS] Ellipsoid terrain: ONLINE');
 
       // ── 5. Scene configuration ─────────────────────────────
       viewer.scene.sun = new Cesium.Sun();
       viewer.scene.moon = new Cesium.Moon();
-      viewer.scene.globe.enableLighting = true;
+      viewer.scene.globe.enableLighting = false;
       // CRITICAL: Must be FALSE when using Google 3D Tiles
       // true = billboards (flights/vessels/satellites) render BEHIND tiles = invisible
       viewer.scene.globe.depthTestAgainstTerrain = false;
@@ -246,13 +228,13 @@ export function Globe({ viewerRef }: Props) {
 
       // ── 7. Camera physics ──────────────────────────────────
       const ctrl = viewer.scene.screenSpaceCameraController;
-      ctrl.inertiaSpin = 0.95;
-      ctrl.inertiaTranslate = 0.95;
-      ctrl.inertiaZoom = 0.88;
+      ctrl.inertiaSpin = 0.97;
+      ctrl.inertiaTranslate = 0.97;
+      ctrl.inertiaZoom = 0.92;
       ctrl.minimumZoomDistance = PK_MIN_ALT;
       ctrl.maximumZoomDistance = PK_MAX_ALT;
       ctrl.maximumMovementRatio = 0.1;
-      ctrl.bounceAnimationTime = 3.0;
+      ctrl.bounceAnimationTime = 2.0;
       ctrl.enableCollisionDetection = true;
 
       ctrl.tiltEventTypes = [
@@ -328,30 +310,126 @@ export function Globe({ viewerRef }: Props) {
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       );
 
-      // ── 11. Pakistan soft boundary enforcement ─────────────
-      viewer.scene.postRender.addEventListener(() => {
-        if (boundaryLockRef.current) return;
-        const carto = viewer.camera.positionCartographic;
-        if (!carto) return;
-        const altKm = carto.height / 1000;
-        if (altKm > 600) return;
-        const lat = Cesium.Math.toDegrees(carto.latitude);
-        const lon = Cesium.Math.toDegrees(carto.longitude);
-        const dist = haversineKm(lat, lon, PK_LAT, PK_LON);
-        if (dist > PK_DRIFT_KM) {
-          boundaryLockRef.current = true;
-          viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(
-              PK_LON, PK_LAT,
-              Math.max(carto.height, 800000)
-            ),
-            duration: 2.0,
-            easingFunction: Cesium.EasingFunction.QUADRATIC_IN_OUT,
-            complete: () => { boundaryLockRef.current = false; },
-            cancel: () => { boundaryLockRef.current = false; },
-          });
-        }
-      });
+      // ── 10b. Click-to-fly — click anywhere on globe ──────
+      // If no entity is picked (LandmarkLayer handles entity clicks),
+      // fly to 2km above clicked point and show coordinate pin.
+      mouseHandlerRef.current.setInputAction(
+        (e: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+          try {
+            // Check if an entity/primitive was picked — let layer handlers deal with those
+            const picked = viewer.scene.pick(e.position);
+            if (Cesium.defined(picked) && picked.id) return;
+
+            // Get globe surface position
+            const ray = viewer.camera.getPickRay(e.position);
+            if (!ray) return;
+
+            const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+            if (!cartesian) return;
+
+            const carto = Cesium.Cartographic.fromCartesian(cartesian);
+            if (!carto) return;
+
+            const lat = Cesium.Math.toDegrees(carto.latitude);
+            const lng = Cesium.Math.toDegrees(carto.longitude);
+
+            // Cancel any in-flight animation first to prevent crash
+            viewer.camera.cancelFlight();
+            isFlyingRef.current = true;
+
+            // Fly to 2km above the clicked point
+            viewer.camera.flyTo({
+              destination: Cesium.Cartesian3.fromDegrees(lng, lat, 2000),
+              orientation: {
+                heading: 0,
+                pitch: Cesium.Math.toRadians(-45),
+                roll: 0,
+              },
+              duration: 2.5,
+              easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+              complete: () => { isFlyingRef.current = false; },
+              cancel: () => { isFlyingRef.current = false; },
+            });
+
+            // Add a temporary coordinate pin at clicked location
+            const pinId = `click-pin-${Date.now()}`;
+            viewer.entities.add({
+              id: pinId,
+              position: Cesium.Cartesian3.fromDegrees(lng, lat, 50),
+              point: {
+                pixelSize: 10,
+                color: Cesium.Color.fromCssColorString('#00FFCC'),
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 2,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+              },
+              label: {
+                text: `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`,
+                font: '13px "Inter", sans-serif',
+                fillColor: Cesium.Color.WHITE,
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 3,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                pixelOffset: new Cesium.Cartesian2(0, -24),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                showBackground: true,
+                backgroundColor: Cesium.Color.fromCssColorString('rgba(10,20,30,0.85)'),
+                backgroundPadding: new Cesium.Cartesian2(8, 5),
+              },
+            });
+
+            // Remove pin after 8 seconds
+            setTimeout(() => {
+              if (!viewer.isDestroyed()) {
+                viewer.entities.removeById(pinId);
+              }
+            }, 8000);
+
+          } catch {
+            // Ignore pick errors
+          }
+        },
+        Cesium.ScreenSpaceEventType.LEFT_CLICK
+      );
+
+      // ── 11. Idle auto-zoom out ──────────────────────────────
+      // If user is idle for 15 seconds, zoom back to default Pakistan view
+      let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const resetIdleTimer = () => {
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          if (viewer.isDestroyed() || isFlyingRef.current) return;
+          const h = viewer.camera.positionCartographic?.height ?? 0;
+          // Only auto-zoom if currently zoomed in (below 1000km)
+          if (h < 1_000_000) {
+            isFlyingRef.current = true;
+            viewer.camera.flyTo({
+              destination: Cesium.Cartesian3.fromDegrees(
+                PK_LON, PK_LAT, PK_OPEN_ALT
+              ),
+              orientation: {
+                heading: 0,
+                pitch: Cesium.Math.toRadians(-90),
+                roll: 0,
+              },
+              duration: 3.0,
+              easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+              complete: () => { isFlyingRef.current = false; },
+              cancel: () => { isFlyingRef.current = false; },
+            });
+          }
+        }, IDLE_TIMEOUT_MS);
+      };
+
+      // Reset timer on any user interaction
+      const canvas = viewer.scene.canvas;
+      canvas.addEventListener('pointerdown', resetIdleTimer);
+      canvas.addEventListener('pointermove', resetIdleTimer);
+      canvas.addEventListener('wheel', resetIdleTimer);
+      resetIdleTimer(); // Start initial timer
+
+      idleTimerRef.current = idleTimer!;
 
       // ── 12. Adaptive FPS performance monitor ──────────────
       let frames = 0;
@@ -391,6 +469,7 @@ export function Globe({ viewerRef }: Props) {
     // ── Cleanup ────────────────────────────────────────────
     return () => {
       destroyed = true;
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       mouseHandlerRef.current?.destroy();
 
       const v = viewerRef.current;
@@ -411,10 +490,17 @@ export function Globe({ viewerRef }: Props) {
     el.style.filter = VIEW_MODE_FILTERS[viewMode] ?? 'none';
   }, [viewMode]);
 
-  // ── Fly To Target Listener // Fly-to global command listener
+  // ── Fly To Target Listener — global command listener
   useEffect(() => {
     if (!flyToTarget || !viewerRef.current) return;
-    viewerRef.current.camera.flyTo({
+    const viewer = viewerRef.current;
+    if (viewer.isDestroyed()) return;
+
+    // Guard: cancel any in-flight animation first
+    viewer.camera.cancelFlight();
+    isFlyingRef.current = true;
+
+    viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
         flyToTarget.lng, flyToTarget.lat, 2000
       ),
@@ -425,6 +511,8 @@ export function Globe({ viewerRef }: Props) {
       },
       duration: 3.0,
       easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+      complete: () => { isFlyingRef.current = false; },
+      cancel: () => { isFlyingRef.current = false; },
     });
   }, [flyToTarget, viewerRef]);
 
@@ -446,6 +534,84 @@ export function Globe({ viewerRef }: Props) {
       });
     }
   }, [triggerCinematicZoom, viewerRef]);
+
+  // ── Entity-Centric Camera Tracking ─────────────────────────
+  // When an entity is selected, enable orbit-around-entity mode
+  useEffect(() => {
+    const unsub = useCommandStore.subscribe((state, prev) => {
+      const entity = (state as any).selectedEntity;
+      const prevEntity = (prev as any)?.selectedEntity;
+
+      if (entity === prevEntity) return;
+
+      const viewer = viewerRef.current;
+      if (!viewer || viewer.isDestroyed()) return;
+
+      if (entity && entity.data) {
+        const d = entity.data;
+        let lon = d.lon ?? d.lng ?? 0;
+        let lat = d.lat ?? 0;
+        let alt = 0;
+
+        if (entity.type === 'satellite') {
+          alt = (d.altKm || 400) * 1000;
+        } else if (entity.type === 'flight') {
+          alt = Math.max((d.altitudeFt || 35000) * 0.3048, 1000);
+        } else if (entity.type === 'vessel') {
+          alt = 5;
+        } else {
+          alt = 50;
+        }
+
+        // Set orbit center to entity position
+        const entityPosition = Cesium.Cartesian3.fromDegrees(lon, lat, alt);
+
+        // Create a temporary entity for camera tracking
+        const trackId = '__argus_track_entity__';
+        viewer.entities.removeById(trackId);
+
+        const trackEntity = viewer.entities.add({
+          id: trackId,
+          position: entityPosition,
+          point: {
+            pixelSize: 1,
+            color: Cesium.Color.TRANSPARENT,
+          },
+        });
+
+        // Use Cesium's built-in entity tracking for orbit behavior
+        viewer.trackedEntity = trackEntity;
+        trackedEntityRef.current = { lon, lat, alt, type: entity.type };
+
+        // Fly to appropriate viewing distance
+        const viewDist = entity.type === 'satellite' ? 500000 :
+                         entity.type === 'flight' ? 80000 :
+                         entity.type === 'vessel' ? 2000 : 5000;
+
+        setTimeout(() => {
+          if (viewer.isDestroyed()) return;
+          viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(lon, lat, alt + viewDist),
+            orientation: {
+              heading: 0,
+              pitch: Cesium.Math.toRadians(-45),
+              roll: 0,
+            },
+            duration: 2.0,
+            easingFunction: Cesium.EasingFunction.CUBIC_IN_OUT,
+          });
+        }, 100);
+
+      } else {
+        // Entity deselected — release tracking
+        viewer.trackedEntity = undefined;
+        viewer.entities.removeById('__argus_track_entity__');
+        trackedEntityRef.current = null;
+      }
+    });
+
+    return unsub;
+  }, [viewerRef]);
 
   // View Mode Effects Listener Gear CSS subscription ───────────────────────────
   // Watches visionStore and applies CSS filter when sliders change
@@ -501,6 +667,8 @@ export function Globe({ viewerRef }: Props) {
       <IntelPinLayer viewerRef={viewerRef} />
       <BorderCheckpostLayer viewerRef={viewerRef} />
       <ProjectedRouteLayer viewerRef={viewerRef} />
+      <CCTVLayer viewerRef={viewerRef} />
+      <SigintLayer viewerRef={viewerRef} />
     </div>
   );
 }

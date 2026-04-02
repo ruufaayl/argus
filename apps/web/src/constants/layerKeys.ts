@@ -10,25 +10,18 @@ export const LAYER_KEYS = {
   weather:    'weather',
   satellites: 'satellites',
   landmarks:  'landmarks',
-  traffic:    'traffic',
   seismic:    'seismic',
   incidents:  'incidents',
-  population: 'population',
   border:     'border',
   cctv:       'cctv',
   sigint:     'sigint',
-  // Legacy OSM category keys — mapped into landmarks 
+  // OSM landmark category keys — wired via LandmarkLayer CATEGORY_TO_LAYER mapping
   military:    'military',
-  government:  'government',
   transport:   'transport',
-  commercial:  'commercial',
   education:   'education',
   healthcare:  'healthcare',
   religious:   'religious',
-  tourism:     'tourism',
   industrial:  'industrial',
-  residential: 'residential',
-  media:       'media',
 } as const;
 
 export type LayerKey = typeof LAYER_KEYS[keyof typeof LAYER_KEYS];

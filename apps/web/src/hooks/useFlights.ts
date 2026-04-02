@@ -8,7 +8,7 @@ import { useCommandStore } from '../stores/commandStore';
 import type { FlightEntity } from '../stores/commandStore';
 import { audioService } from '../services/audioService';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API = import.meta.env.VITE_API_URL ?? '';
 const POLL_INTERVAL = 15_000;
 
 interface RawFlight {

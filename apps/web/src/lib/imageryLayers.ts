@@ -74,18 +74,3 @@ export async function setupImageryLayers(
   return { baseLayer, nightLayer };
 }
 
-// Smooth night lights fade — call on every altitude change
-export function updateNightLights(
-  altitude: number,
-  nightLayer: Cesium.ImageryLayer | null
-): void {
-  if (!nightLayer) return;
-  let target = 0.0;
-  if (altitude > 300000) {
-    target = 0.88;
-  } else if (altitude > 100000) {
-    target = ((altitude - 100000) / 200000) * 0.88;
-  }
-  // Smooth lerp — no flickering
-  nightLayer.alpha = nightLayer.alpha + (target - nightLayer.alpha) * 0.06;
-}

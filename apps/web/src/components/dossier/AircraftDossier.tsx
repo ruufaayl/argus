@@ -12,7 +12,7 @@ import { FlightHistoryCharts } from '../ui/HistoryCharts';
 import { PatternAnalysis } from '../ui/PatternAnalysis';
 
 // ── Aircraft type classification from ICAO hex ranges ──
-function classifyAircraft(icao24: string, callsign: string): {
+function classifyAircraft(_icao24: string, callsign: string): {
   type: string;
   icon: string;
   category: 'FIGHTER' | 'TRANSPORT' | 'ISR' | 'TANKER' | 'HELICOPTER' | 'COMMERCIAL' | 'CARGO' | 'PRIVATE' | 'UNKNOWN';

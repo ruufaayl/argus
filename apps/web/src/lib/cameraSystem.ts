@@ -4,6 +4,7 @@
 
 import * as Cesium from 'cesium';
 import { useCommandStore } from '../stores/commandStore';
+import { PK_HOME_VIEW } from '../constants/geography';
 
 // 6A-C — SETUP CONTROLS & INERTIA
 export function setupCamera(viewer: Cesium.Viewer): void {
@@ -84,10 +85,10 @@ export function setupKeyboardControls(viewer: Cesium.Viewer): () => void {
       case 'Home':
       case '0':
         viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(69.3451, 30.3753, 1400000),
+          destination: Cesium.Cartesian3.fromDegrees(PK_HOME_VIEW.lon, PK_HOME_VIEW.lat, PK_HOME_VIEW.alt),
           orientation: {
-            heading: Cesium.Math.toRadians(0),
-            pitch: Cesium.Math.toRadians(-55),
+            heading: Cesium.Math.toRadians(PK_HOME_VIEW.heading),
+            pitch: Cesium.Math.toRadians(PK_HOME_VIEW.pitch),
             roll: 0,
           },
           duration: 4.0,

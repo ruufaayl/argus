@@ -718,3 +718,350 @@
   border-radius: 2px;
   box-shadow: 0 0 5px var(--accent);
 }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Commander Auth
+   ════════════════════════════════════════════════════════════ */
+
+/* Tablet (< 1024px) */
+@media (max-width: 1024px) {
+  .profile-terminal {
+    width: min(1200px, 96vw);
+    height: min(780px, 92vh);
+  }
+
+  .commander-info-panel {
+    width: 40%;
+    padding: 28px 32px;
+  }
+
+  .commander-callsign {
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+
+  .commander-rank {
+    font-size: 11px;
+    margin-bottom: 24px;
+  }
+
+  .stats-grid {
+    gap: 14px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+  }
+}
+
+/* Mobile landscape + small tablets (< 768px) */
+@media (max-width: 768px) {
+  .profile-terminal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+
+  .profile-terminal.slide-up-hide {
+    transform: translateY(-40px);
+  }
+
+  .terminal-header {
+    height: 44px;
+    padding: 0 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .header-left {
+    font-size: 10px;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    min-width: fit-content;
+  }
+
+  .header-faction-tabs {
+    overflow-x: auto;
+    gap: 0;
+  }
+
+  .header-faction-tabs button {
+    font-size: 9px;
+    padding: 0 10px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .header-right {
+    display: none;
+  }
+
+  .terminal-main {
+    flex-direction: column;
+  }
+
+  .commander-info-panel {
+    width: 100%;
+    height: auto;
+    padding: 20px 20px 80px;
+    order: 2;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: none;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .faction-badge-container {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
+  }
+
+  .faction-symbol {
+    font-size: 20px;
+  }
+
+  .commander-callsign {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .commander-callsign span {
+    display: block;
+    margin-left: 0 !important;
+    margin-top: 4px;
+    font-size: 11px !important;
+  }
+
+  .commander-rank {
+    font-size: 10px;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+  }
+
+  .thin-divider {
+    margin: 12px 0;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-label {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+
+  .stat-value {
+    font-size: 13px;
+  }
+
+  .commander-bio {
+    font-size: 10px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding-left: 10px;
+  }
+
+  .commander-figure-area {
+    order: 1;
+    height: 200px;
+    min-height: 200px;
+    flex: none;
+  }
+
+  .commander-figure-wrapper {
+    height: 100%;
+  }
+
+  .commander-silhouette {
+    width: 180px;
+    height: 200px;
+  }
+
+  .authorize-button-container {
+    position: fixed;
+    bottom: 110px;
+    left: 16px;
+    right: 16px;
+    z-index: 100;
+  }
+
+  .authorize-button {
+    height: 52px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .operator-selector-row {
+    height: 80px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .operator-thumb {
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+    border-radius: 8px;
+  }
+
+  .operator-callsign {
+    font-size: 7px;
+    padding: 2px 0;
+  }
+
+  .scroll-arrow {
+    padding: 0 8px;
+    font-size: 20px;
+  }
+
+  /* Passcode modal mobile */
+  .passcode-popup-modal {
+    width: calc(100vw - 32px);
+    max-width: 400px;
+    border-radius: 12px;
+  }
+
+  .passcode-popup-content {
+    padding: 32px 24px;
+  }
+
+  .passcode-label-large {
+    font-size: 12px;
+    letter-spacing: 3px;
+  }
+
+  .passcode-dots-large {
+    gap: 20px;
+  }
+
+  .passcode-dot-large {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .ground-glow {
+    height: 30%;
+  }
+}
+
+/* Small phones (< 480px) */
+@media (max-width: 480px) {
+  .commander-callsign {
+    font-size: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-value {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .commander-figure-area {
+    height: 160px;
+    min-height: 160px;
+  }
+
+  .commander-info-panel {
+    padding: 16px 16px 80px;
+  }
+
+  .authorize-button-container {
+    bottom: 90px;
+    left: 12px;
+    right: 12px;
+  }
+}
+
+/* Touch device enhancements */
+@media (hover: none) and (pointer: coarse) {
+  .authorize-button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .operator-thumb {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .header-faction-tabs button {
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .passcode-dot-large {
+    width: 32px;
+    height: 32px;
+  }
+
+  .scroll-arrow {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .commander-figure-area {
+    display: none;
+  }
+
+  .terminal-main {
+    flex-direction: row;
+  }
+
+  .commander-info-panel {
+    width: 100%;
+    order: 1;
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 80px;
+  }
+
+  .operator-selector-row {
+    height: 70px;
+  }
+
+  .operator-thumb {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hex-bg {
+    animation: none;
+  }
+
+  .authorize-button::before {
+    animation: none;
+  }
+
+  .commander-figure-wrapper,
+  .commander-info-panel,
+  .profile-terminal {
+    transition: none;
+  }
+}
