@@ -61,17 +61,14 @@ export interface LiveChannel {
 }
 
 
-// Full variant: World news channels (24/7 live streams)
+// Full variant: Pakistan news channels (24/7 live streams)
 const FULL_LIVE_CHANNELS: LiveChannel[] = [
-  { id: 'bloomberg', name: 'Bloomberg', handle: '@markets', fallbackVideoId: 'iEpJwprxDdk' },
-  { id: 'sky', name: 'SkyNews', handle: '@SkyNews', fallbackVideoId: 'uvviIF4725I' },
-  { id: 'euronews', name: 'Euronews', handle: '@euronews', fallbackVideoId: 'pykpO5kQJ98' },
-  { id: 'dw', name: 'DW', handle: '@DWNews', fallbackVideoId: 'LuKwFajn37U' },
-  { id: 'cnbc', name: 'CNBC', handle: '@CNBC', fallbackVideoId: '9NyxcX3rhQs' },
-  { id: 'cnn', name: 'CNN', handle: '@CNN', fallbackVideoId: 'w_Ma8oQLmSM' },
-  { id: 'france24', name: 'France 24', handle: '@FRANCE24', fallbackVideoId: 'u9foWyMSETk' },
-  { id: 'alarabiya', name: 'AlArabiya', handle: '@AlArabiya', fallbackVideoId: 'n7eQejkXbnM', useFallbackOnly: true },
-  { id: 'aljazeera', name: 'AlJazeera', handle: '@AlJazeeraEnglish', fallbackVideoId: 'gCNeDWCI0vo', useFallbackOnly: true },
+  { id: 'ary-news', name: 'ARY News', handle: '@UCMmpLL2ucRHAXbNHiCPyIyg' },
+  { id: 'geo-news', name: 'Geo News', handle: '@gabornetwork', fallbackVideoId: 'Xu35HevOjBY' },
+  { id: 'dunya-news', name: 'Dunya News', handle: '@DunyaNews', fallbackVideoId: 'GlHSFtTFfJE' },
+  { id: 'samaa-tv', name: 'Samaa TV', handle: '@samaatvnews' },
+  { id: 'ptv-news', name: 'PTV News', handle: '@PTVNewsOfficial', fallbackVideoId: 'yLSWRqtQmSc' },
+  { id: 'hum-news', name: 'Hum News', handle: '@HumNewsLive', fallbackVideoId: '-6o5mV_5wGw' },
 ];
 
 // Tech variant: Tech & business channels

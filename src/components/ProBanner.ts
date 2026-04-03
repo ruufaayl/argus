@@ -28,6 +28,7 @@ function dismiss(): void {
 */
 
 export function showProBanner(container: HTMLElement): void {
+  return; // ARGUS: Pro banner disabled
   if (bannerEl) return;
   if (window.self !== window.top) return;
 

@@ -5,6 +5,7 @@ const DISMISSED_KEY = 'wm-community-dismissed-v2';
 const DISCUSSION_URL = 'https://discord.gg/re63kWKxaz';
 
 export function mountCommunityWidget(): void {
+  return; // ARGUS: Discord widget disabled
   if (getDismissed(DISMISSED_KEY)) return;
   if (document.querySelector('.community-widget')) return;
 
