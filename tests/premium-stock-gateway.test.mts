@@ -30,15 +30,15 @@ describe('premium stock gateway enforcement', () => {
     process.env.WORLDMONITOR_VALID_KEYS = 'real-key-123';
 
     // Trusted browser origin without credentials — 401 (Origin is spoofable, not a security boundary)
-    const browserNoKey = await handler(new Request('https://worldmonitor.app/api/market/v1/analyze-stock?symbol=AAPL', {
-      headers: { Origin: 'https://worldmonitor.app' },
+    const browserNoKey = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
+      headers: { Origin: 'https://argus.app' },
     }));
     assert.equal(browserNoKey.status, 401);
 
     // Trusted browser origin with a valid key — also allowed
-    const browserWithKey = await handler(new Request('https://worldmonitor.app/api/market/v1/analyze-stock?symbol=AAPL', {
+    const browserWithKey = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
       headers: {
-        Origin: 'https://worldmonitor.app',
+        Origin: 'https://argus.app',
         'X-WorldMonitor-Key': 'real-key-123',
       },
     }));
@@ -51,8 +51,8 @@ describe('premium stock gateway enforcement', () => {
     assert.equal(unknownNoKey.status, 403);
 
     // Public endpoint — always accessible from trusted origin
-    const publicAllowed = await handler(new Request('https://worldmonitor.app/api/market/v1/list-market-quotes?symbols=AAPL', {
-      headers: { Origin: 'https://worldmonitor.app' },
+    const publicAllowed = await handler(new Request('https://argus.app/api/market/v1/list-market-quotes?symbols=AAPL', {
+      headers: { Origin: 'https://argus.app' },
     }));
     assert.equal(publicAllowed.status, 200);
   });
@@ -133,9 +133,9 @@ describe('premium stock gateway bearer token auth', () => {
 
   it('accepts valid Pro bearer token on premium endpoint → 200', async () => {
     const token = await signToken({ sub: 'user_pro', plan: 'pro' });
-    const res = await handler(new Request('https://worldmonitor.app/api/market/v1/analyze-stock?symbol=AAPL', {
+    const res = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
       headers: {
-        Origin: 'https://worldmonitor.app',
+        Origin: 'https://argus.app',
         Authorization: `Bearer ${token}`,
       },
     }));
@@ -144,9 +144,9 @@ describe('premium stock gateway bearer token auth', () => {
 
   it('rejects Free bearer token on premium endpoint → 403', async () => {
     const token = await signToken({ sub: 'user_free', plan: 'free' });
-    const res = await handler(new Request('https://worldmonitor.app/api/market/v1/analyze-stock?symbol=AAPL', {
+    const res = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
       headers: {
-        Origin: 'https://worldmonitor.app',
+        Origin: 'https://argus.app',
         Authorization: `Bearer ${token}`,
       },
     }));
@@ -157,9 +157,9 @@ describe('premium stock gateway bearer token auth', () => {
 
   it('rejects invalid/expired bearer token on premium endpoint → 401', async () => {
     const token = await signToken({ sub: 'user_bad', plan: 'pro' }, { key: wrongPrivateKey });
-    const res = await handler(new Request('https://worldmonitor.app/api/market/v1/analyze-stock?symbol=AAPL', {
+    const res = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
       headers: {
-        Origin: 'https://worldmonitor.app',
+        Origin: 'https://argus.app',
         Authorization: `Bearer ${token}`,
       },
     }));
@@ -167,8 +167,8 @@ describe('premium stock gateway bearer token auth', () => {
   });
 
   it('public routes are unaffected by absence of auth header', async () => {
-    const res = await handler(new Request('https://worldmonitor.app/api/market/v1/list-market-quotes?symbols=AAPL', {
-      headers: { Origin: 'https://worldmonitor.app' },
+    const res = await handler(new Request('https://argus.app/api/market/v1/list-market-quotes?symbols=AAPL', {
+      headers: { Origin: 'https://argus.app' },
     }));
     assert.equal(res.status, 200);
   });

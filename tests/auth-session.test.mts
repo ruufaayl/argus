@@ -263,17 +263,17 @@ describe('CORS origin matching (convex/http.ts)', () => {
   }
 
   const TRUSTED = [
-    'https://worldmonitor.app',
-    '*.worldmonitor.app',
+    'https://argus.app',
+    '*.argus.app',
     'http://localhost:3000',
   ];
 
   it('allows exact match', () => {
-    assert.equal(allowedOrigin('https://worldmonitor.app', TRUSTED), 'https://worldmonitor.app');
+    assert.equal(allowedOrigin('https://argus.app', TRUSTED), 'https://argus.app');
   });
 
   it('allows wildcard subdomain', () => {
-    const origin = 'https://preview-xyz.worldmonitor.app';
+    const origin = 'https://preview-xyz.argus.app';
     assert.equal(allowedOrigin(origin, TRUSTED), origin);
   });
 
@@ -286,7 +286,7 @@ describe('CORS origin matching (convex/http.ts)', () => {
   });
 
   it('blocks partial domain match', () => {
-    assert.equal(allowedOrigin('https://attackerworldmonitor.app', TRUSTED), null);
+    assert.equal(allowedOrigin('https://attackerargus.app', TRUSTED), null);
   });
 
   it('returns null for null origin -- no ACAO header emitted', () => {

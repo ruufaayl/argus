@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { buildAnalystSystemPrompt } from '../server/worldmonitor/intelligence/v1/chat-analyst-prompt.ts';
-import { buildActionEvents, VISUAL_INTENT_RE } from '../server/worldmonitor/intelligence/v1/chat-analyst-actions.ts';
+import { buildAnalystSystemPrompt } from '../server/argus/intelligence/v1/chat-analyst-prompt.ts';
+import { buildActionEvents, VISUAL_INTENT_RE } from '../server/argus/intelligence/v1/chat-analyst-actions.ts';
 import { postProcessAnalystHtml } from '../src/utils/analyst-markdown.ts';
-import type { AnalystContext } from '../server/worldmonitor/intelligence/v1/chat-analyst-context.ts';
+import type { AnalystContext } from '../server/argus/intelligence/v1/chat-analyst-context.ts';
 
 // ---------------------------------------------------------------------------
 // Fixtures

@@ -2,11 +2,11 @@
  * Unit tests for server handler business logic.
  *
  * Covers exported pure functions from:
- *   - server/worldmonitor/cyber/v1/_shared.ts
- *   - server/worldmonitor/news/v1/_shared.ts  (+ dedup.mjs + hash.ts)
- *   - server/worldmonitor/infrastructure/v1/get-cable-health.ts
+ *   - server/argus/cyber/v1/_shared.ts
+ *   - server/argus/news/v1/_shared.ts  (+ dedup.mjs + hash.ts)
+ *   - server/argus/infrastructure/v1/get-cable-health.ts
  *
- * NOTE: server/worldmonitor/military/v1/get-usni-fleet-report.ts has many useful
+ * NOTE: server/argus/military/v1/get-usni-fleet-report.ts has many useful
  * pure helpers (hullToVesselType, detectDeploymentStatus, extractHomePort,
  * stripHtml, getRegionCoords, parseUSNIArticle) but they are NOT exported.
  * A follow-up PR should export those functions to enable testing.
@@ -26,13 +26,13 @@ import {
   SEVERITY_MAP,
   SEVERITY_RANK,
   type RawThreat,
-} from '../server/worldmonitor/cyber/v1/_shared.ts';
+} from '../server/argus/cyber/v1/_shared.ts';
 
 // ---------------------------------------------------------------------------
 // News domain helpers
 // ---------------------------------------------------------------------------
-import { deduplicateHeadlines } from '../server/worldmonitor/news/v1/dedup.mjs';
-import { buildArticlePrompts, hashString } from '../server/worldmonitor/news/v1/_shared.ts';
+import { deduplicateHeadlines } from '../server/argus/news/v1/dedup.mjs';
+import { buildArticlePrompts, hashString } from '../server/argus/news/v1/_shared.ts';
 
 // ---------------------------------------------------------------------------
 // Infrastructure / cable health helpers
@@ -45,7 +45,7 @@ import {
   parseIssueDate,
   processNgaSignals,
   computeHealthMap,
-} from '../server/worldmonitor/infrastructure/v1/get-cable-health.ts';
+} from '../server/argus/infrastructure/v1/get-cable-health.ts';
 
 
 // ========================================================================
