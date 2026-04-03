@@ -62,7 +62,7 @@ describe('widget-agent unified tester key auth', () => {
     assert.equal(fetchMock.mock.calls.length, 1);
 
     const call = fetchMock.mock.calls[0];
-    assert.equal(call.arguments[0], 'https://proxy.argus.app/widget-agent');
+    assert.equal(call.arguments[0], 'https://proxy.argus-intel.vercel.app/widget-agent');
 
     const init = call.arguments[1] as RequestInit;
     const headers = new Headers(init.headers);

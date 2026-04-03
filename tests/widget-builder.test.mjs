@@ -702,11 +702,11 @@ describe('proxy routing — widgetAgentUrl', () => {
     );
   });
 
-  it('widgetAgentUrl targets proxy.argus.app (not toRuntimeUrl)', () => {
+  it('widgetAgentUrl targets proxy.argus-intel.vercel.app (not toRuntimeUrl)', () => {
     // The URL may be in a constant above the function; search the whole file
     assert.ok(
-      proxy.includes('proxy.argus.app'),
-      'Must target proxy.argus.app directly (sidecar destroys SSE via arrayBuffer)',
+      proxy.includes('proxy.argus-intel.vercel.app'),
+      'Must target proxy.argus-intel.vercel.app directly (sidecar destroys SSE via arrayBuffer)',
     );
     // Verify the function itself does not use toRuntimeUrl
     const fnIdx = proxy.indexOf('function widgetAgentUrl');

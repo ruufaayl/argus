@@ -28,7 +28,7 @@ const readSrc = (relPath) => readFileSync(resolve(root, relPath), 'utf-8');
 // ========================================================================
 
 describe('ChokepointInfo proto has ais_disruptions field', () => {
-  const proto = readSrc('proto/argus/supply_chain/v1/supply_chain_data.proto');
+  const proto = readSrc('proto/worldmonitor/supply_chain/v1/supply_chain_data.proto');
 
   it('declares ais_disruptions as int32 at field 11', () => {
     assert.match(proto, /int32\s+ais_disruptions\s*=\s*11/,

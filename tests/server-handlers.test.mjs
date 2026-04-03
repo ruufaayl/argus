@@ -79,7 +79,7 @@ describe('getHumanitarianSummary handler', () => {
 // ========================================================================
 
 describe('humanitarian_summary.proto', () => {
-  const proto = readSrc('proto/argus/conflict/v1/humanitarian_summary.proto');
+  const proto = readSrc('proto/worldmonitor/conflict/v1/humanitarian_summary.proto');
 
   it('has conflict-event field names instead of humanitarian field names', () => {
     assert.match(proto, /conflict_events_total/);
