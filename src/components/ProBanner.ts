@@ -1,5 +1,3 @@
-import { trackGateHit } from '@/services/analytics';
-
 let bannerEl: HTMLElement | null = null;
 
 /* TODO: re-enable dismiss after pro launch promotion period
