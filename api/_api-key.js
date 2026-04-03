@@ -8,6 +8,8 @@ const DESKTOP_ORIGIN_PATTERNS = [
 const BROWSER_ORIGIN_PATTERNS = [
   /^https:\/\/(.*\.)?argus\.app$/,
   /^https:\/\/argus-[a-z0-9-]+-ruufaayls-projects\.vercel\.app$/,
+  /^https:\/\/pakontir\.vercel\.app$/,
+  /^https:\/\/pakontir-[a-z0-9]+-ruufaayls-projects\.vercel\.app$/,
   ...(process.env.NODE_ENV === 'production' ? [] : [
     /^https?:\/\/localhost(:\d+)?$/,
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,

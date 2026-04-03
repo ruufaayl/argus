@@ -8,6 +8,8 @@
 const PRODUCTION_PATTERNS: RegExp[] = [
   /^https:\/\/(.*\.)?argus\.app$/,
   /^https:\/\/argus-[a-z0-9-]+-ruufaayls-projects+\.vercel\.app$/,
+  /^https:\/\/pakontir\.vercel\.app$/,
+  /^https:\/\/pakontir-[a-z0-9]+-ruufaayls-projects\.vercel\.app$/,
   /^https?:\/\/tauri\.localhost(:\d+)?$/,
   /^https?:\/\/[a-z0-9-]+\.tauri\.localhost(:\d+)?$/i,
   /^tauri:\/\/localhost$/,
@@ -30,7 +32,7 @@ export function isAllowedOrigin(origin: string): boolean {
 
 export function getCorsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get('origin') || '';
-  const allowOrigin = isAllowedOrigin(origin) ? origin : 'https://argus-intel.vercel.app';
+  const allowOrigin = isAllowedOrigin(origin) ? origin : 'https://pakontir.vercel.app';
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
