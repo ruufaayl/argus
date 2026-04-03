@@ -47,13 +47,13 @@ describe('widget-agent unified tester key auth', () => {
     else process.env.WORLDMONITOR_VALID_KEYS = originalValidKeys;
   });
 
-  it('accepts X-WorldMonitor-Key and upgrades relay request to pro', async () => {
+  it('accepts X-Argus-Key and upgrades relay request to pro', async () => {
     const res = await handler(new Request('https://www.argus.app/api/widget-agent', {
       method: 'POST',
       headers: {
         Origin: 'https://www.argus.app',
         'Content-Type': 'application/json',
-        'X-WorldMonitor-Key': 'browser-test-key',
+        'X-Argus-Key': 'browser-test-key',
       },
       body: JSON.stringify({ prompt: 'Build a widget', mode: 'create', tier: 'basic' }),
     }));
@@ -68,7 +68,7 @@ describe('widget-agent unified tester key auth', () => {
     const headers = new Headers(init.headers);
     assert.equal(headers.get('X-Widget-Key'), 'server-widget-key');
     assert.equal(headers.get('X-Pro-Key'), 'server-pro-key');
-    assert.equal(headers.get('X-WorldMonitor-Key'), null);
+    assert.equal(headers.get('X-Argus-Key'), null);
 
     assert.deepEqual(JSON.parse(String(init.body)), {
       prompt: 'Build a widget',
@@ -77,13 +77,13 @@ describe('widget-agent unified tester key auth', () => {
     });
   });
 
-  it('falls back to legacy tester keys when X-WorldMonitor-Key is invalid', async () => {
+  it('falls back to legacy tester keys when X-Argus-Key is invalid', async () => {
     const res = await handler(new Request('https://www.argus.app/api/widget-agent', {
       method: 'POST',
       headers: {
         Origin: 'https://www.argus.app',
         'Content-Type': 'application/json',
-        'X-WorldMonitor-Key': 'wrong-key',
+        'X-Argus-Key': 'wrong-key',
         'X-Pro-Key': 'server-pro-key',
       },
       body: JSON.stringify({ prompt: 'Build a widget', mode: 'create', tier: 'basic' }),
@@ -105,13 +105,13 @@ describe('widget-agent unified tester key auth', () => {
     });
   });
 
-  it('rejects invalid X-WorldMonitor-Key before relay fetch', async () => {
+  it('rejects invalid X-Argus-Key before relay fetch', async () => {
     const res = await handler(new Request('https://www.argus.app/api/widget-agent', {
       method: 'POST',
       headers: {
         Origin: 'https://www.argus.app',
         'Content-Type': 'application/json',
-        'X-WorldMonitor-Key': 'wrong-key',
+        'X-Argus-Key': 'wrong-key',
       },
       body: JSON.stringify({ prompt: 'Build a widget', mode: 'create', tier: 'pro' }),
     }));

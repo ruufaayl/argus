@@ -11,12 +11,12 @@ function makeGitHubReleaseResponse(assets) {
   });
 }
 
-test('matches full variant for dotted World.Monitor AppImage asset names', async () => {
+test('matches full variant for Argus AppImage asset names', async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => makeGitHubReleaseResponse([
     {
-      name: 'World.Monitor_2.5.7_amd64.AppImage',
-      browser_download_url: 'https://downloads.example/World.Monitor_2.5.7_amd64.AppImage',
+      name: 'Argus_2.5.7_amd64.AppImage',
+      browser_download_url: 'https://downloads.example/Argus_2.5.7_amd64.AppImage',
     },
   ]);
 
@@ -27,23 +27,23 @@ test('matches full variant for dotted World.Monitor AppImage asset names', async
     assert.equal(response.status, 302);
     assert.equal(
       response.headers.get('location'),
-      'https://downloads.example/World.Monitor_2.5.7_amd64.AppImage'
+      'https://downloads.example/Argus_2.5.7_amd64.AppImage'
     );
   } finally {
     globalThis.fetch = originalFetch;
   }
 });
 
-test('matches tech variant for dashed Tech-Monitor AppImage asset names', async () => {
+test('matches tech variant for TechMonitor AppImage asset names', async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => makeGitHubReleaseResponse([
     {
-      name: 'Tech-Monitor_2.5.7_amd64.AppImage',
-      browser_download_url: 'https://downloads.example/Tech-Monitor_2.5.7_amd64.AppImage',
+      name: 'TechMonitor_2.5.7_amd64.AppImage',
+      browser_download_url: 'https://downloads.example/TechMonitor_2.5.7_amd64.AppImage',
     },
     {
-      name: 'World.Monitor_2.5.7_amd64.AppImage',
-      browser_download_url: 'https://downloads.example/World.Monitor_2.5.7_amd64.AppImage',
+      name: 'Argus_2.5.7_amd64.AppImage',
+      browser_download_url: 'https://downloads.example/Argus_2.5.7_amd64.AppImage',
     },
   ]);
 
@@ -54,7 +54,7 @@ test('matches tech variant for dashed Tech-Monitor AppImage asset names', async 
     assert.equal(response.status, 302);
     assert.equal(
       response.headers.get('location'),
-      'https://downloads.example/Tech-Monitor_2.5.7_amd64.AppImage'
+      'https://downloads.example/TechMonitor_2.5.7_amd64.AppImage'
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -65,8 +65,8 @@ test('falls back to release page when requested variant has no matching asset', 
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => makeGitHubReleaseResponse([
     {
-      name: 'World.Monitor_2.5.7_amd64.AppImage',
-      browser_download_url: 'https://downloads.example/World.Monitor_2.5.7_amd64.AppImage',
+      name: 'Argus_2.5.7_amd64.AppImage',
+      browser_download_url: 'https://downloads.example/Argus_2.5.7_amd64.AppImage',
     },
   ]);
 

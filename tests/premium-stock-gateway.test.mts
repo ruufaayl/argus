@@ -39,7 +39,7 @@ describe('premium stock gateway enforcement', () => {
     const browserWithKey = await handler(new Request('https://argus.app/api/market/v1/analyze-stock?symbol=AAPL', {
       headers: {
         Origin: 'https://argus.app',
-        'X-WorldMonitor-Key': 'real-key-123',
+        'X-Argus-Key': 'real-key-123',
       },
     }));
     assert.equal(browserWithKey.status, 200);
