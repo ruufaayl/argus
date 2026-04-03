@@ -12,7 +12,7 @@ function sanitizeVideoId(value) {
 
 const ALLOWED_ORIGINS = [
   /^https:\/\/(.*\.)?argus\.app$/,
-  /^https:\/\/argus-[a-z0-9-]+-elie-habib-projects\.vercel\.app$/,
+  /^https:\/\/argus-[a-z0-9-]+-ruufaayls-projects\.vercel\.app$/,
   /^https:\/\/argus-[a-z0-9-]+\.vercel\.app$/,
   /^https?:\/\/localhost(:\d+)?$/,
   /^https?:\/\/127\.0\.0\.1(:\d+)?$/,

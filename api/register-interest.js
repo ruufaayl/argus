@@ -145,7 +145,7 @@ async function sendConfirmationEmail(email, referralCode) {
             </div>
             <div style="border-top: 1px solid #1a1a1a; padding: 24px 32px; text-align: center;">
               <div style="margin-bottom: 16px;">
-                <a href="https://x.com/eliehabib" style="color: #666; text-decoration: none; font-size: 12px; margin: 0 12px;">X / Twitter</a>
+                <a href="https://www.linkedin.com/in/rufayl/" style="color: #666; text-decoration: none; font-size: 12px; margin: 0 12px;">X / Twitter</a>
                 <a href="https://github.com/ruufaayl/argus" style="color: #666; text-decoration: none; font-size: 12px; margin: 0 12px;">GitHub</a>
                 <a href="https://argus-intel.vercel.app/pro" style="color: #666; text-decoration: none; font-size: 12px; margin: 0 12px;">Pro Waitlist</a>
               </div>
