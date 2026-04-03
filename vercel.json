@@ -1,4 +1,7 @@
 {
+  "installCommand": "npm install",
+  "buildCommand": "tsc && vite build",
+  "outputDirectory": "dist",
   "ignoreCommand": "bash scripts/vercel-ignore.sh",
   "crons": [],
   "redirects": [
