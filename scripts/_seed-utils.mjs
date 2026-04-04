@@ -398,7 +398,7 @@ async function httpsProxyFetchJson(url, proxyAuth) {
       const statusLine = buf.split('\r\n')[0];
       if (!statusLine.startsWith('HTTP/1.1 200') && !statusLine.startsWith('HTTP/1.0 200')) {
         proxySock.destroy();
-        return reject(Object.assign(new Error(`Proxy CONNECT: ${statusLine}`), { status: parseInt(statusLine.split(' ')[1]) || 0 }));
+        return reject(Object.assign(new Error(`Proxy CONNECT: ${statusLine}`), { status: parseInt(statusLine.split(' ')[1], 10) || 0 }));
       }
       proxySock.pause();
       resolve();
