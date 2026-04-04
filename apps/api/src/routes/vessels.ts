@@ -93,19 +93,24 @@ app.get('/', async (c) => {
   const redisUrl = c.env.UPSTASH_REDIS_URL;
   const redisToken = c.env.UPSTASH_REDIS_TOKEN;
 
-  // Try cache
+  // Priority 1: Redis cache (populated by GCP relay with live AIS data)
   if (redisUrl && redisToken) {
     const cached = await redisGet(redisUrl, redisToken, CACHE_KEY);
-    if (cached) return c.json(cached);
+    if (cached && cached.vessels && cached.vessels.length > 0) {
+      return c.json(cached);
+    }
   }
 
+  // Priority 2: Simulated vessels (fallback when relay is offline)
   const vessels = generateRealisticVessels();
   const response = {
     vessels,
     count: vessels.length,
+    source: 'simulated',
     timestamp: Date.now(),
   };
 
+  // Cache simulated data briefly so repeated requests are fast
   if (redisUrl && redisToken) {
     await redisSet(redisUrl, redisToken, CACHE_KEY, response, CACHE_TTL);
   }
