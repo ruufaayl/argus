@@ -1,6 +1,8 @@
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(.*\.)?argus\.app$/,
   /^https:\/\/argus-[a-z0-9-]+-ruufaayls-projects+\.vercel\.app$/,
+  /^https:\/\/pakontir\.vercel\.app$/,
+  /^https:\/\/pakontir-[a-z0-9]+-ruufaayls-projects\.vercel\.app$/,
   /^https?:\/\/tauri\.localhost(:\d+)?$/,
   /^https?:\/\/[a-z0-9-]+\.tauri\.localhost(:\d+)?$/i,
   /^tauri:\/\/localhost$/,
