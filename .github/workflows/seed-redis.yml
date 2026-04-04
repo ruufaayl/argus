@@ -1,0 +1,477 @@
+# =============================================================================
+# ARGUS — Redis Data Seeder (GitHub Actions Cron)
+# =============================================================================
+# Replaces Railway relay's setInterval-based seeding with GitHub Actions cron.
+# Runs all seed-*.mjs scripts against Upstash Redis every 30 minutes.
+# FREE for public repos — unlimited GitHub Actions minutes.
+#
+# Required GitHub Secrets:
+#   UPSTASH_REDIS_REST_URL    — Upstash Redis REST endpoint
+#   UPSTASH_REDIS_REST_TOKEN  — Upstash Redis auth token
+#
+# Optional API Key Secrets (scripts skip gracefully if missing):
+#   FINNHUB_API_KEY, FRED_API_KEY, EIA_API_KEY, ALPHA_VANTAGE_API_KEY,
+#   COINGECKO_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, NASA_FIRMS_API_KEY,
+#   ACLED_EMAIL, ACLED_PASSWORD, ICAO_API_KEY, AVIATIONSTACK_API,
+#   CLOUDFLARE_API_TOKEN, UCDP_ACCESS_TOKEN, EXA_API_KEY,
+#   OTX_API_KEY, ABUSEIPDB_API_KEY, URLHAUS_AUTH_KEY,
+#   GIE_API_KEY, WINDY_API_KEY
+# =============================================================================
+
+name: 🌱 Seed Redis Data
+
+on:
+  schedule:
+    # Every 30 minutes — staggered to avoid GitHub's top-of-hour congestion
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+    inputs:
+      wave:
+        description: 'Run specific wave only (1=public-apis, 2=market, 3=economic, 4=intelligence, 5=climate-infra, all=everything)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: seed-redis
+  cancel-in-progress: false
+
+env:
+  UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+  UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+  NODE_ENV: production
+
+jobs:
+  # ===========================================================================
+  # WAVE 1 — Public APIs (no API keys needed)
+  # Earthquakes, climate, displacement, sanctions, disease, natural events, etc.
+  # ===========================================================================
+  wave-1-public-apis:
+    name: '🌍 Wave 1 — Public APIs'
+    if: ${{ github.event.inputs.wave == 'all' || github.event.inputs.wave == '1' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: 🌋 Earthquakes (USGS)
+        run: node scripts/seed-earthquakes.mjs
+        continue-on-error: true
+
+      - name: 🌡️ Climate Anomalies (Open-Meteo)
+        run: node scripts/seed-climate-anomalies.mjs
+        continue-on-error: true
+
+      - name: 🏠 Displacement (UNHCR)
+        run: node scripts/seed-displacement-summary.mjs
+        continue-on-error: true
+
+      - name: 🚫 Sanctions (OFAC/UN)
+        run: node scripts/seed-sanctions-pressure.mjs
+        continue-on-error: true
+
+      - name: 🦠 Disease Outbreaks (WHO)
+        run: node scripts/seed-disease-outbreaks.mjs
+        continue-on-error: true
+
+      - name: 🌪️ Natural Events (EONET)
+        run: node scripts/seed-natural-events.mjs
+        continue-on-error: true
+
+      - name: ☢️ Radiation Watch
+        run: node scripts/seed-radiation-watch.mjs
+        continue-on-error: true
+
+      - name: 🏦 BIS Data
+        run: node scripts/seed-bis-data.mjs
+        continue-on-error: true
+
+      - name: 🇪🇺 ECB FX Rates
+        run: node scripts/seed-ecb-fx-rates.mjs
+        continue-on-error: true
+
+      - name: 📈 ECB Short Rates
+        run: node scripts/seed-ecb-short-rates.mjs
+        continue-on-error: true
+
+      - name: 💱 FX Rates (Yahoo)
+        run: node scripts/seed-fx-rates.mjs
+        continue-on-error: true
+
+      - name: 📊 Eurostat Country Data
+        run: node scripts/seed-eurostat-country-data.mjs
+        continue-on-error: true
+
+      - name: 📈 Yield Curve EU
+        run: node scripts/seed-yield-curve-eu.mjs
+        continue-on-error: true
+
+      - name: 💰 National Debt
+        run: node scripts/seed-national-debt.mjs
+        continue-on-error: true
+
+      - name: 🏗️ Infrastructure Status
+        run: node scripts/seed-infra.mjs
+        continue-on-error: true
+
+      - name: ✅ Service Statuses
+        run: node scripts/seed-service-statuses.mjs
+        continue-on-error: true
+
+      - name: 🌊 Hormuz Shipping
+        run: node scripts/seed-hormuz.mjs
+        continue-on-error: true
+
+      - name: 🔌 Submarine Cables
+        run: node scripts/seed-submarine-cables.mjs
+        continue-on-error: true
+
+      - name: 🇮🇷 Iran Events
+        run: node scripts/seed-iran-events.mjs
+        continue-on-error: true
+
+      - name: 📰 Climate News
+        run: node scripts/seed-climate-news.mjs
+        continue-on-error: true
+
+      - name: 🌍 Climate Zone Normals
+        run: node scripts/seed-climate-zone-normals.mjs
+        continue-on-error: true
+
+      - name: 🫁 CO2 Monitoring
+        run: node scripts/seed-co2-monitoring.mjs
+        continue-on-error: true
+
+      - name: 🔥 Thermal Escalation
+        run: node scripts/seed-thermal-escalation.mjs
+        continue-on-error: true
+
+      - name: ⚖️ FSI EU
+        run: node scripts/seed-fsi-eu.mjs
+        continue-on-error: true
+
+      - name: 🎰 Prediction Markets
+        run: node scripts/seed-prediction-markets.mjs
+        continue-on-error: true
+
+      - name: 📊 COT Positioning
+        run: node scripts/seed-cot.mjs
+        continue-on-error: true
+
+      - name: 🗺️ Trade Flows
+        run: node scripts/seed-trade-flows.mjs
+        continue-on-error: true
+
+      - name: ✊ Unrest Events
+        run: node scripts/seed-unrest-events.mjs
+        continue-on-error: true
+
+      - name: 🏛️ USA Spending
+        run: node scripts/seed-usa-spending.mjs
+        continue-on-error: true
+
+      - name: 🌤️ Weather Alerts
+        run: node scripts/seed-weather-alerts.mjs
+        continue-on-error: true
+
+      - name: 🌡️ VPD Tracker
+        run: node scripts/seed-vpd-tracker.mjs
+        continue-on-error: true
+
+      - name: 🪖 Military Maritime News
+        run: node scripts/seed-military-maritime-news.mjs
+        continue-on-error: true
+
+      - name: 🔬 Defense Patents
+        run: node scripts/seed-defense-patents.mjs
+        continue-on-error: true
+
+      - name: 📡 GDELT Intel
+        run: node scripts/seed-gdelt-intel.mjs
+        continue-on-error: true
+
+      - name: 🔗 Correlation Cards
+        run: node scripts/seed-correlation.mjs
+        continue-on-error: true
+
+      - name: 🔀 Cross-Source Signals
+        run: node scripts/seed-cross-source-signals.mjs
+        continue-on-error: true
+
+      - name: 🔎 Research
+        run: node scripts/seed-research.mjs
+        continue-on-error: true
+
+      - name: 🌐 World Bank Indicators
+        run: node scripts/seed-wb-indicators.mjs
+        continue-on-error: true
+
+  # ===========================================================================
+  # WAVE 2 — Market & Financial Data
+  # Stocks, crypto, commodities, ETFs, Gulf markets
+  # ===========================================================================
+  wave-2-market:
+    name: '📈 Wave 2 — Markets'
+    if: ${{ github.event.inputs.wave == 'all' || github.event.inputs.wave == '2' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+      COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: 📊 Market Quotes (Finnhub + Yahoo)
+        run: node scripts/seed-market-quotes.mjs
+        continue-on-error: true
+
+      - name: 🪙 Crypto Quotes (CoinGecko)
+        run: node scripts/seed-crypto-quotes.mjs
+        continue-on-error: true
+
+      - name: 🏷️ Commodity Quotes
+        run: node scripts/seed-commodity-quotes.mjs
+        continue-on-error: true
+
+      - name: 📊 Crypto Sectors
+        run: node scripts/seed-crypto-sectors.mjs
+        continue-on-error: true
+
+      - name: 💎 Stablecoin Markets
+        run: node scripts/seed-stablecoin-markets.mjs
+        continue-on-error: true
+
+      - name: 🎯 Token Panels (DeFi/AI)
+        run: node scripts/seed-token-panels.mjs
+        continue-on-error: true
+
+      - name: 📈 ETF Flows
+        run: node scripts/seed-etf-flows.mjs
+        continue-on-error: true
+
+      - name: 🏜️ Gulf Quotes
+        run: node scripts/seed-gulf-quotes.mjs
+        continue-on-error: true
+
+      - name: 📅 Earnings Calendar
+        run: node scripts/seed-earnings-calendar.mjs
+        continue-on-error: true
+
+      - name: 😱 Fear & Greed Index
+        run: node scripts/seed-fear-greed.mjs
+        continue-on-error: true
+
+  # ===========================================================================
+  # WAVE 3 — Economic & Energy Data
+  # FRED, EIA, fuel prices, Big Mac, grocery basket
+  # ===========================================================================
+  wave-3-economic:
+    name: '💰 Wave 3 — Economic'
+    if: ${{ github.event.inputs.wave == 'all' || github.event.inputs.wave == '3' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      EXA_API_KEY: ${{ secrets.EXA_API_KEY }}
+      FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: 📊 FRED Economic Series
+        run: node scripts/seed-economy.mjs
+        continue-on-error: true
+
+      - name: ⛽ Fuel Prices (EIA)
+        run: node scripts/seed-fuel-prices.mjs
+        continue-on-error: true
+
+      - name: 📅 Economic Calendar
+        run: node scripts/seed-economic-calendar.mjs
+        continue-on-error: true
+
+      - name: 📊 BLS Series
+        run: node scripts/seed-bls-series.mjs
+        continue-on-error: true
+
+      - name: 🍔 Big Mac Index
+        run: node scripts/seed-bigmac.mjs
+        continue-on-error: true
+
+      - name: 🛒 Grocery Basket
+        run: node scripts/seed-grocery-basket.mjs
+        continue-on-error: true
+
+      - name: 🏷️ Consumer Prices
+        run: node scripts/seed-consumer-prices.mjs
+        continue-on-error: true
+        env:
+          CONSUMER_PRICES_CORE_API_KEY: ${{ secrets.CONSUMER_PRICES_CORE_API_KEY }}
+          CONSUMER_PRICES_CORE_BASE_URL: ${{ secrets.CONSUMER_PRICES_CORE_BASE_URL }}
+
+      - name: 🚢 Supply Chain & Trade
+        run: node scripts/seed-supply-chain-trade.mjs
+        continue-on-error: true
+        env:
+          WTO_API_KEY: ${{ secrets.WTO_API_KEY }}
+
+      - name: ⛽ GIE Gas Storage
+        run: node scripts/seed-gie-gas-storage.mjs
+        continue-on-error: true
+        env:
+          GIE_API_KEY: ${{ secrets.GIE_API_KEY }}
+
+  # ===========================================================================
+  # WAVE 4 — Intelligence & Conflict
+  # ACLED, UCDP, cyber threats, GDELT, conflict intel, forecasts
+  # ===========================================================================
+  wave-4-intelligence:
+    name: '🎯 Wave 4 — Intelligence'
+    if: ${{ github.event.inputs.wave == 'all' || github.event.inputs.wave == '4' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ACLED_EMAIL: ${{ secrets.ACLED_EMAIL }}
+      ACLED_PASSWORD: ${{ secrets.ACLED_PASSWORD }}
+      ACLED_ACCESS_TOKEN: ${{ secrets.ACLED_ACCESS_TOKEN }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      UCDP_ACCESS_TOKEN: ${{ secrets.UCDP_ACCESS_TOKEN }}
+      OTX_API_KEY: ${{ secrets.OTX_API_KEY }}
+      ABUSEIPDB_API_KEY: ${{ secrets.ABUSEIPDB_API_KEY }}
+      URLHAUS_AUTH_KEY: ${{ secrets.URLHAUS_AUTH_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: ⚔️ ACLED Conflict Events
+        run: node scripts/seed-conflict-intel.mjs
+        continue-on-error: true
+
+      - name: 🕊️ UCDP Events
+        run: node scripts/seed-ucdp-events.mjs
+        continue-on-error: true
+
+      - name: 🛡️ Cyber Threats
+        run: node scripts/seed-cyber-threats.mjs
+        continue-on-error: true
+
+      - name: 🔮 AI Forecasts (Groq)
+        run: node scripts/seed-forecasts.mjs
+        continue-on-error: true
+        env:
+          WM_API_BASE_URL: 'https://pakontir.vercel.app'
+
+      - name: 💡 AI Insights (Groq)
+        run: node scripts/seed-insights.mjs
+        continue-on-error: true
+        env:
+          API_BASE_URL: 'https://pakontir.vercel.app'
+
+      - name: 🛡️ Security Advisories
+        run: node scripts/seed-security-advisories.mjs
+        continue-on-error: true
+
+  # ===========================================================================
+  # WAVE 5 — Climate, Aviation, Infrastructure
+  # Fires, internet outages, airport delays, webcams, military bases
+  # ===========================================================================
+  wave-5-climate-infra:
+    name: '🏗️ Wave 5 — Climate & Infra'
+    if: ${{ github.event.inputs.wave == 'all' || github.event.inputs.wave == '5' || github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NASA_FIRMS_API_KEY: ${{ secrets.NASA_FIRMS_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ICAO_API_KEY: ${{ secrets.ICAO_API_KEY }}
+      AVIATIONSTACK_API: ${{ secrets.AVIATIONSTACK_API }}
+      WINDY_API_KEY: ${{ secrets.WINDY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: 🔥 Fire Detections (NASA FIRMS)
+        run: node scripts/seed-fire-detections.mjs
+        continue-on-error: true
+
+      - name: 🌐 Internet Outages (Cloudflare)
+        run: node scripts/seed-internet-outages.mjs
+        continue-on-error: true
+
+      - name: ✈️ Airport Delays (ICAO)
+        run: node scripts/seed-airport-delays.mjs
+        continue-on-error: true
+
+      - name: ✈️ Aviation Data
+        run: node scripts/seed-aviation.mjs
+        continue-on-error: true
+
+      - name: 📷 Webcams (Windy)
+        run: node scripts/seed-webcams.mjs
+        continue-on-error: true
+
+      - name: 🪖 Military Bases
+        run: node scripts/seed-military-bases.mjs
+        continue-on-error: true
+        env:
+          CLOUDFLARE_R2_TOKEN: ${{ secrets.CLOUDFLARE_R2_TOKEN }}
+          CLOUDFLARE_R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_R2_ACCOUNT_ID }}
+
+  # ===========================================================================
+  # SUMMARY — Report seed results
+  # ===========================================================================
+  summary:
+    name: '📋 Seed Summary'
+    needs: [wave-1-public-apis, wave-2-market, wave-3-economic, wave-4-intelligence, wave-5-climate-infra]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Report results
+        run: |
+          echo "## 🌱 Seed Run Summary"
+          echo ""
+          echo "| Wave | Status |"
+          echo "|------|--------|"
+          echo "| 🌍 Public APIs | ${{ needs.wave-1-public-apis.result }} |"
+          echo "| 📈 Markets | ${{ needs.wave-2-market.result }} |"
+          echo "| 💰 Economic | ${{ needs.wave-3-economic.result }} |"
+          echo "| 🎯 Intelligence | ${{ needs.wave-4-intelligence.result }} |"
+          echo "| 🏗️ Climate & Infra | ${{ needs.wave-5-climate-infra.result }} |"
+          echo ""
+          echo "Timestamp: $(date -u)"
