@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { loadEnvFile, loadSharedConfig, sleep, runSeed, parseYahooChart, writeExtraKey } from './_seed-utils.mjs';
+import { loadEnvFile, loadSharedConfig, sleep, runSeed, parseYahooChart, writeExtraKey, CHROME_UA } from './_seed-utils.mjs';
 import { AV_PHYSICAL_MAP, fetchAvPhysicalCommodity, fetchAvBulkQuotes } from './_shared-av.mjs';
 
 const commodityConfig = loadSharedConfig('commodities.json');

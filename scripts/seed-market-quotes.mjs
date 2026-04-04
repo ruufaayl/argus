@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { loadEnvFile, loadSharedConfig, sleep, runSeed, parseYahooChart, writeExtraKey } from './_seed-utils.mjs';
+import { loadEnvFile, loadSharedConfig, sleep, runSeed, parseYahooChart, writeExtraKey, CHROME_UA } from './_seed-utils.mjs';
 import { fetchAvBulkQuotes } from './_shared-av.mjs';
 
 const stocksConfig = loadSharedConfig('stocks.json');

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { loadEnvFile, loadSharedConfig, runSeed } from './_seed-utils.mjs';
+import { loadEnvFile, loadSharedConfig, runSeed, CHROME_UA } from './_seed-utils.mjs';
 import { fetchAvBulkQuotes } from './_shared-av.mjs';
 
 const etfConfig = loadSharedConfig('etfs.json');
