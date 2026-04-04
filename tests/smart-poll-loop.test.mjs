@@ -537,7 +537,7 @@ describe('startSmartPollLoop', () => {
 
     it('abort errors do not trigger backoff', async () => {
       let calls = 0;
-      startSmartPollLoop((ctx) => {
+      startSmartPollLoop((_ctx) => {
         calls++;
         const err = new Error('aborted');
         err.name = 'AbortError';
