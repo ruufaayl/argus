@@ -4,6 +4,11 @@
   "version": "2.6.6",
   "license": "AGPL-3.0-only",
   "type": "module",
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "lint": "biome lint ./src ./server ./api ./tests ./e2e ./scripts ./middleware.ts",
     "lint:fix": "biome check ./src ./server ./api ./tests ./e2e ./scripts ./middleware.ts --fix",

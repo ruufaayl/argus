@@ -106,6 +106,9 @@ jobs:
             gstreamer1.0-libav \
             gstreamer1.0-gl
 
+      - name: Pin npm to 11 (matches lockfile)
+        run: npm install -g npm@11.12.1
+
       - name: Install frontend dependencies
         run: npm ci
 
