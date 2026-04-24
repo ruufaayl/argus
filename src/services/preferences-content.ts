@@ -141,8 +141,9 @@ export function renderPreferences(host: PreferencesHost): PreferencesResult {
   </div>`;
   html += `<select class="unified-settings-select" id="us-font-family">`;
   for (const opt of [
-    { value: 'mono', label: t('preferences.fontMono') },
+    { value: 'manrope', label: 'Manrope' },
     { value: 'system', label: t('preferences.fontSystem') },
+    { value: 'mono', label: t('preferences.fontMono') },
   ] as { value: FontFamily; label: string }[]) {
     const selected = opt.value === currentFont ? ' selected' : '';
     html += `<option value="${opt.value}"${selected}>${escapeHtml(opt.label)}</option>`;

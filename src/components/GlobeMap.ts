@@ -1829,7 +1829,7 @@ export class GlobeMap {
       </div>`;
     const authorBadge = document.createElement('div');
     authorBadge.className = 'map-author-badge';
-    authorBadge.textContent = '© ruufaayl · Someone™';
+    authorBadge.textContent = '© VERITAS';
     el.appendChild(authorBadge);
     this.container.appendChild(el);
 

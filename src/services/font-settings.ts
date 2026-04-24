@@ -1,9 +1,9 @@
-export type FontFamily = 'mono' | 'system';
+export type FontFamily = 'manrope' | 'mono' | 'system';
 
 const STORAGE_KEY = 'wm-font-family';
 const EVENT_NAME = 'wm-font-changed';
 
-const ALLOWED: FontFamily[] = ['mono', 'system'];
+const ALLOWED: FontFamily[] = ['manrope', 'mono', 'system'];
 
 export function getFontFamily(): FontFamily {
   try {
@@ -12,11 +12,11 @@ export function getFontFamily(): FontFamily {
   } catch {
     // ignore
   }
-  return 'mono';
+  return 'manrope';
 }
 
 export function setFontFamily(font: FontFamily): void {
-  const safe = ALLOWED.includes(font) ? font : 'mono';
+  const safe = ALLOWED.includes(font) ? font : 'manrope';
   try {
     localStorage.setItem(STORAGE_KEY, safe);
   } catch {
@@ -30,7 +30,10 @@ export function applyFont(font?: FontFamily): void {
   const resolved = font ?? getFontFamily();
   if (resolved === 'system') {
     document.documentElement.dataset.font = 'system';
+  } else if (resolved === 'mono') {
+    document.documentElement.dataset.font = 'mono';
   } else {
+    // Manrope is the CSS default (--font-manrope), no data-font attribute needed
     delete document.documentElement.dataset.font;
   }
 }

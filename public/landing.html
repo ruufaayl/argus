@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VERITAS — The Carbon Credit Anti-Greenwash Oracle</title>
+<meta name="description" content="VERITAS is the Bloomberg Terminal of carbon credit quality. Real-time, AI-justified risk scores for any carbon credit, powered by Sentinel-2 satellite imagery and multi-model AI." />
+<meta name="theme-color" content="#060a07" />
+<meta name="author" content="VERITAS" />
+<link rel="canonical" href="https://pakontir.vercel.app/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="VERITAS — Verified Emissions · Real Intelligence · Transparent Assets" />
+<meta property="og:description" content="The real-time AI oracle for carbon credit verification. Truth in every tonne." />
+<meta property="og:url" content="https://pakontir.vercel.app/" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060a07;
+    --bg-elev: #0a100c;
+    --ink: #f5f0eb;
+    --ink-soft: rgba(245, 240, 235, 0.65);
+    --ink-mute: rgba(245, 240, 235, 0.42);
+    --gold: #c8860a;
+    --gold-soft: #d4943a;
+    --gold-glow: rgba(200, 134, 10, 0.18);
+    --line: rgba(245, 240, 235, 0.10);
+    --glass-bg: rgba(255, 255, 255, 0.025);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans: 'Barlow', system-ui, -apple-system, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200, 134, 10, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 80, 40, 0.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(200, 134, 10, 0.04), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245, 240, 235, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 240, 235, 0.018) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 80%);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* LIQUID GLASS — the core visual primitive                            */
+  /* ------------------------------------------------------------------ */
+  .glass {
+    background: rgba(255, 255, 255, 0.018);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.2px;
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.40) 0%,
+      rgba(255, 255, 255, 0.10) 22%,
+      rgba(255, 255, 255, 0) 45%,
+      rgba(255, 255, 255, 0) 55%,
+      rgba(255, 255, 255, 0.10) 78%,
+      rgba(255, 255, 255, 0.40) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.022);
+    backdrop-filter: blur(40px) saturate(140%);
+    -webkit-backdrop-filter: blur(40px) saturate(140%);
+    border: none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .glass-strong::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.4px;
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.18) 22%,
+      rgba(255, 255, 255, 0) 45%,
+      rgba(255, 255, 255, 0) 55%,
+      rgba(255, 255, 255, 0.18) 78%,
+      rgba(255, 255, 255, 0.55) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* TYPOGRAPHY                                                          */
+  /* ------------------------------------------------------------------ */
+  .serif       { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
+  .serif-it    { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -0.01em; }
+  .mono-tag    { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; line-height: 0.95; }
+  h1 { font-size: clamp(3rem, 9vw, 7rem); font-style: italic; }
+  h2 { font-size: clamp(2.2rem, 5.4vw, 4.4rem); font-style: italic; }
+  h3 { font-size: clamp(1.4rem, 2.4vw, 2rem); }
+
+  /* ------------------------------------------------------------------ */
+  /* LAYOUT                                                              */
+  /* ------------------------------------------------------------------ */
+  main, header, section, footer { position: relative; z-index: 1; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+
+  /* ------------------------------------------------------------------ */
+  /* NAVBAR                                                              */
+  /* ------------------------------------------------------------------ */
+  .nav {
+    position: fixed; top: 18px; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: center;
+  }
+  .nav-inner {
+    display: flex; align-items: center; gap: 4px;
+    padding: 7px 7px 7px 22px;
+    border-radius: 999px;
+  }
+  .nav-brand {
+    font-family: var(--serif); font-style: italic;
+    font-size: 1.4rem; letter-spacing: -0.01em;
+    color: var(--ink); padding-right: 14px;
+    border-right: 1px solid var(--line);
+    margin-right: 8px;
+  }
+  .nav-brand .dot { color: var(--gold); }
+  .nav-links { display: flex; align-items: center; gap: 2px; }
+  .nav-links a {
+    color: var(--ink-soft); text-decoration: none;
+    padding: 8px 14px; border-radius: 999px;
+    font-size: 0.85rem; font-weight: 400;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
+  .nav-cta {
+    background: var(--ink); color: var(--bg);
+    padding: 9px 16px; border-radius: 999px;
+    font-size: 0.82rem; font-weight: 500;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold); color: #0a0501; transform: translateY(-1px); }
+  .nav-cta svg { width: 14px; height: 14px; }
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+    .nav-brand { padding-right: 10px; margin-right: 4px; font-size: 1.2rem; }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* HERO                                                                */
+  /* ------------------------------------------------------------------ */
+  .hero {
+    min-height: 100vh; padding: 140px 0 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center; position: relative;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 6px 6px 14px;
+    border-radius: 999px;
+    margin: 0 auto 38px;
+    font-size: 0.78rem;
+  }
+  .hero-badge .pill {
+    background: var(--gold); color: #0a0501;
+    padding: 4px 10px; border-radius: 999px;
+    font-weight: 600; font-size: 0.66rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .hero-badge .label { color: var(--ink-soft); padding-right: 8px; }
+
+  .hero h1 {
+    max-width: 13ch; margin: 0 auto;
+    background: linear-gradient(180deg, #fff 0%, #d8cdc0 90%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero h1 .gold { color: var(--gold); -webkit-text-fill-color: var(--gold); font-style: italic; }
+  .hero-sub {
+    max-width: 620px; margin: 32px auto 0;
+    color: var(--ink-soft); font-size: 1.05rem; line-height: 1.55;
+  }
+  .hero-cta-row {
+    margin-top: 44px;
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; border-radius: 999px;
+    font-size: 0.92rem; font-weight: 500;
+    text-decoration: none; cursor: pointer;
+    border: none; transition: transform 0.2s, background 0.2s, color 0.2s;
+  }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: var(--gold); color: #0a0501; transform: translateY(-1px); }
+  .btn-ghost { color: var(--ink); }
+  .btn-ghost:hover { color: var(--gold); }
+  .btn svg { width: 16px; height: 16px; }
+
+  /* HERO STAT STRIP */
+  .stat-strip {
+    margin-top: 90px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  .stat-strip > div { padding: 28px 24px; text-align: left; position: relative; }
+  .stat-strip > div + div::before {
+    content: ''; position: absolute; left: 0; top: 24px; bottom: 24px;
+    width: 1px; background: var(--line);
+  }
+  .stat-strip .num { font-family: var(--serif); font-style: italic; font-size: 2.4rem; color: var(--gold); line-height: 1; }
+  .stat-strip .lab { color: var(--ink-mute); font-size: 0.78rem; margin-top: 10px; line-height: 1.4; }
+  @media (max-width: 760px) {
+    .stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .stat-strip > div:nth-child(3)::before { display: none; }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* SECTION SCAFFOLD                                                    */
+  /* ------------------------------------------------------------------ */
+  section { padding: 110px 0; }
+  .section-tag {
+    display: inline-block;
+    padding: 6px 14px; border-radius: 999px;
+    color: var(--gold-soft);
+    margin-bottom: 22px;
+  }
+  .section-head { max-width: 720px; margin-bottom: 60px; }
+  .section-head .lede {
+    color: var(--ink-soft); font-size: 1.05rem; margin-top: 22px; max-width: 620px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* PROBLEM SECTION                                                     */
+  /* ------------------------------------------------------------------ */
+  .problem-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center;
+  }
+  @media (max-width: 880px) { .problem-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .problem-grid p { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.7; margin-bottom: 16px; }
+  .quote-card {
+    padding: 36px 32px;
+    border-radius: 24px;
+    border-left: 2px solid var(--gold);
+  }
+  .quote-card .q {
+    font-family: var(--serif); font-style: italic; font-size: 1.5rem;
+    line-height: 1.4; color: var(--ink);
+  }
+  .quote-card .a {
+    margin-top: 18px; font-size: 0.78rem; color: var(--ink-mute);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* PLATFORM (4-CARD GRID)                                              */
+  /* ------------------------------------------------------------------ */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  }
+  @media (max-width: 1100px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px)  { .feature-grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    padding: 28px;
+    border-radius: 22px;
+    min-height: 240px;
+    display: flex; flex-direction: column;
+  }
+  .feature-card .icon {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 999px;
+    background: var(--gold-glow); color: var(--gold);
+    margin-bottom: 18px;
+  }
+  .feature-card h3 {
+    font-family: var(--serif); font-size: 1.4rem; font-style: italic;
+    color: var(--ink); margin-bottom: 10px; line-height: 1.1;
+  }
+  .feature-card p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.55; }
+
+  /* ------------------------------------------------------------------ */
+  /* HOW IT WORKS (3-STEP)                                              */
+  /* ------------------------------------------------------------------ */
+  .steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+  }
+  @media (max-width: 880px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    padding: 32px;
+    border-radius: 22px;
+    position: relative;
+  }
+  .step .num {
+    font-family: var(--serif); font-style: italic;
+    font-size: 3.2rem; color: var(--gold); line-height: 1;
+    margin-bottom: 22px;
+  }
+  .step h3 {
+    font-family: var(--serif); font-size: 1.45rem; font-style: italic;
+    color: var(--ink); margin-bottom: 12px; line-height: 1.1;
+  }
+  .step p { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
+
+  /* ------------------------------------------------------------------ */
+  /* COMPETITORS TABLE                                                   */
+  /* ------------------------------------------------------------------ */
+  .table-wrap {
+    border-radius: 24px;
+    overflow: hidden;
+    padding: 8px;
+  }
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table.cmp th, table.cmp td {
+    padding: 18px 16px; text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  table.cmp th {
+    color: var(--ink-mute); font-weight: 500;
+    font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  table.cmp tr:last-child td { border-bottom: none; }
+  table.cmp .name { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); }
+  table.cmp .focus { color: var(--ink-mute); font-size: 0.82rem; }
+  table.cmp .score { font-family: var(--serif); font-size: 1rem; color: var(--ink-soft); }
+  table.cmp tr.us {
+    background: linear-gradient(90deg, rgba(200, 134, 10, 0.08), transparent);
+  }
+  table.cmp tr.us .name { color: var(--gold); }
+  table.cmp tr.us .score { color: var(--ink); font-weight: 500; }
+  @media (max-width: 760px) {
+    table.cmp .focus { display: none; }
+    table.cmp th:nth-child(2), table.cmp td:nth-child(2) { display: none; }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* TEAM                                                                */
+  /* ------------------------------------------------------------------ */
+  .team {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  }
+  @media (max-width: 1000px) { .team { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px)  { .team { grid-template-columns: 1fr; } }
+  .person {
+    padding: 28px;
+    border-radius: 22px;
+  }
+  .person .role { color: var(--gold-soft); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .person .name { font-family: var(--serif); font-size: 1.6rem; color: var(--ink); margin-top: 6px; line-height: 1.1; }
+  .person .title { color: var(--ink-mute); font-size: 0.85rem; margin-top: 4px; }
+  .person .bio { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin-top: 18px; }
+
+  /* ------------------------------------------------------------------ */
+  /* FINAL CTA                                                           */
+  /* ------------------------------------------------------------------ */
+  .final-cta {
+    padding: 110px 0 40px;
+    text-align: center;
+  }
+  .final-cta h2 {
+    font-size: clamp(2.4rem, 6vw, 4.8rem);
+    background: linear-gradient(180deg, #fff 0%, #d8cdc0 90%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    max-width: 14ch; margin: 0 auto;
+  }
+  .final-cta p {
+    color: var(--ink-soft); font-size: 1.05rem; max-width: 520px;
+    margin: 28px auto 0;
+  }
+  .final-cta .btn-row { margin-top: 40px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* ------------------------------------------------------------------ */
+  /* FOOTER                                                              */
+  /* ------------------------------------------------------------------ */
+  footer {
+    margin-top: 80px;
+    padding: 36px 0 32px;
+    border-top: 1px solid var(--line);
+  }
+  .foot-row {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 18px;
+  }
+  .foot-brand { font-family: var(--serif); font-style: italic; font-size: 1.1rem; color: var(--ink); }
+  .foot-brand .dot { color: var(--gold); }
+  .foot-meta { color: var(--ink-mute); font-size: 0.78rem; }
+  .foot-links { display: flex; gap: 22px; }
+  .foot-links a { color: var(--ink-mute); font-size: 0.82rem; text-decoration: none; transition: color 0.2s; }
+  .foot-links a:hover { color: var(--ink); }
+
+  /* ------------------------------------------------------------------ */
+  /* ENTRANCE ANIMATION                                                  */
+  /* ------------------------------------------------------------------ */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); filter: blur(8px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+  }
+  .rise { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .rise.d1 { animation-delay: 0.1s; }
+  .rise.d2 { animation-delay: 0.25s; }
+  .rise.d3 { animation-delay: 0.4s; }
+  .rise.d4 { animation-delay: 0.55s; }
+  .rise.d5 { animation-delay: 0.7s; }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s, transform 0.8s; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Pulsing live dot */
+  .live-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+    box-shadow: 0 0 0 0 var(--gold-glow);
+    animation: pulse 1.8s infinite;
+    display: inline-block;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200, 134, 10, 0.4); }
+    70%  { box-shadow: 0 0 0 10px rgba(200, 134, 10, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(200, 134, 10, 0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- NAVBAR                                                       -->
+<!-- ============================================================ -->
+<header class="nav">
+  <div class="nav-inner glass">
+    <a href="/" class="nav-brand">VERITAS<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#platform">Platform</a>
+      <a href="#how">How It Works</a>
+      <a href="#team">Team</a>
+    </nav>
+    <a href="/dashboard" class="nav-cta">
+      Launch Oracle
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
+    </a>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- HERO                                                         -->
+<!-- ============================================================ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge glass rise">
+      <span class="pill">New</span>
+      <span class="label"><span class="live-dot"></span> &nbsp;The Carbon Credit Anti-Greenwash Oracle</span>
+    </div>
+
+    <h1 class="rise d1">
+      Truth in <span class="gold">every</span> tonne.
+    </h1>
+
+    <p class="hero-sub rise d2">
+      VERITAS returns a transparent, AI-justified risk score for any carbon credit
+      in seconds — powered by Sentinel-2 satellite imagery, real-time IoT feeds,
+      and multi-model AI inference.
+    </p>
+
+    <div class="hero-cta-row rise d3">
+      <a href="/dashboard" class="btn btn-primary">
+        Launch Dashboard
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
+      </a>
+      <a href="#how" class="btn btn-ghost glass">
+        See How It Works
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+
+    <div class="stat-strip glass rise d4">
+      <div>
+        <div class="num">$50B+</div>
+        <div class="lab">Global VCM + ESG SaaS TAM by 2030</div>
+      </div>
+      <div>
+        <div class="num">90%</div>
+        <div class="lab">Of leading REDD+ credits found effectively worthless (2023)</div>
+      </div>
+      <div>
+        <div class="num">3–5y</div>
+        <div class="lab">Audit gap between on-site verifications today</div>
+      </div>
+      <div>
+        <div class="num">&lt;2s</div>
+        <div class="lab">VERITAS RISK SCORE™ generation, per credit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- THE PROBLEM                                                  -->
+<!-- ============================================================ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="section-tag glass mono-tag">01 — The Crisis</div>
+    <h2 class="serif-it" style="max-width: 18ch;">The voluntary carbon market is broken.</h2>
+
+    <div style="height: 50px;"></div>
+
+    <div class="problem-grid">
+      <div>
+        <p>
+          In 2023, an investigation found that over <strong style="color:var(--gold-soft)">90%</strong>
+          of the world's leading carbon registry's flagship REDD+ credits were effectively worthless.
+          Billions of dollars flow annually into a market where the primary verification method is a
+          periodic on-site audit conducted once every three to five years.
+        </p>
+        <p>
+          The window for fraud is enormous. The window for institutional reputational damage is wider still.
+        </p>
+        <p>
+          Meanwhile, the regulatory tide has turned. The EU's CSRD, California's SB 253, and the
+          ISSB's S2 climate disclosure standard now force companies to <em style="color:var(--ink)">prove</em> —
+          not merely claim — the quality of their carbon offsets. Self-reported data and registry
+          certificates are no longer sufficient.
+        </p>
+      </div>
+
+      <div class="quote-card glass">
+        <div class="q">
+          "The voluntary carbon market will survive its credibility crisis only through radical
+          transparency at the asset level. VERITAS is the oracle that makes this possible."
+        </div>
+        <div class="a">— Founding Thesis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PLATFORM (4 features)                                        -->
+<!-- ============================================================ -->
+<section id="platform">
+  <div class="wrap">
+    <div class="section-tag glass mono-tag">02 — The Platform</div>
+    <h2 class="serif-it" style="max-width: 16ch;">The Bloomberg Terminal of carbon credit quality.</h2>
+    <p class="section-head lede">
+      Four capabilities, missing from every existing platform. VERITAS delivers them as one unified oracle.
+    </p>
+
+    <div class="feature-grid">
+
+      <div class="feature-card glass">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        </div>
+        <h3>Real-Time Verification</h3>
+        <p>Daily Sentinel-2 NDVI change detection per project polygon. No more three-year audit blackouts.</p>
+      </div>
+
+      <div class="feature-card glass">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <h3>Per-Credit Risk Score</h3>
+        <p>VERITAS RISK SCORE™ (0–100) per individual SKU — not portfolio averages, not registry citations.</p>
+      </div>
+
+      <div class="feature-card glass">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4M14 3h7v7M21 3l-9 9"/></svg>
+        </div>
+        <h3>AI-Native Architecture</h3>
+        <p>Claude Opus deep-audit reasoning. Groq sub-200ms real-time API. Sentinel-2 imagery synthesis. One pipeline.</p>
+      </div>
+
+      <div class="feature-card glass">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg>
+        </div>
+        <h3>Transparent Provenance</h3>
+        <p>Immutable audit trail: project polygon → registry serial → buyer wallet. End-to-end retirement tracking.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOW IT WORKS                                                 -->
+<!-- ============================================================ -->
+<section id="how">
+  <div class="wrap">
+    <div class="section-tag glass mono-tag">03 — How It Works</div>
+    <h2 class="serif-it" style="max-width: 14ch;">Search a credit. Get the score.</h2>
+    <p class="section-head lede">
+      Three steps from registry serial number to AI-justified risk verdict. No waiting, no opacity.
+    </p>
+
+    <div class="steps">
+
+      <div class="step glass">
+        <div class="num">01</div>
+        <h3>Search any credit</h3>
+        <p>
+          Enter a carbon credit serial from Verra, Gold Standard, ACR, or CAR.
+          Or upload a portfolio CSV for batch verification.
+        </p>
+      </div>
+
+      <div class="step glass">
+        <div class="num">02</div>
+        <h3>The oracle audits it</h3>
+        <p>
+          Satellite NDVI history, IoT sensor feeds, registry records, and project documentation
+          are synthesised by Claude Opus into a coherent audit chain — in under two seconds.
+        </p>
+      </div>
+
+      <div class="step glass">
+        <div class="num">03</div>
+        <h3>Receive the RISK SCORE</h3>
+        <p>
+          VERITAS RISK SCORE™ (0–100) returned with full chain-of-thought justification,
+          source citations, and an immutable audit hash you can share with regulators.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- COMPETITIVE ANALYSIS                                         -->
+<!-- ============================================================ -->
+<section>
+  <div class="wrap">
+    <div class="section-tag glass mono-tag">04 — Market Gap</div>
+    <h2 class="serif-it" style="max-width: 16ch;">Where the giants stop, VERITAS begins.</h2>
+    <p class="section-head lede">
+      Benchmarked across the six dimensions most critical to carbon credit verification.
+      Scores on a 1–10 scale.
+    </p>
+
+    <div class="table-wrap glass">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Focus</th>
+            <th>Transparency</th>
+            <th>Real-Time</th>
+            <th>Per-Credit</th>
+            <th>SME Pricing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Persefoni</td>
+            <td class="focus">Enterprise Carbon Mgmt</td>
+            <td class="score">5/10</td>
+            <td class="score">4/10</td>
+            <td class="score">3/10</td>
+            <td class="score">2/10</td>
+          </tr>
+          <tr>
+            <td class="name">Watershed</td>
+            <td class="focus">Corporate Climate Platform</td>
+            <td class="score">6/10</td>
+            <td class="score">5/10</td>
+            <td class="score">4/10</td>
+            <td class="score">3/10</td>
+          </tr>
+          <tr>
+            <td class="name">Plan A</td>
+            <td class="focus">ESG &amp; Carbon Reporting</td>
+            <td class="score">7/10</td>
+            <td class="score">4/10</td>
+            <td class="score">5/10</td>
+            <td class="score">4/10</td>
+          </tr>
+          <tr>
+            <td class="name">Verra / Gold Std</td>
+            <td class="focus">Credit Registry</td>
+            <td class="score">4/10</td>
+            <td class="score">2/10</td>
+            <td class="score">3/10</td>
+            <td class="score">7/10</td>
+          </tr>
+          <tr class="us">
+            <td class="name">VERITAS</td>
+            <td class="focus">AI Verification Oracle</td>
+            <td class="score">9/10</td>
+            <td class="score">9/10</td>
+            <td class="score">9/10</td>
+            <td class="score">9/10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- TEAM                                                         -->
+<!-- ============================================================ -->
+<section id="team">
+  <div class="wrap">
+    <div class="section-tag glass mono-tag">05 — The Founders</div>
+    <h2 class="serif-it" style="max-width: 16ch;">Built by four. For the institutions that need it most.</h2>
+    <p class="section-head lede">
+      The Green Ledger · Climate-Tech Startup Project · FAST-NUCES Islamabad · BSFT-4D Fintech Programme.
+    </p>
+
+    <div class="team">
+
+      <div class="person glass">
+        <div class="role">CEO</div>
+        <div class="name">Taha Ali</div>
+        <div class="title">Chief Executive Officer</div>
+        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Visionary</strong> — Regulatory strategy, investor narrative, mission alignment with CSRD/ISSB 2026 climate frameworks.</div>
+      </div>
+
+      <div class="person glass">
+        <div class="role">CTO</div>
+        <div class="name">Rufayl Waseem</div>
+        <div class="title">Chief Technology Officer</div>
+        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Architect</strong> — Full-stack dashboard build, globe engine, API layer, Vercel deployment infrastructure.</div>
+      </div>
+
+      <div class="person glass">
+        <div class="role">CSO</div>
+        <div class="name">Harris Safi</div>
+        <div class="title">Chief Science Officer</div>
+        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Quant</strong> — GHG Protocol methodology, carbon accounting engine, scientific rigour of the emission scoring system.</div>
+      </div>
+
+      <div class="person glass">
+        <div class="role">COO</div>
+        <div class="name">Waleed</div>
+        <div class="title">Chief Operating Officer</div>
+        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Navigator</strong> — Phase timeline management, deadline coordination, submission quality control.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- FINAL CTA                                                    -->
+<!-- ============================================================ -->
+<section class="final-cta">
+  <div class="wrap">
+    <h2 class="serif-it">Your next carbon investment starts here.</h2>
+    <p>Open the oracle. Search a credit. See what radical transparency feels like.</p>
+    <div class="btn-row">
+      <a href="/dashboard" class="btn btn-primary">
+        Launch VERITAS Dashboard
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-row">
+        <div>
+          <div class="foot-brand">VERITAS<span class="dot">.</span></div>
+          <div class="foot-meta">Verified Emissions · Real Intelligence · Transparent Assets</div>
+        </div>
+        <div class="foot-links">
+          <a href="#problem">Problem</a>
+          <a href="#platform">Platform</a>
+          <a href="#how">How</a>
+          <a href="#team">Team</a>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+        <div class="foot-meta">© 2026 VERITAS · The Green Ledger</div>
+      </div>
+    </div>
+  </footer>
+</section>
+
+</main>
+
+<script>
+  // Reveal-on-scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('section .section-tag, section h2, section .lede, section .feature-card, section .step, section .person, section .quote-card, section .table-wrap, section .stat-strip').forEach((el) => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>

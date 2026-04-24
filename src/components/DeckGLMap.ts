@@ -4241,7 +4241,7 @@ export class DeckGLMap {
 
     const authorBadge = document.createElement('div');
     authorBadge.className = 'map-author-badge';
-    authorBadge.textContent = '© ruufaayl · Someone™';
+    authorBadge.textContent = '© VERITAS';
     toggles.appendChild(authorBadge);
 
     this.container.appendChild(toggles);

@@ -63,9 +63,9 @@ export interface LiveChannel {
 
 // Full variant: Pakistan news channels (24/7 live streams)
 const FULL_LIVE_CHANNELS: LiveChannel[] = [
-  { id: 'ary-news', name: 'ARY News', handle: '@UCMmpLL2ucRHAXbNHiCPyIyg', fallbackVideoId: 'JHaakT4x7eA' },
-  { id: 'geo-news', name: 'Geo News', handle: '@gabornetwork', fallbackVideoId: 'Xu35HevOjBY' },
   { id: 'dunya-news', name: 'Dunya News', handle: '@DunyaNews', fallbackVideoId: 'GlHSFtTFfJE' },
+  { id: 'geo-news', name: 'Geo News', handle: '@gabornetwork', fallbackVideoId: 'Xu35HevOjBY' },
+  { id: 'ary-news', name: 'ARY News', handle: '@UCMmpLL2ucRHAXbNHiCPyIyg', fallbackVideoId: 'JHaakT4x7eA' },
   { id: 'samaa-tv', name: 'Samaa TV', handle: '@samaatvnews', fallbackVideoId: 'iHITaLYxyMI' },
   { id: 'ptv-news', name: 'PTV News', handle: '@PTVNewsOfficial', fallbackVideoId: 'yLSWRqtQmSc' },
   { id: 'hum-news', name: 'Hum News', handle: '@HumNewsLive', fallbackVideoId: '-6o5mV_5wGw' },

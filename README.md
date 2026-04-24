@@ -1,156 +1,137 @@
-<p align="center">
-  <img src="docs/images/argus-banner.png" alt="ARGUS" width="600" />
-</p>
-
-<h1 align="center">ARGUS</h1>
-<h3 align="center">Automated Reconnaissance & Geospatial Unified System</h3>
-<p align="center"><strong>Pakistan's Real-Time Military Intelligence & Situational Awareness Platform</strong></p>
+<h1 align="center">VERITAS</h1>
+<h3 align="center">Verified Emissions · Real Intelligence · Transparent Assets System</h3>
+<p align="center"><strong>The Carbon Credit Anti-Greenwash Oracle</strong></p>
 
 <p align="center">
-  <a href="https://github.com/ruufaayl/argus"><img src="https://img.shields.io/github/stars/ruufaayl/argus?style=for-the-badge&color=0a0e14&labelColor=1a1f2e" alt="Stars" /></a>
-  <a href="https://github.com/ruufaayl/argus"><img src="https://img.shields.io/github/last-commit/ruufaayl/argus?style=for-the-badge&color=00C8FF&labelColor=1a1f2e" alt="Last Commit" /></a>
-  <a href="https://github.com/ruufaayl/argus"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-  <a href="https://github.com/ruufaayl/argus/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL%20v3-blue?style=for-the-badge&labelColor=1a1f2e" alt="License" /></a>
+  <a href="https://pakontir.vercel.app/"><img src="https://img.shields.io/badge/live-pakontir.vercel.app-c8860a?style=for-the-badge&labelColor=060a07" alt="Live" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vercel-Edge-000000?style=for-the-badge&logo=vercel" alt="Vercel" />
+  <img src="https://img.shields.io/badge/Stack-Free%20Tier-c8860a?style=for-the-badge&labelColor=060a07" alt="Free Tier" />
 </p>
 
 ---
 
-## Overview
+## What is VERITAS?
 
-ARGUS is a classified-grade intelligence dashboard built for Pakistan's national security apparatus. It aggregates 50+ live data sources into a unified command interface — from ADS-B flight tracking and AIS maritime surveillance to AI-synthesized threat analysis and cross-domain signal correlation.
+The voluntary carbon market is plagued by unverifiable credits. After the 2023 investigation that found over **90%** of the world's leading carbon registry's flagship REDD+ credits to be effectively worthless, institutional buyers have been left without a trusted mechanism to verify what they are purchasing.
 
-Every panel, every feed, every data point is tuned for Pakistan's strategic environment: LOC tensions, western border operations, CPEC corridor security, maritime domain awareness in the Arabian Sea, and the broader South Asian theater.
+**VERITAS is the Bloomberg Terminal of carbon credit quality** — a real-time AI oracle that returns a transparent, AI-justified risk score for any carbon credit within seconds, powered by satellite imagery, IoT sensor feeds, registry cross-checks, and multi-model AI inference.
 
----
-
-## Capabilities
-
-| Domain | What ARGUS Tracks |
-|--------|-------------------|
-| **Air Surveillance** | 400+ live aircraft via ADS-B Exchange, military flight detection, NOTAM alerts |
-| **Maritime Domain** | AIS vessel tracking (Arabian Sea, Gwadar, Karachi), naval patrol monitoring |
-| **Satellite Intel** | 10,000+ orbital objects via TLE/SGP4, overpass detection for Pakistan airspace |
-| **News Intelligence** | 435+ curated feeds — Dawn, Geo, ARY, ISPR, Express Tribune, Reuters, AP |
-| **Threat Correlation** | Multi-domain signal convergence (military + economic + disaster + escalation) |
-| **Country Risk Index** | 12-factor composite scoring: conflict, economic stress, displacement, health |
-| **Financial Radar** | PSX/KSE-100, global commodities, crypto, 92 exchanges, PKR FX tracking |
-| **Climate & CBRN** | Earthquake monitoring, NASA FIRMS fire detection, radiation watch |
-| **Cyber & Infrastructure** | Internet outages (Cloudflare Radar), submarine cable health, DDoS tracking |
-| **AI Analysis** | Groq/OpenRouter LLM synthesis — threat classification, behavioral patterns |
+> *"The voluntary carbon market will survive its credibility crisis only through radical transparency at the asset level. VERITAS is the oracle that makes this possible."*
 
 ---
 
-## Quick Start
+## The Product
 
-```bash
-git clone https://github.com/ruufaayl/argus.git
-cd argus
-npm install
-npm run dev
-```
+| Layer | What it does |
+|-------|--------------|
+| **Landing** (`/`) | Premium marketing site — problem statement, platform overview, founders, market gap analysis. |
+| **Dashboard** (`/dashboard`) | The oracle itself — 12 environmental intelligence panels rendered against a real-time 3D earth-system globe. |
 
-Open [localhost:5173](http://localhost:5173). No API keys required for basic operation.
+### The 12 Dashboard Panels
+
+1. **Earth System Map** — `globe.gl` 3D + `deck.gl` 2D, layered with environmental signals
+2. **Carbon Intelligence Brief** — Daily AI-synthesised climate intelligence digest
+3. **AI Climate Forecasts** — Forward-looking risk projections per region
+4. **Climate Anomalies** — Live anomaly detection across regions
+5. **Fire & Deforestation Monitor** — NASA FIRMS satellite hotspots
+6. **Thermal Anomalies** — Sea-surface and land-surface temperature deviations
+7. **Climate Risk Exposure** — Population-weighted exposure scoring
+8. **Disaster Cascade** — Multi-hazard correlation analysis
+9. **Climate Health Risks** — Outbreak surveillance correlated with climate signals
+10. **Energy & Renewables** — Energy mix + renewable installation registry
+11. **Air Quality Monitor** — Global PM2.5 / NO₂ via OpenAQ
+12. **Carbon Credit Markets** — Spot pricing + project provenance
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Vanilla TypeScript, Vite |
-| **3D Globe** | globe.gl + Three.js |
-| **2D Map** | deck.gl + MapLibre GL |
-| **AI/ML** | Groq, OpenRouter, Ollama (local) |
-| **API Layer** | Vercel Edge Functions (60+), Protocol Buffers |
-| **Real-time** | Railway relay (AIS WebSocket, OpenSky, RSS proxy) |
-| **Cache** | Upstash Redis (3-tier: Memory → IndexedDB → Redis) |
-| **Desktop** | Tauri 2 (Rust) — macOS, Windows, Linux |
+| Layer | Choice |
+|-------|--------|
+| **Frontend** | TypeScript + Vite SPA (vanilla / Preact) |
+| **3D Globe** | `globe.gl` (Three.js) |
+| **2D Maps** | `deck.gl` + MapLibre GL |
+| **Edge Compute** | Vercel Serverless / Edge Functions |
+| **Cache** | 3-tier (Memory → IndexedDB → Upstash Redis) |
+| **AI — Deep Audit** | Claude Opus (chain-of-thought verification) |
+| **AI — Real-time** | Claude Haiku / Sonnet + Groq Llama-3.3-70b (sub-200ms) |
+| **Satellite & Earth Data** | NASA FIRMS · NOAA ERDDAP · Global Forest Watch · ESA Sentinel-2 |
+| **Climate APIs** | NOAA Mauna Loa CO₂ · OpenAQ · Xpansiv CBL |
+| **Hosting Cost** | $0 — free-tier Vercel + free-tier Upstash |
 
 ---
 
 ## Architecture
 
 ```
-ARGUS
-├── src/                    # Frontend (TypeScript, 118 components)
-│   ├── app/                # Bootstrap, context, data loaders
-│   ├── components/         # 100+ UI panels (intel, market, military, etc.)
-│   ├── config/             # Feeds, variants, geo data, layer definitions
-│   ├── services/           # 125+ service modules (correlation, CII, AI)
-│   └── workers/            # Web Workers (analysis, ML, vector DB)
-├── api/                    # Vercel Edge Functions (60+ endpoints)
-├── server/                 # Business logic (22 RPC services)
-├── proto/                  # Protocol Buffer definitions (92 .proto files)
-├── scripts/                # Seed scripts, relay server, utilities
-└── shared/                 # Cross-platform utilities
+┌────────────────────────────────────────────────────────────────┐
+│  Browser (TypeScript SPA, served by Vercel CDN)                │
+│  ┌──────────────────┐    ┌────────────────────────────────┐   │
+│  │  Landing  (/)    │    │  Dashboard (/dashboard)         │   │
+│  │  landing.html    │    │  globe.gl + deck.gl + panels    │   │
+│  └──────────────────┘    └────────────┬───────────────────┘   │
+└──────────────────────────────────────┬─┴──────────────────────┘
+                                       │
+                ┌──────────────────────┴──────────────────────┐
+                │  Vercel Edge Functions  (api/*)             │
+                │  (NASA FIRMS, OpenAQ, NOAA, Forest Watch)   │
+                └──────────────────────┬──────────────────────┘
+                                       │
+                ┌──────────────────────┴──────────────────────┐
+                │   Upstash Redis (3-tier cache, free plan)   │
+                └─────────────────────────────────────────────┘
 ```
+
+Total deployable footprint: **~12 serverless functions**, well within Vercel's free-tier limit.
 
 ---
 
-## Data Sources
+## The Founders
 
-ARGUS aggregates 50+ external data providers:
+**The Green Ledger · Climate-Tech Startup Project · FAST-NUCES Islamabad · BSFT-4D Fintech Programme · April 2026**
 
-- **Conflict**: ACLED, UCDP, HAPI/HDX
-- **Aviation**: ADS-B Exchange, OpenSky, AviationStack, Wingbits
-- **Maritime**: AISStream (live AIS), corridor risk scoring
-- **Markets**: Finnhub, Yahoo Finance, CoinGecko, Alpha Vantage
-- **Economic**: FRED, BLS, BIS, ECB, EIA, Eurostat
-- **Climate**: NASA FIRMS, Open-Meteo, USGS earthquakes
-- **Intelligence**: GDELT, Telegram OSINT, Polymarket predictions
-- **Infrastructure**: Cloudflare Radar, TeleGeography submarine cables
-- **Health**: WHO disease surveillance, UNHCR displacement
+| | Name | Role | Mandate |
+|---|---|---|---|
+| **CEO** | Taha Ali        | Chief Executive Officer  | *The Visionary* — Regulatory strategy, investor narrative, CSRD/ISSB alignment |
+| **CTO** | Rufayl Waseem   | Chief Technology Officer | *The Architect* — Full-stack build, globe engine, API layer, deployment |
+| **CSO** | Harris Safi     | Chief Science Officer    | *The Quant* — GHG Protocol methodology, carbon accounting engine |
+| **COO** | Waleed          | Chief Operating Officer  | *The Navigator* — Phase timeline, deadline coordination, QA |
 
 ---
 
-## Environment Variables
-
-All keys are optional — features degrade gracefully without them.
-
-Copy `.env.example` to `.env.local` and fill in what you have:
+## Run Locally
 
 ```bash
-cp .env.example .env.local
+pnpm install        # or npm install
+pnpm dev            # vite dev server on :5173
+# →  http://localhost:5173/             landing
+# →  http://localhost:5173/dashboard    oracle
 ```
 
-**Priority keys:**
+Required environment variables (see `.env.example`):
 
-| Key | Source | Purpose |
-|-----|--------|---------|
-| `GROQ_API_KEY` | [Groq](https://console.groq.com/) | AI threat synthesis |
-| `UPSTASH_REDIS_REST_URL` | [Upstash](https://upstash.com/) | Cross-user cache |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash | Cache auth |
-| `FINNHUB_API_KEY` | [Finnhub](https://finnhub.io/) | Stock market data |
-| `ACLED_EMAIL` | [ACLED](https://acleddata.com/) | Conflict events |
-| `AISSTREAM_API_KEY` | [AISStream](https://aisstream.io/) | Maritime tracking |
-
-See `.env.example` for the complete list of 40+ optional keys.
+| Variable | Used by |
+|----------|---------|
+| `GROQ_API_KEY` | AI synthesis (real-time briefs) |
+| `ANTHROPIC_API_KEY` | Claude Opus / Sonnet / Haiku audit chain |
+| `OPENAQ_API_KEY` | Air quality data |
+| `UPSTASH_REDIS_URL` / `UPSTASH_REDIS_TOKEN` | Cache layer |
+| `NASA_FIRMS_KEY` | Fire hotspot satellite feed |
 
 ---
 
-## Deployment
+## Roadmap
 
-**Vercel (recommended):**
-```bash
-npm run build
-# Deploy via Vercel CLI or GitHub integration
-```
-
-**Docker:**
-```bash
-docker-compose up -d
-```
-
-**Self-hosted:** See [SELF_HOSTING.md](./SELF_HOSTING.md)
+- **Phase 00 — Group Formation** ✅ Complete (April 2, 2026)
+- **Phase 01 — Market Identification & Comparative Analysis** ✅ Complete (April 9, 2026)
+- **Phase 02 — Methodology & Alpha MVP** 🚧 In progress
+  - GHG formula engine (live)
+  - First clickable low-fidelity prototype (live URL: [pakontir.vercel.app](https://pakontir.vercel.app/))
+- **Phase 03 — VERITAS RISK SCORE™ engine** ⏳ Next
 
 ---
 
 ## License
 
-AGPL-3.0 for non-commercial use. See [LICENSE](LICENSE) for full terms.
-
----
-
-<p align="center">
-  Built for Pakistan's defense by <a href="https://github.com/ruufaayl">@ruufaayl</a>
-</p>
+AGPL-3.0 — see [LICENSE](LICENSE).
