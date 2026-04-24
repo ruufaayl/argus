@@ -20,7 +20,5 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-      - run: npm ci
+      - run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
       - run: npm run lint:md

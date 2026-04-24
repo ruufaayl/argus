@@ -57,11 +57,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
 
       - name: 🌋 Earthquakes (USGS)
         run: node scripts/seed-earthquakes.mjs
@@ -235,11 +232,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
 
       - name: 📊 Market Quotes (Finnhub + Yahoo)
         run: node scripts/seed-market-quotes.mjs
@@ -303,11 +297,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
 
       - name: 📊 FRED Economic Series
         run: node scripts/seed-economy.mjs
@@ -378,11 +369,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
 
       - name: ⚔️ ACLED Conflict Events
         run: node scripts/seed-conflict-intel.mjs
@@ -434,11 +422,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --no-audit --no-fund --prefer-offline --ignore-scripts
 
       - name: 🔥 Fire Detections (NASA FIRMS)
         run: node scripts/seed-fire-detections.mjs

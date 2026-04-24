@@ -52,11 +52,8 @@ jobs:
             imagemagick \
             xdotool
 
-      - name: Pin npm to 11 (matches lockfile)
-        run: npm install -g npm@11.12.1
-
       - name: Install frontend dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund --prefer-offline
 
       - name: Bundle Node.js runtime
         shell: bash
