@@ -94,6 +94,8 @@ const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
     'waterways', 'economic', 'minerals', 'gpsJamming',
     'satellites', 'ciiChoropleth', 'sanctions', 'dayNight', 'webcams', 'weatherRadar',
     'diseaseOutbreaks',
+    // VERITAS pivot: climate & biodiversity layers
+    'speciesRecovery', 'renewableInstallations',
   ],
   tech: [
     'startupHubs', 'techHQs', 'accelerators', 'cloudRegions',
