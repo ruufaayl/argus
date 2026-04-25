@@ -121,6 +121,64 @@ Required environment variables (see `.env.example`):
 
 ---
 
+## Deploying to Vercel
+
+The site is **fully API-driven** — no panel falls back to fabricated data. Set the env vars below in **Vercel → Project → Settings → Environment Variables**, redeploy, and every panel will populate from live sources. Missing vars surface as empty panels, never fake numbers.
+
+### Required for the 12 VERITAS panels
+
+| Env Var | Powers |
+|---------|--------|
+| `GROQ_API_KEY` | `Carbon Intelligence Brief`, `AI Climate Forecasts`, `VERITAS Risk Signals` |
+| `ANTHROPIC_API_KEY` | Deep-audit chain (Claude Opus verification step) |
+| `EIA_API_KEY` | `Energy & Renewables` panel (US EIA tape) |
+| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | 3-tier cache layer (panels still work without it, but every request hits upstream APIs) |
+
+### Strongly recommended
+
+| Env Var | Powers |
+|---------|--------|
+| `OPENAQ_API_KEY` | `Air Quality Monitor` (panel works without a key but at lower quota) |
+| `OPENWEATHER_API_KEY` | Weather overlay on the globe |
+| `RESEND_API_KEY` + `CONTACT_NOTIFY_EMAIL` | Landing page contact / waitlist forms |
+| `WORLDMONITOR_VALID_KEYS` | Comma-separated allowlist of API keys for premium endpoints (leave unset for browser-trusted-origin only) |
+
+### Optional integrations
+
+| Env Var | Powers |
+|---------|--------|
+| `EOSDIS_NASA_TOKEN` / `NASA_FIRMS_KEY` | NASA FIRMS fire & deforestation feed (panel works without — uses public proxy) |
+| `CLERK_SECRET_KEY` + `CLERK_JWT_ISSUER_DOMAIN` | Pro account auth |
+| `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET` / `DISCORD_REDIRECT_URI` | Discord notification channel |
+| `SLACK_CLIENT_ID` / `SLACK_CLIENT_SECRET` / `SLACK_REDIRECT_URI` | Slack notification channel |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile bot-protection on forms |
+| `CONVEX_URL` / `CONVEX_SITE_URL` | Convex backend (waitlist, user prefs) |
+| `WS_RELAY_URL` + `RELAY_SHARED_SECRET` | Live AIS/ADS-B WebSocket relay |
+| `WINGBITS_API_KEY` / `AVIATIONSTACK_API` / `ICAO_API_KEY` | Aviation feeds (off in VERITAS variant by default) |
+| `ABUSEIPDB_API_KEY` / `OTX_API_KEY` / `URLHAUS_AUTH_KEY` | Cyber-threat overlays (off in VERITAS variant) |
+| `COINGECKO_API_KEY` / `WTO_API_KEY` / `TRAVELPAYOUTS_API_TOKEN` | Auxiliary data feeds |
+
+### Variant selector
+
+| Env Var | Effect |
+|---------|--------|
+| `VITE_VARIANT=full` (default) | VERITAS — 12 environmental panels |
+| `VITE_VARIANT=tech` | Tech/AI/startup variant |
+| `VITE_VARIANT=finance` | Markets/trading variant |
+| `VITE_VARIANT=commodity` | Mining/metals/energy variant |
+| `VITE_VARIANT=happy` | Good-news variant |
+
+### Workflow
+
+1. Open Vercel → `pakontir` project → **Settings** → **Environment Variables**.
+2. Add the rows above (paste only the keys you have — missing ones leave their panels empty, not broken).
+3. Trigger a redeploy (push to `main`, or **Deployments → … → Redeploy**).
+4. Confirm panels populate at `https://pakontir.vercel.app/dashboard`.
+
+> Nothing is hardcoded. Every figure on every panel originates from a live API response or a cache hit. If a panel is empty, its upstream feed is either missing an env var or rate-limited.
+
+---
+
 ## Roadmap
 
 - **Phase 00 — Group Formation** ✅ Complete (April 2, 2026)

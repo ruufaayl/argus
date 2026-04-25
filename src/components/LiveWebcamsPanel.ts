@@ -1,5 +1,5 @@
 import { Panel } from './Panel';
-import { IDLE_PAUSE_MS, STORAGE_KEYS } from '@/config';
+import { IDLE_PAUSE_MS, STORAGE_KEYS, SITE_VARIANT } from '@/config';
 import { isDesktopRuntime, getLocalApiPort } from '@/services/runtime';
 import { escapeHtml } from '@/utils/sanitize';
 import { t } from '../services/i18n';
@@ -8,20 +8,50 @@ import { getStreamQuality, subscribeStreamQualityChange } from '@/services/ai-fl
 import { isMobileDevice, loadFromStorage, saveToStorage } from '@/utils';
 import { getLiveStreamsAlwaysOn, subscribeLiveStreamsSettingsChange } from '@/services/live-stream-settings';
 
-type WebcamRegion = 'iran' | 'middle-east' | 'europe' | 'asia' | 'americas' | 'space';
+type WebcamRegion = 'environment' | 'iran' | 'middle-east' | 'europe' | 'asia' | 'americas' | 'space';
 
 interface WebcamFeed {
   id: string;
   city: string;
   country: string;
   region: WebcamRegion;
+  /** YouTube channel handle for live-discovery, or '' when iframeUrl is used. */
   channelHandle: string;
+  /** YouTube videoId for fallback embed (required for YT cams). */
   fallbackVideoId: string;
+  /** Direct iframe URL for non-YouTube cams (skylinewebcams, explore.org, africam, etc.). When set, fallbackVideoId is ignored. */
+  iframeUrl?: string;
+  /** Page URL to open externally for users wanting the source. */
+  pageUrl?: string;
+  /** Short tag describing environmental relevance (GLACIER, EMISSIONS, etc.). */
+  tag?: string;
 }
 
 // Verified YouTube live stream IDs — validated Feb 2026 via title cross-check.
 // IDs may rotate; update when stale.
 const WEBCAM_FEEDS: WebcamFeed[] = [
+  // Environment — earth observation, biodiversity & nature live cams (VERITAS default region).
+  // Verified sources from VERITAS_Environmental_Feeds.docx — USGS, explore.org,
+  // skylinewebcams, africam, JCU, Nature Conservancy. Mix of YouTube embeds and
+  // direct iframe pages. EMISSIONS / GLACIER / DEFORESTATION / OCEAN / ECOSYSTEM tags.
+  // North America
+  { id: 'env-kilauea',      city: 'Kilauea Volcano',         country: 'Hawaii, USA',         region: 'environment', channelHandle: '@USGS',    fallbackVideoId: 'kMRKYNFYOAI', tag: 'EMISSIONS',      pageUrl: 'https://www.usgs.gov/volcanoes/kilauea/webcams' },
+  { id: 'env-brooks-falls', city: 'Brooks Falls Bears',      country: 'Katmai NP, Alaska',   region: 'environment', channelHandle: '@explore', fallbackVideoId: 'TVx9Pt0H6jE', tag: 'ECOSYSTEM',      pageUrl: 'https://explore.org/livecams/three-bears/brown-bear-salmon-cam-brooks-falls' },
+  { id: 'env-polar-bear',   city: 'Polar Bear Cam',          country: 'Wapusk NP, Canada',   region: 'environment', channelHandle: '@explore', fallbackVideoId: 'IfHMPxRwFxc', tag: 'ARCTIC',         pageUrl: 'https://explore.org/livecams/polar-bears/polar-bear-cam' },
+  // South America
+  { id: 'env-amazon-jk',    city: 'Amazon Reserve',          country: 'Madre de Dios, Peru', region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://www.earthcam.com/world/peru/madrededios/?cam=madrededios', tag: 'DEFORESTATION', pageUrl: 'https://www.earthcam.com/world/peru/madrededios/' },
+  { id: 'env-galapagos',    city: 'Galapagos Islands',       country: 'Ecuador',             region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://explore.org/livecams/galapagos',                                tag: 'OCEAN',         pageUrl: 'https://explore.org/livecams/galapagos' },
+  // Europe
+  { id: 'env-jokulsarlon',  city: 'Jokulsarlon Glacier',     country: 'Iceland',             region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://www.skylinewebcams.com/en/webcam/iceland/austurland/hofn/jokulsarlon.html', tag: 'GLACIER', pageUrl: 'https://www.skylinewebcams.com/en/webcam/iceland/austurland/hofn/jokulsarlon.html' },
+  { id: 'env-etna',         city: 'Etna Volcano',            country: 'Sicily, Italy',       region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://www.skylinewebcams.com/en/webcam/italia/sicilia/catania/etna.html',         tag: 'EMISSIONS', pageUrl: 'https://www.ct.ingv.it/index.php/monitoraggio-e-sorveglianza/prodotti-del-monitoraggio/webcam' },
+  // Africa
+  { id: 'env-tembe',        city: 'Tembe Elephant Park',     country: 'South Africa',        region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://www.africam.com/wildlife/tembe_elephant_park',                              tag: 'ECOSYSTEM', pageUrl: 'https://explore.org/livecams/africam/tembe-elephant-park' },
+  { id: 'env-gorilla-drc',  city: 'Gorilla Forest Corridor', country: 'Eastern DRC',         region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://explore.org/livecams/african-wildlife/gorilla-forest-corridor',           tag: 'DEFORESTATION', pageUrl: 'https://explore.org/livecams/african-wildlife/gorilla-forest-corridor' },
+  // Asia
+  { id: 'env-panda',        city: 'Giant Panda Centre',      country: 'Chengdu, China',      region: 'environment', channelHandle: '',         fallbackVideoId: '', iframeUrl: 'https://explore.org/livecams/three-bears/happiness-village-baby-panda-park',      tag: 'ECOSYSTEM', pageUrl: 'https://explore.org/livecams/three-bears/happiness-village-baby-panda-park' },
+  // Oceania / Polar
+  { id: 'env-southern-reef',city: 'Great Southern Reef',     country: 'Port Phillip, Australia', region: 'environment', channelHandle: '',     fallbackVideoId: '', iframeUrl: 'https://www.natureaustralia.org.au/what-we-do/our-priorities/oceans/ocean-stories/reef-cam/', tag: 'OCEAN', pageUrl: 'https://soel.org.au/reef-cam' },
+  { id: 'env-gbr-orpheus',  city: 'Great Barrier Reef',      country: 'Orpheus Island, Australia', region: 'environment', channelHandle: '',   fallbackVideoId: '', iframeUrl: 'https://www.jcu.edu.au/classroom-on-the-reef/livecams',                            tag: 'OCEAN',     pageUrl: 'https://www.jcu.edu.au/classroom-on-the-reef/livecams' },
   // Iran Attacks — Tehran, Tel Aviv, Jerusalem
   { id: 'iran-tehran', city: 'Tehran', country: 'Iran', region: 'iran', channelHandle: '@IranHDCams', fallbackVideoId: '-zGuR1qVKrU' },
   { id: 'iran-telaviv', city: 'Tel Aviv', country: 'Israel', region: 'iran', channelHandle: '@IsraelLiveCam', fallbackVideoId: 'gmtlJ_m2r5A' },
@@ -66,7 +96,11 @@ const IDLE_ACTIVITY_EVENTS = ['mousedown', 'keydown', 'scroll', 'touchstart', 'm
 type ViewMode = 'grid' | 'single';
 type RegionFilter = 'all' | WebcamRegion;
 
-const ALL_REGIONS: RegionFilter[] = ['all', 'iran', 'middle-east', 'europe', 'americas', 'asia', 'space'];
+const ALL_REGIONS: RegionFilter[] = ['all', 'environment', 'iran', 'middle-east', 'europe', 'americas', 'asia', 'space'];
+
+/** Default region per site variant. VERITAS (full) opens with environmental cams. */
+const DEFAULT_REGION_FOR_VARIANT: RegionFilter =
+  SITE_VARIANT === 'full' ? 'environment' : 'iran';
 
 interface WebcamPrefs {
   regionFilter: RegionFilter;
@@ -77,7 +111,7 @@ interface WebcamPrefs {
 function loadWebcamPrefs(forceSingleView: boolean): WebcamPrefs {
   const stored = loadFromStorage<Partial<WebcamPrefs>>(STORAGE_KEYS.webcamPrefs, {});
   const region = stored.regionFilter as RegionFilter;
-  const regionFilter = ALL_REGIONS.includes(region) ? region : 'iran';
+  const regionFilter = ALL_REGIONS.includes(region) ? region : DEFAULT_REGION_FOR_VARIANT;
   const viewMode = forceSingleView ? 'single'
     : (stored.viewMode === 'grid' || stored.viewMode === 'single' ? stored.viewMode : 'grid');
   const regionFeeds = regionFilter === 'all' ? WEBCAM_FEEDS
@@ -100,7 +134,7 @@ interface WebcamIframeTracker {
 
 export class LiveWebcamsPanel extends Panel {
   private viewMode: ViewMode = 'grid';
-  private regionFilter: RegionFilter = 'iran';
+  private regionFilter: RegionFilter = DEFAULT_REGION_FOR_VARIANT;
   private activeFeed: WebcamFeed = WEBCAM_FEEDS[0]!;
   private toolbar: HTMLElement | null = null;
   private iframes: HTMLIFrameElement[] = [];
@@ -191,10 +225,14 @@ export class LiveWebcamsPanel extends Panel {
   }
 
   private static readonly ALL_GRID_IDS = ['jerusalem', 'tehran', 'kyiv', 'washington'];
+  private static readonly VERITAS_GRID_IDS = ['env-iss-earth', 'env-katmai-bears', 'env-amazon', 'env-coral-reef'];
 
   private get gridFeeds(): WebcamFeed[] {
     if (this.regionFilter === 'all') {
-      return LiveWebcamsPanel.ALL_GRID_IDS
+      const ids = SITE_VARIANT === 'full'
+        ? LiveWebcamsPanel.VERITAS_GRID_IDS
+        : LiveWebcamsPanel.ALL_GRID_IDS;
+      return ids
         .map(id => WEBCAM_FEEDS.find(f => f.id === id)!)
         .filter(Boolean);
     }
@@ -208,15 +246,27 @@ export class LiveWebcamsPanel extends Panel {
     const regionGroup = document.createElement('div');
     regionGroup.className = 'webcam-toolbar-group';
 
-    const regions: { key: RegionFilter; label: string }[] = [
+    // VERITAS variant: lead with environment cams. Other variants keep their order.
+    const veritasOrder: { key: RegionFilter; label: string }[] = [
+      { key: 'environment', label: 'Environment' },
+      { key: 'all', label: t('components.webcams.regions.all') },
+      { key: 'space', label: t('components.webcams.regions.space') },
+      { key: 'americas', label: t('components.webcams.regions.americas') },
+      { key: 'europe', label: t('components.webcams.regions.europe') },
+      { key: 'asia', label: t('components.webcams.regions.asia') },
+      { key: 'middle-east', label: t('components.webcams.regions.mideast') },
+    ];
+    const defaultOrder: { key: RegionFilter; label: string }[] = [
       { key: 'iran', label: t('components.webcams.regions.iran') },
       { key: 'all', label: t('components.webcams.regions.all') },
+      { key: 'environment', label: 'Environment' },
       { key: 'middle-east', label: t('components.webcams.regions.mideast') },
       { key: 'europe', label: t('components.webcams.regions.europe') },
       { key: 'americas', label: t('components.webcams.regions.americas') },
       { key: 'asia', label: t('components.webcams.regions.asia') },
       { key: 'space', label: t('components.webcams.regions.space') },
     ];
+    const regions = SITE_VARIANT === 'full' ? veritasOrder : defaultOrder;
 
     regions.forEach(({ key, label }) => {
       const btn = document.createElement('button');
@@ -300,7 +350,9 @@ export class LiveWebcamsPanel extends Panel {
   private createIframe(feed: WebcamFeed): HTMLIFrameElement {
     const iframe = document.createElement('iframe');
     iframe.className = 'webcam-iframe';
-    iframe.src = this.buildEmbedUrl(feed.fallbackVideoId);
+    // Non-YouTube cams (skylinewebcams, explore.org pages, africam, JCU) embed
+    // their own page directly. YouTube cams go through the buildEmbedUrl pipeline.
+    iframe.src = feed.iframeUrl ? feed.iframeUrl : this.buildEmbedUrl(feed.fallbackVideoId);
     iframe.title = `${feed.city} live webcam`;
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture; storage-access';
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
@@ -419,10 +471,16 @@ export class LiveWebcamsPanel extends Panel {
 
     const openBtn = document.createElement('a');
     openBtn.className = 'offline-retry webcam-embed-open';
-    openBtn.href = `https://www.youtube.com/watch?v=${encodeURIComponent(feed.fallbackVideoId)}`;
+    // Non-YouTube feeds (skylinewebcams, explore.org pages, africam, JCU) carry
+    // their own page URL; fall back to the iframe URL itself, then to YouTube.
+    openBtn.href = feed.pageUrl
+      ?? feed.iframeUrl
+      ?? `https://www.youtube.com/watch?v=${encodeURIComponent(feed.fallbackVideoId)}`;
     openBtn.target = '_blank';
     openBtn.rel = 'noopener noreferrer';
-    openBtn.textContent = t('components.liveNews.openOnYouTube') || 'Open on YouTube';
+    openBtn.textContent = (feed.iframeUrl || feed.pageUrl)
+      ? 'Open source page'
+      : (t('components.liveNews.openOnYouTube') || 'Open on YouTube');
     openBtn.addEventListener('click', (e) => e.stopPropagation());
 
     actions.append(retryBtn, openBtn);

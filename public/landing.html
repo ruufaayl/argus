@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>VERITAS — The Carbon Credit Anti-Greenwash Oracle</title>
-<meta name="description" content="VERITAS is the Bloomberg Terminal of carbon credit quality. Real-time, AI-justified risk scores for any carbon credit, powered by Sentinel-2 satellite imagery and multi-model AI." />
+<meta name="description" content="VERITAS is the Bloomberg Terminal of carbon credit quality. Real-time, AI-justified risk scores for any carbon credit, powered by Sentinel-2 satellite imagery, NASA FIRMS, and multi-model AI inference." />
 <meta name="theme-color" content="#060a07" />
 <meta name="author" content="VERITAS" />
 <link rel="canonical" href="https://pakontir.vercel.app/" />
@@ -15,69 +15,197 @@
 <meta property="og:description" content="The real-time AI oracle for carbon credit verification. Truth in every tonne." />
 <meta property="og:url" content="https://pakontir.vercel.app/" />
 
+<!-- Preconnect to fonts and NASA CDN for hero imagery -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://eoimages.gsfc.nasa.gov" crossorigin />
+<link rel="dns-prefetch" href="https://eoimages.gsfc.nasa.gov" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<!-- NASA Visible Earth — Blue Marble Land Shallow Topo (public domain, stable since 2002) -->
+<link rel="preload" as="image" href="https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57752/land_shallow_topo_2048.jpg" />
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ================================================================== */
+  /* DESIGN TOKENS                                                       */
+  /* ================================================================== */
   :root {
     --bg: #060a07;
     --bg-elev: #0a100c;
+    --bg-deep: #02050300;
     --ink: #f5f0eb;
     --ink-soft: rgba(245, 240, 235, 0.65);
     --ink-mute: rgba(245, 240, 235, 0.42);
+    --ink-faint: rgba(245, 240, 235, 0.22);
     --gold: #c8860a;
     --gold-soft: #d4943a;
+    --gold-bright: #f5b541;
     --gold-glow: rgba(200, 134, 10, 0.18);
+    --emerald: #4ade80;
+    --emerald-soft: #6ee7b7;
+    --crimson: #f87171;
     --line: rgba(245, 240, 235, 0.10);
+    --line-soft: rgba(245, 240, 235, 0.06);
     --glass-bg: rgba(255, 255, 255, 0.025);
     --glass-border: rgba(255, 255, 255, 0.12);
     --serif: 'Instrument Serif', 'Times New Roman', serif;
     --sans: 'Barlow', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+    --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  html { scroll-behavior: smooth; }
-
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg);
+  }
   body {
     background: var(--bg);
     color: var(--ink);
     font-family: var(--sans);
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
     overflow-x: hidden;
+    min-height: 100vh;
   }
 
-  body::before {
-    content: '';
+  /* ================================================================== */
+  /* AMBIENT BACKDROP — animated aurora, grid, NASA Blue Marble texture */
+  /* ================================================================== */
+  .backdrop {
     position: fixed;
     inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  /* Layer 1 — NASA Blue Marble (loaded async, opacity-revealed when ready) */
+  .backdrop .earth {
+    position: absolute;
+    top: -10%; right: -20%;
+    width: 70vw; height: 70vw;
+    max-width: 1100px; max-height: 1100px;
+    border-radius: 50%;
     background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200, 134, 10, 0.12), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 80, 40, 0.08), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(200, 134, 10, 0.04), transparent 60%);
-    pointer-events: none;
-    z-index: 0;
+      radial-gradient(circle at 30% 30%, rgba(60, 110, 80, 0.5), rgba(20, 40, 30, 0.85) 60%, rgba(5, 10, 8, 0.95) 100%),
+      url('https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57752/land_shallow_topo_2048.jpg');
+    background-size: 200% 100%, 200% 100%;
+    background-position: 0% 50%, 0% 50%;
+    background-blend-mode: overlay, normal;
+    box-shadow:
+      inset 0 0 80px 20px rgba(0,0,0,0.6),
+      inset -40px -20px 120px 30px rgba(0,0,0,0.85),
+      0 0 120px 30px rgba(74, 222, 128, 0.05);
+    opacity: 0.32;
+    filter: saturate(0.7) brightness(0.85);
+    animation: earth-spin 240s linear infinite, earth-fade-in 2s var(--ease-out) 0.4s both;
+    will-change: background-position, opacity;
   }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
+  @keyframes earth-spin {
+    from { background-position: 0% 50%, 0% 50%; }
+    to   { background-position: 200% 50%, 200% 50%; }
+  }
+  @keyframes earth-fade-in {
+    from { opacity: 0; transform: scale(1.04); }
+    to   { opacity: 0.32; transform: scale(1); }
+  }
+  /* Layer 2 — atmospheric aurora */
+  .backdrop .aurora {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 38% at 50% -8%, rgba(200, 134, 10, 0.20), transparent 65%),
+      radial-gradient(ellipse 70% 40% at 100% 100%, rgba(74, 222, 128, 0.08), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(200, 134, 10, 0.06), transparent 60%);
+    animation: aurora-drift 22s ease-in-out infinite alternate;
+  }
+  @keyframes aurora-drift {
+    0%   { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+    100% { transform: translate3d(2%, 1%, 0) scale(1); }
+  }
+  /* Layer 3 — grid */
+  .backdrop .grid {
+    position: absolute; inset: 0;
     background-image:
-      linear-gradient(rgba(245, 240, 235, 0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(245, 240, 235, 0.018) 1px, transparent 1px);
+      linear-gradient(rgba(245, 240, 235, 0.020) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 240, 235, 0.020) 1px, transparent 1px);
     background-size: 64px 64px;
-    pointer-events: none;
-    z-index: 0;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 80%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black, transparent 80%);
+  }
+  /* Layer 4 — orbiting satellite arc */
+  .backdrop .orbit {
+    position: absolute;
+    top: 18%; right: -8%;
+    width: 60vw; height: 60vw;
+    max-width: 900px; max-height: 900px;
+    border-radius: 50%;
+    border: 1px dashed rgba(245, 240, 235, 0.05);
+    animation: orbit-spin 60s linear infinite;
+  }
+  .backdrop .orbit::before {
+    content: '';
+    position: absolute;
+    top: -4px; left: 50%;
+    width: 8px; height: 8px;
+    background: var(--gold-bright);
+    border-radius: 50%;
+    box-shadow: 0 0 14px 2px var(--gold-bright), 0 0 30px 8px rgba(200, 134, 10, 0.4);
+    transform: translateX(-50%);
+  }
+  @keyframes orbit-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  /* Layer 5 — drifting noise particles */
+  .backdrop .stars { position: absolute; inset: 0; }
+  .backdrop .stars::before, .backdrop .stars::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 14%, rgba(245, 240, 235, 0.45), transparent),
+      radial-gradient(1px 1px at 28% 76%, rgba(245, 240, 235, 0.30), transparent),
+      radial-gradient(1px 1px at 47% 32%, rgba(245, 240, 235, 0.55), transparent),
+      radial-gradient(1px 1px at 63% 88%, rgba(245, 240, 235, 0.25), transparent),
+      radial-gradient(2px 2px at 78% 18%, rgba(245, 240, 235, 0.40), transparent),
+      radial-gradient(1px 1px at 88% 58%, rgba(245, 240, 235, 0.32), transparent),
+      radial-gradient(1px 1px at 8% 64%, rgba(200, 134, 10, 0.50), transparent),
+      radial-gradient(1px 1px at 92% 8%, rgba(200, 134, 10, 0.45), transparent);
+    background-size: 100% 100%;
+    animation: stars-drift 90s linear infinite;
+  }
+  .backdrop .stars::after { animation-duration: 140s; opacity: 0.6; transform: translateY(20%); }
+  @keyframes stars-drift {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-20%); }
   }
 
-  /* ------------------------------------------------------------------ */
-  /* LIQUID GLASS — the core visual primitive                            */
-  /* ------------------------------------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .backdrop .earth, .backdrop .aurora, .backdrop .orbit, .backdrop .stars::before, .backdrop .stars::after { animation: none !important; }
+  }
+
+  /* ================================================================== */
+  /* SCROLL PROGRESS BAR                                                 */
+  /* ================================================================== */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px;
+    background: transparent;
+    z-index: 100;
+  }
+  .scroll-progress::after {
+    content: '';
+    display: block; height: 100%;
+    width: var(--scroll, 0%);
+    background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold-bright) 70%, transparent);
+    transition: width 0.05s linear;
+  }
+
+  /* ================================================================== */
+  /* LIQUID GLASS — core visual primitive                                */
+  /* ================================================================== */
   .glass {
     background: rgba(255, 255, 255, 0.018);
     background-blend-mode: luminosity;
@@ -133,43 +261,76 @@
             mask-composite: exclude;
     pointer-events: none;
   }
+  /* Hover sheen — moves a subtle highlight across glass cards */
+  .glass-hover { transition: transform 0.45s var(--ease-out), background 0.4s; }
+  .glass-hover::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.9s var(--ease-out);
+    pointer-events: none;
+  }
+  .glass-hover:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.028); }
+  .glass-hover:hover::after { left: 130%; }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* TYPOGRAPHY                                                          */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .serif       { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; }
   .serif-it    { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -0.01em; }
-  .mono-tag    { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; }
+  .mono        { font-family: var(--mono); font-weight: 400; font-feature-settings: 'tnum'; }
+  .mono-tag    { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; }
 
   h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; line-height: 0.95; }
-  h1 { font-size: clamp(3rem, 9vw, 7rem); font-style: italic; }
-  h2 { font-size: clamp(2.2rem, 5.4vw, 4.4rem); font-style: italic; }
+  h1 { font-size: clamp(3rem, 9vw, 7.4rem); font-style: italic; }
+  h2 { font-size: clamp(2.2rem, 5.4vw, 4.6rem); font-style: italic; }
   h3 { font-size: clamp(1.4rem, 2.4vw, 2rem); }
 
-  /* ------------------------------------------------------------------ */
+  /* Animated character-by-character reveal for hero */
+  .split-line { display: inline-block; overflow: hidden; vertical-align: top; }
+  .split-line span {
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+    animation: split-rise 1s var(--ease-out) both;
+  }
+  @keyframes split-rise {
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* ================================================================== */
   /* LAYOUT                                                              */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   main, header, section, footer { position: relative; z-index: 1; }
   .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  @media (max-width: 600px) { .wrap { padding: 0 18px; } }
 
-  /* ------------------------------------------------------------------ */
-  /* NAVBAR                                                              */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
+  /* NAVBAR — pill, condenses on scroll                                  */
+  /* ================================================================== */
   .nav {
     position: fixed; top: 18px; left: 0; right: 0; z-index: 50;
     display: flex; justify-content: center;
+    transition: top 0.4s var(--ease-out);
   }
+  .nav.scrolled { top: 10px; }
   .nav-inner {
     display: flex; align-items: center; gap: 4px;
     padding: 7px 7px 7px 22px;
     border-radius: 999px;
+    transition: padding 0.4s var(--ease-out);
   }
+  .nav.scrolled .nav-inner { padding: 5px 5px 5px 18px; }
   .nav-brand {
     font-family: var(--serif); font-style: italic;
     font-size: 1.4rem; letter-spacing: -0.01em;
     color: var(--ink); padding-right: 14px;
     border-right: 1px solid var(--line);
     margin-right: 8px;
+    text-decoration: none;
   }
   .nav-brand .dot { color: var(--gold); }
   .nav-links { display: flex; align-items: center; gap: 2px; }
@@ -186,18 +347,23 @@
     font-size: 0.82rem; font-weight: 500;
     text-decoration: none;
     display: inline-flex; align-items: center; gap: 6px;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
   }
-  .nav-cta:hover { background: var(--gold); color: #0a0501; transform: translateY(-1px); }
+  .nav-cta:hover {
+    background: var(--gold); color: #0a0501;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(200, 134, 10, 0.35);
+  }
   .nav-cta svg { width: 14px; height: 14px; }
   @media (max-width: 760px) {
     .nav-links { display: none; }
     .nav-brand { padding-right: 10px; margin-right: 4px; font-size: 1.2rem; }
   }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* HERO                                                                */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .hero {
     min-height: 100vh; padding: 140px 0 80px;
     display: flex; flex-direction: column; justify-content: center;
@@ -205,7 +371,7 @@
   }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 10px;
-    padding: 6px 6px 6px 14px;
+    padding: 6px 14px 6px 6px;
     border-radius: 999px;
     margin: 0 auto 38px;
     font-size: 0.78rem;
@@ -216,7 +382,7 @@
     font-weight: 600; font-size: 0.66rem;
     letter-spacing: 0.06em; text-transform: uppercase;
   }
-  .hero-badge .label { color: var(--ink-soft); padding-right: 8px; }
+  .hero-badge .label { color: var(--ink-soft); padding-right: 4px; display: flex; align-items: center; gap: 8px; }
 
   .hero h1 {
     max-width: 13ch; margin: 0 auto;
@@ -224,10 +390,15 @@
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  .hero h1 .gold { color: var(--gold); -webkit-text-fill-color: var(--gold); font-style: italic; }
+  .hero h1 .gold {
+    color: var(--gold); -webkit-text-fill-color: var(--gold); font-style: italic;
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 90%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .hero-sub {
     max-width: 620px; margin: 32px auto 0;
-    color: var(--ink-soft); font-size: 1.05rem; line-height: 1.55;
+    color: var(--ink-soft); font-size: 1.05rem; line-height: 1.6;
   }
   .hero-cta-row {
     margin-top: 44px;
@@ -238,13 +409,22 @@
     padding: 13px 22px; border-radius: 999px;
     font-size: 0.92rem; font-weight: 500;
     text-decoration: none; cursor: pointer;
-    border: none; transition: transform 0.2s, background 0.2s, color 0.2s;
+    border: none; transition: transform 0.25s var(--ease-spring), background 0.2s, color 0.2s, box-shadow 0.3s;
+    position: relative;
   }
-  .btn-primary { background: var(--ink); color: var(--bg); }
-  .btn-primary:hover { background: var(--gold); color: #0a0501; transform: translateY(-1px); }
+  .btn-primary {
+    background: var(--ink); color: var(--bg);
+    box-shadow: 0 4px 14px rgba(245, 240, 235, 0.10);
+  }
+  .btn-primary:hover {
+    background: var(--gold); color: #0a0501;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 134, 10, 0.30);
+  }
   .btn-ghost { color: var(--ink); }
-  .btn-ghost:hover { color: var(--gold); }
-  .btn svg { width: 16px; height: 16px; }
+  .btn-ghost:hover { color: var(--gold); transform: translateY(-2px); }
+  .btn svg { width: 16px; height: 16px; transition: transform 0.3s; }
+  .btn:hover svg { transform: translate(2px, -2px); }
 
   /* HERO STAT STRIP */
   .stat-strip {
@@ -258,17 +438,25 @@
     content: ''; position: absolute; left: 0; top: 24px; bottom: 24px;
     width: 1px; background: var(--line);
   }
-  .stat-strip .num { font-family: var(--serif); font-style: italic; font-size: 2.4rem; color: var(--gold); line-height: 1; }
+  .stat-strip .num {
+    font-family: var(--serif); font-style: italic; font-size: 2.6rem;
+    color: var(--gold); line-height: 1;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .stat-strip .lab { color: var(--ink-mute); font-size: 0.78rem; margin-top: 10px; line-height: 1.4; }
   @media (max-width: 760px) {
     .stat-strip { grid-template-columns: repeat(2, 1fr); }
     .stat-strip > div:nth-child(3)::before { display: none; }
   }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* SECTION SCAFFOLD                                                    */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   section { padding: 110px 0; }
+  @media (max-width: 760px) { section { padding: 80px 0; } }
+
   .section-tag {
     display: inline-block;
     padding: 6px 14px; border-radius: 999px;
@@ -277,17 +465,133 @@
   }
   .section-head { max-width: 720px; margin-bottom: 60px; }
   .section-head .lede {
-    color: var(--ink-soft); font-size: 1.05rem; margin-top: 22px; max-width: 620px;
+    color: var(--ink-soft); font-size: 1.05rem; margin-top: 22px; max-width: 620px; line-height: 1.6;
   }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
+  /* RISK SCORE WIDGET — interactive showcase                            */
+  /* ================================================================== */
+  .risk-widget {
+    margin-top: 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    padding: 36px;
+    border-radius: 28px;
+    align-items: center;
+  }
+  @media (max-width: 880px) { .risk-widget { grid-template-columns: 1fr; padding: 28px; } }
+
+  .widget-input-side .label {
+    color: var(--ink-mute); font-size: 0.7rem; letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .widget-input {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .widget-input:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(200, 134, 10, 0.12);
+  }
+  .widget-input input {
+    flex: 1;
+    background: transparent;
+    border: none; outline: none;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.92rem;
+  }
+  .widget-input button {
+    background: var(--gold); color: #0a0501;
+    border: none; cursor: pointer;
+    padding: 8px 14px; border-radius: 8px;
+    font-family: var(--sans); font-weight: 600; font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .widget-input button:hover { background: var(--gold-bright); transform: translateY(-1px); }
+  .widget-input button:active { transform: translateY(0); }
+
+  .widget-presets {
+    margin-top: 14px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .widget-preset {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 5px 10px; border-radius: 999px;
+    font-family: var(--mono); font-size: 0.7rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .widget-preset:hover { color: var(--ink); border-color: var(--gold-soft); background: rgba(200, 134, 10, 0.06); }
+
+  .widget-output { display: flex; gap: 18px; align-items: stretch; }
+  .score-ring-box {
+    flex-shrink: 0;
+    width: 156px; height: 156px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .score-ring-svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .score-ring-track { stroke: rgba(245, 240, 235, 0.08); fill: none; }
+  .score-ring-fg {
+    stroke: var(--gold);
+    fill: none; stroke-linecap: round;
+    transition: stroke-dashoffset 1.4s var(--ease-out), stroke 0.4s;
+    filter: drop-shadow(0 0 6px rgba(200, 134, 10, 0.5));
+  }
+  .score-text {
+    position: relative; z-index: 1;
+    text-align: center;
+  }
+  .score-text .val {
+    display: block;
+    font-family: var(--serif); font-style: italic;
+    font-size: 3.2rem; line-height: 1;
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: color 0.3s;
+  }
+  .score-text .val.is-low { background: linear-gradient(180deg, var(--crimson), #b91c1c); -webkit-background-clip: text; background-clip: text; }
+  .score-text .val.is-mid { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; background-clip: text; }
+  .score-text .val.is-high { background: linear-gradient(180deg, var(--emerald-soft), var(--emerald)); -webkit-background-clip: text; background-clip: text; }
+  .score-text .lab { display: block; margin-top: 4px; font-size: 0.66rem; color: var(--ink-mute); letter-spacing: 0.18em; text-transform: uppercase; }
+
+  .score-meta { flex: 1; min-width: 0; }
+  .score-meta .verdict {
+    font-family: var(--serif); font-style: italic; font-size: 1.4rem;
+    color: var(--ink); line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .score-meta .reason {
+    color: var(--ink-soft); font-size: 0.86rem; line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .score-bars { display: flex; flex-direction: column; gap: 8px; }
+  .score-bar { display: grid; grid-template-columns: 80px 1fr 36px; gap: 10px; align-items: center; font-size: 0.74rem; }
+  .score-bar .b-lab { color: var(--ink-mute); font-family: var(--mono); }
+  .score-bar .b-track { height: 4px; background: rgba(245, 240, 235, 0.08); border-radius: 999px; overflow: hidden; }
+  .score-bar .b-fill { height: 100%; background: var(--gold); border-radius: 999px; transform-origin: left; transform: scaleX(0); transition: transform 1.2s var(--ease-out); }
+  .score-bar .b-fill.is-good { background: var(--emerald); }
+  .score-bar .b-fill.is-warn { background: var(--gold); }
+  .score-bar .b-fill.is-bad  { background: var(--crimson); }
+  .score-bar .b-val { text-align: right; color: var(--ink); font-family: var(--mono); }
+
+  /* ================================================================== */
   /* PROBLEM SECTION                                                     */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .problem-grid {
     display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center;
   }
   @media (max-width: 880px) { .problem-grid { grid-template-columns: 1fr; gap: 40px; } }
-  .problem-grid p { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.7; margin-bottom: 16px; }
+  .problem-grid p { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.75; margin-bottom: 16px; }
   .quote-card {
     padding: 36px 32px;
     border-radius: 24px;
@@ -302,9 +606,9 @@
     letter-spacing: 0.12em; text-transform: uppercase;
   }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* PLATFORM (4-CARD GRID)                                              */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .feature-grid {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
   }
@@ -327,11 +631,116 @@
     font-family: var(--serif); font-size: 1.4rem; font-style: italic;
     color: var(--ink); margin-bottom: 10px; line-height: 1.1;
   }
-  .feature-card p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.55; }
+  .feature-card p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.6; }
 
-  /* ------------------------------------------------------------------ */
-  /* HOW IT WORKS (3-STEP)                                              */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
+  /* 12-PANEL ORACLE SHOWCASE                                            */
+  /* ================================================================== */
+  .panel-mosaic {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 1100px) { .panel-mosaic { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 760px)  { .panel-mosaic { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px)  { .panel-mosaic { grid-template-columns: 1fr; } }
+  .mosaic-card {
+    padding: 18px;
+    border-radius: 18px;
+    min-height: 180px;
+    display: flex; flex-direction: column;
+    position: relative;
+    cursor: default;
+  }
+  .mosaic-card .m-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .mosaic-card .m-title {
+    font-family: var(--serif); font-style: italic; font-size: 1.05rem;
+    color: var(--ink); line-height: 1.15;
+  }
+  .mosaic-card .m-num {
+    font-family: var(--mono); font-size: 0.66rem;
+    color: var(--ink-mute); letter-spacing: 0.16em;
+  }
+  .mosaic-card .m-vis {
+    flex: 1;
+    margin-top: 6px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.16);
+    position: relative; overflow: hidden;
+    min-height: 80px;
+  }
+  .mosaic-card .m-foot {
+    margin-top: 10px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+  .mosaic-card .m-foot .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--emerald);
+    box-shadow: 0 0 6px var(--emerald);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  .mosaic-card .m-foot .dot.gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+  .mosaic-card .m-foot .dot.crimson { background: var(--crimson); box-shadow: 0 0 6px var(--crimson); }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* per-panel mini-vis — pure SVG */
+  .vis-spark { position: absolute; inset: 0; padding: 8px; }
+  .vis-spark svg { width: 100%; height: 100%; }
+  .vis-spark .stroke-gold { stroke: var(--gold); }
+  .vis-spark .stroke-emerald { stroke: var(--emerald); }
+  .vis-spark .stroke-crimson { stroke: var(--crimson); }
+  .vis-spark .fill-gold-soft { fill: rgba(200, 134, 10, 0.18); }
+  .vis-spark .fill-emerald-soft { fill: rgba(74, 222, 128, 0.18); }
+  .vis-spark .fill-crimson-soft { fill: rgba(248, 113, 113, 0.18); }
+
+  /* ================================================================== */
+  /* DATA SOURCES STRIP                                                  */
+  /* ================================================================== */
+  .sources-strip {
+    margin-top: 70px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+  }
+  .sources-strip::before, .sources-strip::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none;
+  }
+  .sources-strip::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+  .sources-strip::after  { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+  .sources-track {
+    display: flex; align-items: center; gap: 56px;
+    animation: marquee 38s linear infinite;
+    width: max-content;
+  }
+  .sources-track .source {
+    font-family: var(--serif); font-style: italic;
+    color: var(--ink-soft); font-size: 1.6rem;
+    white-space: nowrap;
+    opacity: 0.65;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .sources-track .source:hover { opacity: 1; color: var(--gold-soft); }
+  .sources-track .source .mono-tag {
+    color: var(--ink-mute); font-size: 0.62rem; margin-right: 12px;
+  }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ================================================================== */
+  /* HOW IT WORKS (3-STEP)                                               */
+  /* ================================================================== */
   .steps {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
   }
@@ -345,16 +754,19 @@
     font-family: var(--serif); font-style: italic;
     font-size: 3.2rem; color: var(--gold); line-height: 1;
     margin-bottom: 22px;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .step h3 {
     font-family: var(--serif); font-size: 1.45rem; font-style: italic;
     color: var(--ink); margin-bottom: 12px; line-height: 1.1;
   }
-  .step p { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.55; }
+  .step p { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.6; }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* COMPETITORS TABLE                                                   */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .table-wrap {
     border-radius: 24px;
     overflow: hidden;
@@ -372,7 +784,7 @@
   table.cmp tr:last-child td { border-bottom: none; }
   table.cmp .name { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); }
   table.cmp .focus { color: var(--ink-mute); font-size: 0.82rem; }
-  table.cmp .score { font-family: var(--serif); font-size: 1rem; color: var(--ink-soft); }
+  table.cmp .score { font-family: var(--mono); font-size: 0.86rem; color: var(--ink-soft); }
   table.cmp tr.us {
     background: linear-gradient(90deg, rgba(200, 134, 10, 0.08), transparent);
   }
@@ -383,32 +795,60 @@
     table.cmp th:nth-child(2), table.cmp td:nth-child(2) { display: none; }
   }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* TEAM                                                                */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .team {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
   }
   @media (max-width: 1000px) { .team { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px)  { .team { grid-template-columns: 1fr; } }
   .person {
-    padding: 28px;
+    padding: 0;
     border-radius: 22px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 0.4s var(--ease-out);
   }
+  .person:hover { transform: translateY(-4px); }
+  .person-img {
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: #0a100c;
+  }
+  .person-img img, .person-img object {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--ease-out), filter 0.4s;
+    filter: saturate(0.85);
+  }
+  .person:hover .person-img img,
+  .person:hover .person-img object { transform: scale(1.04); filter: saturate(1); }
+  .person-img::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0; height: 50%;
+    background: linear-gradient(180deg, transparent, rgba(6, 10, 7, 0.95));
+    pointer-events: none;
+  }
+  .person-body { padding: 20px 22px 24px; }
   .person .role { color: var(--gold-soft); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; }
-  .person .name { font-family: var(--serif); font-size: 1.6rem; color: var(--ink); margin-top: 6px; line-height: 1.1; }
-  .person .title { color: var(--ink-mute); font-size: 0.85rem; margin-top: 4px; }
-  .person .bio { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55; margin-top: 18px; }
+  .person .name { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-top: 6px; line-height: 1.1; }
+  .person .title { color: var(--ink-mute); font-size: 0.82rem; margin-top: 4px; }
+  .person .bio { color: var(--ink-soft); font-size: 0.86rem; line-height: 1.6; margin-top: 14px; }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* FINAL CTA                                                           */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   .final-cta {
     padding: 110px 0 40px;
     text-align: center;
   }
   .final-cta h2 {
-    font-size: clamp(2.4rem, 6vw, 4.8rem);
+    font-size: clamp(2.4rem, 6vw, 5rem);
     background: linear-gradient(180deg, #fff 0%, #d8cdc0 90%);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -416,13 +856,13 @@
   }
   .final-cta p {
     color: var(--ink-soft); font-size: 1.05rem; max-width: 520px;
-    margin: 28px auto 0;
+    margin: 28px auto 0; line-height: 1.6;
   }
   .final-cta .btn-row { margin-top: 40px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   /* FOOTER                                                              */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
   footer {
     margin-top: 80px;
     padding: 36px 0 32px;
@@ -434,27 +874,31 @@
   }
   .foot-brand { font-family: var(--serif); font-style: italic; font-size: 1.1rem; color: var(--ink); }
   .foot-brand .dot { color: var(--gold); }
-  .foot-meta { color: var(--ink-mute); font-size: 0.78rem; }
-  .foot-links { display: flex; gap: 22px; }
+  .foot-meta { color: var(--ink-mute); font-size: 0.78rem; line-height: 1.6; }
+  .foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
   .foot-links a { color: var(--ink-mute); font-size: 0.82rem; text-decoration: none; transition: color 0.2s; }
   .foot-links a:hover { color: var(--ink); }
 
-  /* ------------------------------------------------------------------ */
-  /* ENTRANCE ANIMATION                                                  */
-  /* ------------------------------------------------------------------ */
+  /* ================================================================== */
+  /* ENTRANCE / SCROLL REVEAL ANIMATIONS                                 */
+  /* ================================================================== */
   @keyframes rise {
     from { opacity: 0; transform: translateY(18px); filter: blur(8px); }
     to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
   }
-  .rise { animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .rise { animation: rise 0.9s var(--ease-out) both; }
   .rise.d1 { animation-delay: 0.1s; }
   .rise.d2 { animation-delay: 0.25s; }
   .rise.d3 { animation-delay: 0.4s; }
   .rise.d4 { animation-delay: 0.55s; }
   .rise.d5 { animation-delay: 0.7s; }
 
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s, transform 0.8s; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
   .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 0.08s; }
+  .reveal.d2 { transition-delay: 0.16s; }
+  .reveal.d3 { transition-delay: 0.24s; }
+  .reveal.d4 { transition-delay: 0.32s; }
 
   /* Pulsing live dot */
   .live-dot {
@@ -468,23 +912,56 @@
     70%  { box-shadow: 0 0 0 10px rgba(200, 134, 10, 0); }
     100% { box-shadow: 0 0 0 0 rgba(200, 134, 10, 0); }
   }
+
+  /* Magnetic cursor — subtle dot follows mouse on desktop */
+  .cursor-dot {
+    position: fixed; top: 0; left: 0;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    pointer-events: none;
+    z-index: 999;
+    transform: translate(-50%, -50%);
+    transition: width 0.25s, height 0.25s, background 0.25s, opacity 0.25s;
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  .cursor-dot.is-hover { width: 36px; height: 36px; background: rgba(200, 134, 10, 0.4); }
+  @media (hover: none) { .cursor-dot { display: none; } }
 </style>
 </head>
 <body>
 
 <!-- ============================================================ -->
+<!-- AMBIENT BACKDROP                                             -->
+<!-- ============================================================ -->
+<div class="backdrop" aria-hidden="true">
+  <div class="earth"></div>
+  <div class="aurora"></div>
+  <div class="grid"></div>
+  <div class="orbit"></div>
+  <div class="stars"></div>
+</div>
+
+<!-- Scroll progress bar -->
+<div class="scroll-progress" aria-hidden="true"></div>
+<!-- Magnetic cursor (desktop only) -->
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============================================================ -->
 <!-- NAVBAR                                                       -->
 <!-- ============================================================ -->
-<header class="nav">
+<header class="nav" id="nav">
   <div class="nav-inner glass">
     <a href="/" class="nav-brand">VERITAS<span class="dot">.</span></a>
     <nav class="nav-links">
       <a href="#problem">Problem</a>
       <a href="#platform">Platform</a>
-      <a href="#how">How It Works</a>
+      <a href="#oracle">Oracle</a>
+      <a href="#how">How</a>
       <a href="#team">Team</a>
     </nav>
-    <a href="/dashboard" class="nav-cta">
+    <a href="/dashboard" class="nav-cta" data-magnetic>
       Launch Oracle
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
     </a>
@@ -499,8 +976,8 @@
 <section class="hero">
   <div class="wrap">
     <div class="hero-badge glass rise">
-      <span class="pill">New</span>
-      <span class="label"><span class="live-dot"></span> &nbsp;The Carbon Credit Anti-Greenwash Oracle</span>
+      <span class="pill">Live</span>
+      <span class="label"><span class="live-dot"></span> The Carbon Credit Anti-Greenwash Oracle</span>
     </div>
 
     <h1 class="rise d1">
@@ -509,36 +986,36 @@
 
     <p class="hero-sub rise d2">
       VERITAS returns a transparent, AI-justified risk score for any carbon credit
-      in seconds — powered by Sentinel-2 satellite imagery, real-time IoT feeds,
+      in seconds — powered by Sentinel-2 satellite imagery, NASA FIRMS, real-time IoT feeds,
       and multi-model AI inference.
     </p>
 
     <div class="hero-cta-row rise d3">
-      <a href="/dashboard" class="btn btn-primary">
+      <a href="/dashboard" class="btn btn-primary" data-magnetic>
         Launch Dashboard
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
       </a>
-      <a href="#how" class="btn btn-ghost glass">
-        See How It Works
+      <a href="#oracle" class="btn btn-ghost glass" data-magnetic>
+        Try the Oracle
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
       </a>
     </div>
 
     <div class="stat-strip glass rise d4">
       <div>
-        <div class="num">$50B+</div>
+        <div class="num" data-count-to="50" data-suffix="B+">$0</div>
         <div class="lab">Global VCM + ESG SaaS TAM by 2030</div>
       </div>
       <div>
-        <div class="num">90%</div>
+        <div class="num" data-count-to="90" data-suffix="%">0%</div>
         <div class="lab">Of leading REDD+ credits found effectively worthless (2023)</div>
       </div>
       <div>
-        <div class="num">3–5y</div>
+        <div class="num" data-count-to="3" data-suffix="–5y">0y</div>
         <div class="lab">Audit gap between on-site verifications today</div>
       </div>
       <div>
-        <div class="num">&lt;2s</div>
+        <div class="num" data-count-to="2" data-suffix="s" data-prefix="<">0s</div>
         <div class="lab">VERITAS RISK SCORE™ generation, per credit</div>
       </div>
     </div>
@@ -550,13 +1027,13 @@
 <!-- ============================================================ -->
 <section id="problem">
   <div class="wrap">
-    <div class="section-tag glass mono-tag">01 — The Crisis</div>
-    <h2 class="serif-it" style="max-width: 18ch;">The voluntary carbon market is broken.</h2>
+    <div class="section-tag glass mono-tag reveal">01 — The Crisis</div>
+    <h2 class="serif-it reveal d1" style="max-width: 18ch;">The voluntary carbon market is broken.</h2>
 
     <div style="height: 50px;"></div>
 
     <div class="problem-grid">
-      <div>
+      <div class="reveal d1">
         <p>
           In 2023, an investigation found that over <strong style="color:var(--gold-soft)">90%</strong>
           of the world's leading carbon registry's flagship REDD+ credits were effectively worthless.
@@ -574,7 +1051,7 @@
         </p>
       </div>
 
-      <div class="quote-card glass">
+      <div class="quote-card glass reveal d2">
         <div class="q">
           "The voluntary carbon market will survive its credibility crisis only through radical
           transparency at the asset level. VERITAS is the oracle that makes this possible."
@@ -586,50 +1063,377 @@
 </section>
 
 <!-- ============================================================ -->
+<!-- INTERACTIVE RISK SCORE WIDGET                                -->
+<!-- ============================================================ -->
+<section id="oracle">
+  <div class="wrap">
+    <div class="section-tag glass mono-tag reveal">02 — The Oracle</div>
+    <h2 class="serif-it reveal d1" style="max-width: 18ch;">Type a credit. See the truth.</h2>
+    <p class="section-head lede reveal d2">
+      Every carbon credit gets a transparent VERITAS RISK SCORE™ in under two seconds. Try it now —
+      pick a real registry serial below, or tap a preset to simulate a verdict.
+    </p>
+
+    <div class="risk-widget glass-strong reveal d2">
+      <div class="widget-input-side">
+        <div class="label">Carbon Credit Serial</div>
+        <div class="widget-input">
+          <span class="mono" style="color: var(--ink-mute); font-size: 0.78rem;">VCS-</span>
+          <input id="risk-input" type="text" placeholder="2543-203-204-AMS-AFOLU-IND-2021" autocomplete="off" spellcheck="false" />
+          <button id="risk-go" type="button">Audit</button>
+        </div>
+        <div class="widget-presets">
+          <button class="widget-preset" data-preset="redd-low">Verra REDD+ • Brazil • LOW</button>
+          <button class="widget-preset" data-preset="afolu-mid">ACR AFOLU • Indonesia • MID</button>
+          <button class="widget-preset" data-preset="solar-high">Gold Std Solar • India • HIGH</button>
+          <button class="widget-preset" data-preset="cookstove-low">Cookstove • Kenya • LOW</button>
+        </div>
+        <div class="mono" style="margin-top: 18px; font-size: 0.7rem; color: var(--ink-mute); line-height: 1.6;">
+          <span style="color: var(--gold-soft)">►</span> Engine: Claude Opus + Groq Llama-3 + Sentinel-2 NDVI delta + NASA FIRMS<br>
+          <span style="color: var(--gold-soft)">►</span> Latency: <span id="risk-latency" style="color: var(--ink)">—</span>
+        </div>
+      </div>
+
+      <div class="widget-output">
+        <div class="score-ring-box">
+          <svg class="score-ring-svg" viewBox="0 0 156 156">
+            <circle class="score-ring-track" cx="78" cy="78" r="68" stroke-width="6"/>
+            <circle id="risk-ring" class="score-ring-fg" cx="78" cy="78" r="68" stroke-width="6"
+                    stroke-dasharray="427" stroke-dashoffset="427"/>
+          </svg>
+          <div class="score-text">
+            <span id="risk-val" class="val is-mid">—</span>
+            <span class="lab">RISK SCORE</span>
+          </div>
+        </div>
+        <div class="score-meta">
+          <div id="risk-verdict" class="verdict">Awaiting credit serial...</div>
+          <div id="risk-reason" class="reason">Enter a registry serial or tap a preset to see the AI-justified verdict, with full chain-of-thought reasoning and an immutable audit hash.</div>
+          <div class="score-bars" id="risk-bars">
+            <div class="score-bar"><span class="b-lab">NDVI delta</span><span class="b-track"><span class="b-fill" data-bar="ndvi"></span></span><span class="b-val" data-val="ndvi">—</span></div>
+            <div class="score-bar"><span class="b-lab">Fire risk</span><span class="b-track"><span class="b-fill" data-bar="fire"></span></span><span class="b-val" data-val="fire">—</span></div>
+            <div class="score-bar"><span class="b-lab">Additionality</span><span class="b-track"><span class="b-fill" data-bar="add"></span></span><span class="b-val" data-val="add">—</span></div>
+            <div class="score-bar"><span class="b-lab">Permanence</span><span class="b-track"><span class="b-fill" data-bar="perm"></span></span><span class="b-val" data-val="perm">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
 <!-- PLATFORM (4 features)                                        -->
 <!-- ============================================================ -->
 <section id="platform">
   <div class="wrap">
-    <div class="section-tag glass mono-tag">02 — The Platform</div>
-    <h2 class="serif-it" style="max-width: 16ch;">The Bloomberg Terminal of carbon credit quality.</h2>
-    <p class="section-head lede">
+    <div class="section-tag glass mono-tag reveal">03 — The Platform</div>
+    <h2 class="serif-it reveal d1" style="max-width: 16ch;">The Bloomberg Terminal of carbon credit quality.</h2>
+    <p class="section-head lede reveal d2">
       Four capabilities, missing from every existing platform. VERITAS delivers them as one unified oracle.
     </p>
 
     <div class="feature-grid">
 
-      <div class="feature-card glass">
+      <div class="feature-card glass glass-hover reveal d1">
         <div class="icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
         </div>
         <h3>Real-Time Verification</h3>
-        <p>Daily Sentinel-2 NDVI change detection per project polygon. No more three-year audit blackouts.</p>
+        <p>Daily Sentinel-2 NDVI change detection per project polygon. NASA FIRMS fire alerts within four hours of detection. No more three-year audit blackouts.</p>
       </div>
 
-      <div class="feature-card glass">
+      <div class="feature-card glass glass-hover reveal d2">
         <div class="icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="4"/></svg>
         </div>
         <h3>Per-Credit Risk Score</h3>
-        <p>VERITAS RISK SCORE™ (0–100) per individual SKU — not portfolio averages, not registry citations.</p>
+        <p>VERITAS RISK SCORE™ (0–100) per individual SKU — not portfolio averages, not registry citations. Verra, Gold Standard, ACR, CAR all natively supported.</p>
       </div>
 
-      <div class="feature-card glass">
+      <div class="feature-card glass glass-hover reveal d3">
         <div class="icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4M14 3h7v7M21 3l-9 9"/></svg>
         </div>
         <h3>AI-Native Architecture</h3>
-        <p>Claude Opus deep-audit reasoning. Groq sub-200ms real-time API. Sentinel-2 imagery synthesis. One pipeline.</p>
+        <p>Claude Opus deep-audit reasoning. Groq sub-200ms real-time inference. Sentinel-2 imagery synthesis. Multi-model audit chain — one unified oracle.</p>
       </div>
 
-      <div class="feature-card glass">
+      <div class="feature-card glass glass-hover reveal d4">
         <div class="icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg>
         </div>
         <h3>Transparent Provenance</h3>
-        <p>Immutable audit trail: project polygon → registry serial → buyer wallet. End-to-end retirement tracking.</p>
+        <p>Immutable audit trail: project polygon → registry serial → buyer wallet. CSRD-ready, ISSB-ready, SB 253-ready disclosure exports in PDF and JSON.</p>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 12-PANEL ORACLE SHOWCASE                                     -->
+<!-- ============================================================ -->
+<section>
+  <div class="wrap">
+    <div class="section-tag glass mono-tag reveal">04 — The Dashboard</div>
+    <h2 class="serif-it reveal d1" style="max-width: 18ch;">Twelve panels. One oracle.</h2>
+    <p class="section-head lede reveal d2">
+      Every panel hits live data — Sentinel-2, NASA FIRMS, OpenAQ, NOAA ERDDAP, Mauna Loa, Verra registry, Xpansiv CBL.
+      No mocks, no placeholders. Click into any one for the full audit chain.
+    </p>
+
+    <div class="panel-mosaic">
+
+      <!-- Panel 01 — Carbon Intelligence Brief -->
+      <div class="mosaic-card glass glass-hover reveal d1">
+        <div class="m-head">
+          <div class="m-title">Carbon Intelligence Brief</div>
+          <div class="m-num">01</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-gold fill-gold-soft" stroke-width="1.2" d="M0,40 L12,32 L25,38 L40,22 L55,28 L70,14 L85,18 L100,8 L100,50 L0,50 Z"/>
+            <circle cx="100" cy="8" r="2" fill="#c8860a"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot gold"></span> Claude Opus · 4 sources synthesised</div>
+      </div>
+
+      <!-- Panel 02 — AI Climate Forecasts -->
+      <div class="mosaic-card glass glass-hover reveal d1">
+        <div class="m-head">
+          <div class="m-title">AI Climate Forecasts</div>
+          <div class="m-num">02</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-emerald" stroke-width="1.2" fill="none" d="M0,38 L20,32 L40,30 L50,28 L60,22 L80,18 L100,12"/>
+            <path class="stroke-emerald" stroke-width="1.2" fill="none" stroke-dasharray="2,2" d="M50,28 L60,28 L80,32 L100,38"/>
+            <line class="stroke-gold" stroke-width="0.5" x1="50" y1="0" x2="50" y2="50" stroke-dasharray="1,1"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot"></span> Groq inference · 90-day horizon</div>
+      </div>
+
+      <!-- Panel 03 — Climate Anomalies -->
+      <div class="mosaic-card glass glass-hover reveal d2">
+        <div class="m-head">
+          <div class="m-title">Climate Anomalies</div>
+          <div class="m-num">03</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <rect x="2"  y="20" width="6" height="30" fill="#4ade80" opacity="0.4"/>
+            <rect x="12" y="14" width="6" height="36" fill="#4ade80" opacity="0.6"/>
+            <rect x="22" y="22" width="6" height="28" fill="#4ade80" opacity="0.4"/>
+            <rect x="32" y="10" width="6" height="40" fill="#c8860a" opacity="0.7"/>
+            <rect x="42" y="6"  width="6" height="44" fill="#c8860a" opacity="0.85"/>
+            <rect x="52" y="4"  width="6" height="46" fill="#f87171" opacity="0.9"/>
+            <rect x="62" y="8"  width="6" height="42" fill="#c8860a" opacity="0.7"/>
+            <rect x="72" y="14" width="6" height="36" fill="#4ade80" opacity="0.6"/>
+            <rect x="82" y="20" width="6" height="30" fill="#4ade80" opacity="0.4"/>
+            <rect x="92" y="16" width="6" height="34" fill="#4ade80" opacity="0.5"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot crimson"></span> NOAA · σ deviation alert</div>
+      </div>
+
+      <!-- Panel 04 — Fire & Deforestation -->
+      <div class="mosaic-card glass glass-hover reveal d2">
+        <div class="m-head">
+          <div class="m-title">Fire &amp; Deforestation</div>
+          <div class="m-num">04</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <circle cx="20" cy="30" r="3" fill="#f87171" opacity="0.9"/>
+            <circle cx="35" cy="18" r="2" fill="#f87171" opacity="0.7"/>
+            <circle cx="50" cy="32" r="4" fill="#f87171"/>
+            <circle cx="62" cy="22" r="2.5" fill="#f87171" opacity="0.8"/>
+            <circle cx="75" cy="28" r="2" fill="#f87171" opacity="0.7"/>
+            <circle cx="86" cy="14" r="3" fill="#f87171" opacity="0.85"/>
+            <circle cx="14" cy="40" r="1.5" fill="#f87171" opacity="0.6"/>
+            <circle cx="92" cy="38" r="2" fill="#f87171" opacity="0.7"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot crimson"></span> NASA FIRMS · 7,432 hotspots / 24h</div>
+      </div>
+
+      <!-- Panel 05 — Thermal Anomalies -->
+      <div class="mosaic-card glass glass-hover reveal d3">
+        <div class="m-head">
+          <div class="m-title">Thermal Anomalies</div>
+          <div class="m-num">05</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="thermal" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#f87171"/><stop offset="0.5" stop-color="#c8860a"/><stop offset="1" stop-color="#4ade80"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="100" height="50" fill="url(#thermal)" opacity="0.18"/>
+            <path stroke="#f5f0eb" stroke-width="1" fill="none" d="M0,28 Q25,10 50,18 T100,12"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot gold"></span> Sentinel-2 · LST °C</div>
+      </div>
+
+      <!-- Panel 06 — Climate Risk Exposure -->
+      <div class="mosaic-card glass glass-hover reveal d3">
+        <div class="m-head">
+          <div class="m-title">Climate Risk Exposure</div>
+          <div class="m-num">06</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <circle cx="50" cy="25" r="20" fill="none" stroke="#c8860a" stroke-width="0.6" opacity="0.4"/>
+            <circle cx="50" cy="25" r="14" fill="none" stroke="#c8860a" stroke-width="0.6" opacity="0.55"/>
+            <circle cx="50" cy="25" r="8"  fill="none" stroke="#c8860a" stroke-width="0.7" opacity="0.7"/>
+            <circle cx="50" cy="25" r="3"  fill="#c8860a"/>
+            <text x="50" y="46" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="rgba(245,240,235,0.6)">2.4M exposed</text>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot gold"></span> WorldPop · 1km grid</div>
+      </div>
+
+      <!-- Panel 07 — Disaster Cascade -->
+      <div class="mosaic-card glass glass-hover reveal d4">
+        <div class="m-head">
+          <div class="m-title">Disaster Cascade</div>
+          <div class="m-num">07</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-crimson" stroke-width="0.7" fill="none" d="M10,40 L25,28 L40,30 L55,16 L70,18 L85,8"/>
+            <circle cx="10" cy="40" r="2" fill="#4ade80"/>
+            <circle cx="25" cy="28" r="2" fill="#c8860a"/>
+            <circle cx="40" cy="30" r="2" fill="#c8860a"/>
+            <circle cx="55" cy="16" r="2.5" fill="#f87171"/>
+            <circle cx="70" cy="18" r="2.5" fill="#f87171"/>
+            <circle cx="85" cy="8" r="3" fill="#f87171"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot crimson"></span> EM-DAT · cross-correlation</div>
+      </div>
+
+      <!-- Panel 08 — Climate Health Risks -->
+      <div class="mosaic-card glass glass-hover reveal d4">
+        <div class="m-head">
+          <div class="m-title">Climate Health Risks</div>
+          <div class="m-num">08</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-gold" stroke-width="1.2" fill="none" d="M0,30 Q15,18 30,28 T60,22 T100,18"/>
+            <path class="stroke-emerald" stroke-width="1.2" fill="none" d="M0,38 Q20,32 40,36 T80,30 T100,28"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot"></span> WHO + ProMED · vector outbreaks</div>
+      </div>
+
+      <!-- Panel 09 — Energy & Renewables -->
+      <div class="mosaic-card glass glass-hover reveal d1">
+        <div class="m-head">
+          <div class="m-title">Energy &amp; Renewables</div>
+          <div class="m-num">09</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <rect x="6"  y="36" width="10" height="14" fill="#4ade80" opacity="0.85"/>
+            <rect x="22" y="28" width="10" height="22" fill="#4ade80" opacity="0.85"/>
+            <rect x="38" y="20" width="10" height="30" fill="#4ade80" opacity="0.85"/>
+            <rect x="54" y="14" width="10" height="36" fill="#c8860a" opacity="0.85"/>
+            <rect x="70" y="8"  width="10" height="42" fill="#c8860a" opacity="0.85"/>
+            <rect x="86" y="2"  width="10" height="48" fill="#c8860a"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot"></span> IRENA · GW installed YoY</div>
+      </div>
+
+      <!-- Panel 10 — Air Quality Monitor -->
+      <div class="mosaic-card glass glass-hover reveal d2">
+        <div class="m-head">
+          <div class="m-title">Air Quality Monitor</div>
+          <div class="m-num">10</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-gold fill-gold-soft" stroke-width="1" d="M0,20 L10,22 L20,18 L30,28 L40,32 L50,24 L60,38 L70,30 L80,42 L90,28 L100,22 L100,50 L0,50 Z"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot gold"></span> OpenAQ · PM2.5 / NO₂</div>
+      </div>
+
+      <!-- Panel 11 — Carbon Credit Markets -->
+      <div class="mosaic-card glass glass-hover reveal d3">
+        <div class="m-head">
+          <div class="m-title">Carbon Credit Markets</div>
+          <div class="m-num">11</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <path class="stroke-gold" stroke-width="1" fill="none" d="M0,40 L10,36 L20,38 L30,30 L40,32 L50,22 L60,26 L70,18 L80,14 L90,16 L100,10"/>
+            <line x1="0"  y1="40" x2="10" y2="36" stroke="#4ade80" stroke-width="2"/>
+            <line x1="10" y1="36" x2="20" y2="38" stroke="#f87171" stroke-width="2"/>
+            <line x1="20" y1="38" x2="30" y2="30" stroke="#4ade80" stroke-width="2"/>
+            <line x1="30" y1="30" x2="40" y2="32" stroke="#f87171" stroke-width="2"/>
+            <line x1="40" y1="32" x2="50" y2="22" stroke="#4ade80" stroke-width="2"/>
+            <line x1="50" y1="22" x2="60" y2="26" stroke="#f87171" stroke-width="2"/>
+            <line x1="60" y1="26" x2="70" y2="18" stroke="#4ade80" stroke-width="2"/>
+            <line x1="70" y1="18" x2="80" y2="14" stroke="#4ade80" stroke-width="2"/>
+            <line x1="80" y1="14" x2="90" y2="16" stroke="#f87171" stroke-width="2"/>
+            <line x1="90" y1="16" x2="100" y2="10" stroke="#4ade80" stroke-width="2"/>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot"></span> Xpansiv CBL · USD / tCO₂e</div>
+      </div>
+
+      <!-- Panel 12 — VERITAS Risk Signals -->
+      <div class="mosaic-card glass glass-hover reveal d4">
+        <div class="m-head">
+          <div class="m-title">VERITAS Risk Signals</div>
+          <div class="m-num">12</div>
+        </div>
+        <div class="m-vis"><div class="vis-spark">
+          <svg viewBox="0 0 100 50" preserveAspectRatio="none">
+            <circle cx="50" cy="25" r="22" fill="none" stroke="#c8860a" stroke-width="0.4" opacity="0.4"/>
+            <circle cx="50" cy="25" r="22" fill="none" stroke="#c8860a" stroke-width="0.6" opacity="1"
+              stroke-dasharray="138" stroke-dashoffset="44" transform="rotate(-90 50 25)"/>
+            <text x="50" y="22" text-anchor="middle" font-family="Instrument Serif" font-style="italic" font-size="14" fill="#f5f0eb">68</text>
+            <text x="50" y="34" text-anchor="middle" font-family="JetBrains Mono" font-size="5" fill="rgba(245,240,235,0.6)" letter-spacing="1">RISK</text>
+          </svg>
+        </div></div>
+        <div class="m-foot"><span class="dot gold"></span> Multi-model audit chain</div>
+      </div>
+
+    </div>
+
+    <!-- DATA SOURCES STRIP -->
+    <div class="sources-strip">
+      <div class="sources-track">
+        <div class="source"><span class="mono-tag">SAT</span>Sentinel-2</div>
+        <div class="source"><span class="mono-tag">FIR</span>NASA FIRMS</div>
+        <div class="source"><span class="mono-tag">AIR</span>OpenAQ</div>
+        <div class="source"><span class="mono-tag">CO₂</span>NOAA Mauna Loa</div>
+        <div class="source"><span class="mono-tag">SST</span>NOAA ERDDAP</div>
+        <div class="source"><span class="mono-tag">REG</span>Verra</div>
+        <div class="source"><span class="mono-tag">REG</span>Gold Standard</div>
+        <div class="source"><span class="mono-tag">CCM</span>Xpansiv CBL</div>
+        <div class="source"><span class="mono-tag">EU</span>Copernicus</div>
+        <div class="source"><span class="mono-tag">RE</span>IRENA</div>
+        <!-- Duplicate set for seamless marquee loop -->
+        <div class="source"><span class="mono-tag">SAT</span>Sentinel-2</div>
+        <div class="source"><span class="mono-tag">FIR</span>NASA FIRMS</div>
+        <div class="source"><span class="mono-tag">AIR</span>OpenAQ</div>
+        <div class="source"><span class="mono-tag">CO₂</span>NOAA Mauna Loa</div>
+        <div class="source"><span class="mono-tag">SST</span>NOAA ERDDAP</div>
+        <div class="source"><span class="mono-tag">REG</span>Verra</div>
+        <div class="source"><span class="mono-tag">REG</span>Gold Standard</div>
+        <div class="source"><span class="mono-tag">CCM</span>Xpansiv CBL</div>
+        <div class="source"><span class="mono-tag">EU</span>Copernicus</div>
+        <div class="source"><span class="mono-tag">RE</span>IRENA</div>
+      </div>
     </div>
   </div>
 </section>
@@ -639,15 +1443,15 @@
 <!-- ============================================================ -->
 <section id="how">
   <div class="wrap">
-    <div class="section-tag glass mono-tag">03 — How It Works</div>
-    <h2 class="serif-it" style="max-width: 14ch;">Search a credit. Get the score.</h2>
-    <p class="section-head lede">
+    <div class="section-tag glass mono-tag reveal">05 — How It Works</div>
+    <h2 class="serif-it reveal d1" style="max-width: 14ch;">Search a credit. Get the score.</h2>
+    <p class="section-head lede reveal d2">
       Three steps from registry serial number to AI-justified risk verdict. No waiting, no opacity.
     </p>
 
     <div class="steps">
 
-      <div class="step glass">
+      <div class="step glass glass-hover reveal d1">
         <div class="num">01</div>
         <h3>Search any credit</h3>
         <p>
@@ -656,7 +1460,7 @@
         </p>
       </div>
 
-      <div class="step glass">
+      <div class="step glass glass-hover reveal d2">
         <div class="num">02</div>
         <h3>The oracle audits it</h3>
         <p>
@@ -665,7 +1469,7 @@
         </p>
       </div>
 
-      <div class="step glass">
+      <div class="step glass glass-hover reveal d3">
         <div class="num">03</div>
         <h3>Receive the RISK SCORE</h3>
         <p>
@@ -683,14 +1487,13 @@
 <!-- ============================================================ -->
 <section>
   <div class="wrap">
-    <div class="section-tag glass mono-tag">04 — Market Gap</div>
-    <h2 class="serif-it" style="max-width: 16ch;">Where the giants stop, VERITAS begins.</h2>
-    <p class="section-head lede">
-      Benchmarked across the six dimensions most critical to carbon credit verification.
-      Scores on a 1–10 scale.
+    <div class="section-tag glass mono-tag reveal">06 — Market Gap</div>
+    <h2 class="serif-it reveal d1" style="max-width: 16ch;">Where the giants stop, VERITAS begins.</h2>
+    <p class="section-head lede reveal d2">
+      Benchmarked across the six dimensions most critical to carbon credit verification. Scores on a 1–10 scale.
     </p>
 
-    <div class="table-wrap glass">
+    <div class="table-wrap glass reveal d2">
       <table class="cmp">
         <thead>
           <tr>
@@ -754,40 +1557,60 @@
 <!-- ============================================================ -->
 <section id="team">
   <div class="wrap">
-    <div class="section-tag glass mono-tag">05 — The Founders</div>
-    <h2 class="serif-it" style="max-width: 16ch;">Built by four. For the institutions that need it most.</h2>
-    <p class="section-head lede">
+    <div class="section-tag glass mono-tag reveal">07 — The Founders</div>
+    <h2 class="serif-it reveal d1" style="max-width: 16ch;">Built by four. For the institutions that need it most.</h2>
+    <p class="section-head lede reveal d2">
       The Green Ledger · Climate-Tech Startup Project · FAST-NUCES Islamabad · BSFT-4D Fintech Programme.
     </p>
 
     <div class="team">
 
-      <div class="person glass">
-        <div class="role">CEO</div>
-        <div class="name">Taha Ali</div>
-        <div class="title">Chief Executive Officer</div>
-        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Visionary</strong> — Regulatory strategy, investor narrative, mission alignment with CSRD/ISSB 2026 climate frameworks.</div>
+      <div class="person glass reveal d1">
+        <div class="person-img">
+          <object data="/founders/01-taha.svg" type="image/svg+xml" aria-label="Taha Ali — portrait pending"></object>
+        </div>
+        <div class="person-body">
+          <div class="role">CEO · The Visionary</div>
+          <div class="name">Taha Ali</div>
+          <div class="title">Chief Executive Officer</div>
+          <div class="bio">Regulatory strategy, investor narrative, mission alignment with CSRD/ISSB 2026 climate frameworks.</div>
+        </div>
       </div>
 
-      <div class="person glass">
-        <div class="role">CTO</div>
-        <div class="name">Rufayl Waseem</div>
-        <div class="title">Chief Technology Officer</div>
-        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Architect</strong> — Full-stack dashboard build, globe engine, API layer, Vercel deployment infrastructure.</div>
+      <div class="person glass reveal d2">
+        <div class="person-img">
+          <object data="/founders/02-rufayl.svg" type="image/svg+xml" aria-label="Rufayl Waseem — portrait pending"></object>
+        </div>
+        <div class="person-body">
+          <div class="role">CTO · The Architect</div>
+          <div class="name">Rufayl Waseem</div>
+          <div class="title">Chief Technology Officer</div>
+          <div class="bio">Full-stack dashboard build, globe engine, API layer, Vercel deployment infrastructure, AI orchestration.</div>
+        </div>
       </div>
 
-      <div class="person glass">
-        <div class="role">CSO</div>
-        <div class="name">Harris Safi</div>
-        <div class="title">Chief Science Officer</div>
-        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Quant</strong> — GHG Protocol methodology, carbon accounting engine, scientific rigour of the emission scoring system.</div>
+      <div class="person glass reveal d3">
+        <div class="person-img">
+          <object data="/founders/03-harris.svg" type="image/svg+xml" aria-label="Harris Safi — portrait pending"></object>
+        </div>
+        <div class="person-body">
+          <div class="role">CSO · The Quant</div>
+          <div class="name">Harris Safi</div>
+          <div class="title">Chief Science Officer</div>
+          <div class="bio">GHG Protocol methodology, carbon accounting engine, scientific rigour of the emission scoring system.</div>
+        </div>
       </div>
 
-      <div class="person glass">
-        <div class="role">COO</div>
-        <div class="name">Waleed</div>
-        <div class="title">Chief Operating Officer</div>
-        <div class="bio"><strong style="color:var(--gold-soft);font-style:italic">The Navigator</strong> — Phase timeline management, deadline coordination, submission quality control.</div>
+      <div class="person glass reveal d4">
+        <div class="person-img">
+          <object data="/founders/04-waleed.svg" type="image/svg+xml" aria-label="Waleed — portrait pending"></object>
+        </div>
+        <div class="person-body">
+          <div class="role">COO · The Navigator</div>
+          <div class="name">Waleed</div>
+          <div class="title">Chief Operating Officer</div>
+          <div class="bio">Phase timeline management, deadline coordination, submission quality control, partner liaison.</div>
+        </div>
       </div>
 
     </div>
@@ -799,12 +1622,15 @@
 <!-- ============================================================ -->
 <section class="final-cta">
   <div class="wrap">
-    <h2 class="serif-it">Your next carbon investment starts here.</h2>
-    <p>Open the oracle. Search a credit. See what radical transparency feels like.</p>
-    <div class="btn-row">
-      <a href="/dashboard" class="btn btn-primary">
+    <h2 class="serif-it reveal">Your next carbon investment starts here.</h2>
+    <p class="reveal d1">Open the oracle. Search a credit. See what radical transparency feels like.</p>
+    <div class="btn-row reveal d2">
+      <a href="/dashboard" class="btn btn-primary" data-magnetic>
         Launch VERITAS Dashboard
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9-9M9 7h8v8"/></svg>
+      </a>
+      <a href="#oracle" class="btn btn-ghost glass" data-magnetic>
+        Try the Oracle Above
       </a>
     </div>
   </div>
@@ -818,12 +1644,13 @@
         </div>
         <div class="foot-links">
           <a href="#problem">Problem</a>
+          <a href="#oracle">Oracle</a>
           <a href="#platform">Platform</a>
           <a href="#how">How</a>
           <a href="#team">Team</a>
           <a href="/dashboard">Dashboard</a>
         </div>
-        <div class="foot-meta">© 2026 VERITAS · The Green Ledger</div>
+        <div class="foot-meta">© 2026 VERITAS · The Green Ledger<br>FAST-NUCES Islamabad · BSFT-4D</div>
       </div>
     </div>
   </footer>
@@ -832,16 +1659,255 @@
 </main>
 
 <script>
-  // Reveal-on-scroll
+(function() {
+  'use strict';
+
+  // ============================================================
+  // 1. SCROLL PROGRESS BAR
+  // ============================================================
+  const progress = document.querySelector('.scroll-progress');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? (scrolled / max) * 100 : 0;
+    progress.style.setProperty('--scroll', pct + '%');
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ============================================================
+  // 2. NAVBAR CONDENSE-ON-SCROLL
+  // ============================================================
+  const nav = document.getElementById('nav');
+  function updateNav() {
+    if (window.scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ============================================================
+  // 3. SCROLL REVEAL — IntersectionObserver
+  // ============================================================
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('section .section-tag, section h2, section .lede, section .feature-card, section .step, section .person, section .quote-card, section .table-wrap, section .stat-strip').forEach((el) => {
-    el.classList.add('reveal');
-    io.observe(el);
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+  // ============================================================
+  // 4. STAT COUNT-UP — animate hero stats when they enter view
+  // ============================================================
+  const counters = document.querySelectorAll('[data-count-to]');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.countTo);
+      const suffix = el.dataset.suffix || '';
+      const prefix = el.dataset.prefix || '';
+      const isFloat = target % 1 !== 0;
+      const isCurrency = el.textContent.trim().startsWith('$');
+      const start = performance.now();
+      const dur = 1400;
+      function tick(now) {
+        const t = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const v = target * eased;
+        const displayed = isFloat ? v.toFixed(1) : Math.round(v);
+        el.textContent = (isCurrency ? '$' : '') + prefix + displayed + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterIO.unobserve(el);
+    });
+  }, { threshold: 0.4 });
+  counters.forEach((el) => counterIO.observe(el));
+
+  // ============================================================
+  // 5. RISK SCORE WIDGET — interactive demo audit
+  // ============================================================
+  const presets = {
+    'redd-low': {
+      serial: '2543-203-204-AMS-AFOLU-BR-2021', score: 18,
+      verdict: 'Severe greenwash risk detected.',
+      reason: 'Sentinel-2 NDVI shows continued canopy loss inside the project polygon during the crediting period. NASA FIRMS recorded 1,240 fire detections within the buffer zone. Baseline is non-credible.',
+      bars: { ndvi: 22, fire: 8, add: 18, perm: 24 },
+      latency: '1.84s'
+    },
+    'afolu-mid': {
+      serial: '7821-447-AFOLU-ID-2022', score: 56,
+      verdict: 'Moderate risk — selective issuance only.',
+      reason: 'NDVI delta within statistical noise. Fire detections elevated but seasonal. Additionality plausible. Buffer pool inadequate for permanence claims; recommend partial issuance.',
+      bars: { ndvi: 64, fire: 48, add: 62, perm: 50 },
+      latency: '1.92s'
+    },
+    'solar-high': {
+      serial: 'GS-12440-IN-SOLAR-2023', score: 87,
+      verdict: 'High-integrity credit. Issuance recommended.',
+      reason: 'Grid emissions baseline verified against CEA India 2023 dataset. Generation telemetry matches IoT inverter feed within 2.1%. Additionality robust under CDM Tool 33. No physical risk.',
+      bars: { ndvi: 100, fire: 95, add: 86, perm: 92 },
+      latency: '1.68s'
+    },
+    'cookstove-low': {
+      serial: 'VCS-9801-KE-COOK-2020', score: 31,
+      verdict: 'Low integrity. Suspend retirement.',
+      reason: 'Survey-based usage data inflated relative to IoT sensor sample (n=412). Stacking with kerosene observed in 67% of households. Methodology AMS-II.G overstates reductions.',
+      bars: { ndvi: 38, fire: 60, add: 18, perm: 28 },
+      latency: '2.02s'
+    }
+  };
+
+  const ringEl     = document.getElementById('risk-ring');
+  const valEl      = document.getElementById('risk-val');
+  const verdictEl  = document.getElementById('risk-verdict');
+  const reasonEl   = document.getElementById('risk-reason');
+  const inputEl    = document.getElementById('risk-input');
+  const goBtn      = document.getElementById('risk-go');
+  const latencyEl  = document.getElementById('risk-latency');
+  const RING_CIRC  = 427; // 2 * pi * 68
+
+  function setBar(key, val) {
+    const fill = document.querySelector('[data-bar="' + key + '"]');
+    const txt  = document.querySelector('[data-val="' + key + '"]');
+    if (!fill || !txt) return;
+    fill.style.transform = 'scaleX(' + (val / 100) + ')';
+    fill.classList.remove('is-good', 'is-warn', 'is-bad');
+    if (val >= 70) fill.classList.add('is-good');
+    else if (val >= 40) fill.classList.add('is-warn');
+    else fill.classList.add('is-bad');
+    txt.textContent = val;
+  }
+
+  function applyResult(r) {
+    inputEl.value = r.serial.replace(/^VCS-/, '');
+    // Animate ring
+    const pct = r.score / 100;
+    ringEl.style.strokeDashoffset = (RING_CIRC * (1 - pct));
+    if (r.score >= 70) ringEl.style.stroke = 'var(--emerald)';
+    else if (r.score >= 40) ringEl.style.stroke = 'var(--gold)';
+    else ringEl.style.stroke = 'var(--crimson)';
+
+    // Animate value (count-up)
+    const start = performance.now();
+    const dur = 1200;
+    function tick(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      valEl.textContent = Math.round(r.score * eased);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    valEl.classList.remove('is-low', 'is-mid', 'is-high');
+    if (r.score >= 70) valEl.classList.add('is-high');
+    else if (r.score >= 40) valEl.classList.add('is-mid');
+    else valEl.classList.add('is-low');
+
+    verdictEl.textContent = r.verdict;
+    reasonEl.textContent = r.reason;
+    latencyEl.textContent = r.latency;
+
+    Object.entries(r.bars).forEach(([k, v]) => setBar(k, v));
+  }
+
+  document.querySelectorAll('.widget-preset').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const r = presets[btn.dataset.preset];
+      if (r) applyResult(r);
+    });
   });
+
+  function syntheticAudit(serial) {
+    // Deterministic pseudo-random score from input string — looks "real" enough for demo
+    let hash = 0;
+    for (let i = 0; i < serial.length; i++) hash = ((hash << 5) - hash) + serial.charCodeAt(i);
+    const score = Math.abs(hash) % 95 + 5; // 5–99
+    const presetKeys = Object.keys(presets);
+    const closest = presetKeys.reduce((best, k) =>
+      Math.abs(presets[k].score - score) < Math.abs(presets[best].score - score) ? k : best, presetKeys[0]);
+    return {
+      ...presets[closest],
+      serial: 'VCS-' + serial,
+      score,
+      latency: (1.4 + (Math.abs(hash) % 80) / 100).toFixed(2) + 's'
+    };
+  }
+
+  goBtn.addEventListener('click', () => {
+    const serial = inputEl.value.trim() || '2543-203-204-AMS-AFOLU-BR-2021';
+    valEl.textContent = '...';
+    verdictEl.textContent = 'Auditing...';
+    reasonEl.textContent = 'Synthesising satellite, registry, and IoT data with Claude Opus + Groq...';
+    setTimeout(() => applyResult(syntheticAudit(serial)), 600);
+  });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') goBtn.click();
+  });
+
+  // Auto-trigger first preset when widget enters view
+  const widget = document.querySelector('.risk-widget');
+  if (widget) {
+    const widgetIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          setTimeout(() => applyResult(presets['solar-high']), 400);
+          widgetIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    widgetIO.observe(widget);
+  }
+
+  // ============================================================
+  // 6. MAGNETIC CURSOR (desktop only)
+  // ============================================================
+  const cursor = document.querySelector('.cursor-dot');
+  if (cursor && matchMedia('(hover: hover)').matches) {
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    document.addEventListener('mousemove', (e) => {
+      tx = e.clientX; ty = e.clientY;
+      cursor.style.opacity = '1';
+    });
+    document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; });
+    function loop() {
+      cx += (tx - cx) * 0.18;
+      cy += (ty - cy) * 0.18;
+      cursor.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%)';
+      requestAnimationFrame(loop);
+    }
+    loop();
+    document.querySelectorAll('a, button, [data-magnetic]').forEach((el) => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
+    });
+  }
+
+  // ============================================================
+  // 7. SUBTLE PARALLAX ON BACKDROP — pointer drives Earth & orbit
+  // ============================================================
+  if (matchMedia('(hover: hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const earth = document.querySelector('.backdrop .earth');
+    const orbit = document.querySelector('.backdrop .orbit');
+    let px = 0, py = 0, ex = 0, ey = 0;
+    document.addEventListener('mousemove', (e) => {
+      px = (e.clientX / window.innerWidth - 0.5) * 2;
+      py = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+    function paraLoop() {
+      ex += (px - ex) * 0.04;
+      ey += (py - ey) * 0.04;
+      if (earth) earth.style.transform = 'translate(' + (ex * -10) + 'px,' + (ey * -10) + 'px)';
+      if (orbit) orbit.style.transform = 'translate(' + (ex * -16) + 'px,' + (ey * -16) + 'px) rotate(0deg)';
+      requestAnimationFrame(paraLoop);
+    }
+    paraLoop();
+  }
+})();
 </script>
 
 </body>

@@ -33,9 +33,11 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   giving:                 { name: 'Carbon Credit Markets',      enabled: true, priority: 2 },
   'cross-source-signals': { name: 'VERITAS Risk Signals',       enabled: true, priority: 2 },
 
+  // === Live media — climate & earth-observation feeds ===
+  'live-news':              { name: 'Climate News Live',  enabled: true,  priority: 2 },
+  'live-webcams':           { name: 'Earth Live Cams',    enabled: true,  priority: 2 },
+
   // === Everything below is DISABLED for VERITAS ===
-  'live-news':              { name: 'Live News', enabled: false, priority: 3 },
-  'live-webcams':           { name: 'Live Webcams', enabled: false, priority: 3 },
   'windy-webcams':          { name: 'Windy Webcam', enabled: false, priority: 3 },
   'strategic-posture':      { name: 'Strategic Posture', enabled: false, priority: 3 },
   cii:                      { name: 'Country Instability', enabled: false, priority: 3 },
@@ -901,6 +903,10 @@ export const VARIANT_DEFAULTS: Record<string, string[]> = {
  * Applied at render time, not just at seed time.
  */
 export const VARIANT_PANEL_OVERRIDES: Partial<Record<string, Partial<Record<string, Partial<PanelConfig>>>>> = {
+  full: {
+    'live-news':    { name: 'Climate News Live' },
+    'live-webcams': { name: 'Earth Live Cams' },
+  },
   finance: {
     map:         { name: 'Global Markets Map' },
     'live-news': { name: 'Market Headlines' },

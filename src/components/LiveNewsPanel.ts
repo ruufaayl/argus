@@ -79,6 +79,20 @@ const TECH_LIVE_CHANNELS: LiveChannel[] = [
   { id: 'nasa', name: 'Sen Space Live', handle: '@NASA', fallbackVideoId: 'aB1yRz0HhdY', useFallbackOnly: true },
 ];
 
+// VERITAS variant (full): live environmental video feeds.
+// Sources verified in `VERITAS_Environmental_Feeds.docx` — public 24/7 streams
+// from USGS, explore.org (Annenberg Foundation), and NASA. Mix of nature cams
+// (carbon sinks, volcanic emissions, arctic) plus DW News for climate-policy
+// coverage. `useFallbackOnly` pins the embed to a known stable ID since these
+// are dedicated cams (no rotating "current live" video to discover).
+const VERITAS_LIVE_CHANNELS: LiveChannel[] = [
+  { id: 'kilauea',     name: 'Kilauea Volcano (Hawaii)',     handle: '@USGS',     fallbackVideoId: 'kMRKYNFYOAI', useFallbackOnly: true },
+  { id: 'brooks-falls',name: 'Brooks Falls Bears (Alaska)',  handle: '@explore',  fallbackVideoId: 'TVx9Pt0H6jE', useFallbackOnly: true },
+  { id: 'polar-bear',  name: 'Polar Bear Cam (Manitoba)',    handle: '@explore',  fallbackVideoId: 'IfHMPxRwFxc', useFallbackOnly: true },
+  { id: 'nasa',        name: 'NASA Earth Live',              handle: '@NASA',     fallbackVideoId: 'aB1yRz0HhdY', useFallbackOnly: true },
+  { id: 'dw',          name: 'DW News (Climate Coverage)',   handle: '@DWNews',   fallbackVideoId: 'LuKwFajn37U' },
+];
+
 // Optional channels users can add from the "Available Channels" tab UI
 // Includes default channels so they appear in the grid for toggle on/off
 export const OPTIONAL_LIVE_CHANNELS: LiveChannel[] = [
@@ -198,7 +212,13 @@ export const OPTIONAL_CHANNEL_REGIONS: { key: string; labelKey: string; channelI
   ..._REGION_ENTRIES,
 ];
 
-const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech' ? TECH_LIVE_CHANNELS : SITE_VARIANT === 'happy' ? [] : FULL_LIVE_CHANNELS;
+const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech'
+  ? TECH_LIVE_CHANNELS
+  : SITE_VARIANT === 'happy'
+    ? []
+    : SITE_VARIANT === 'full'
+      ? VERITAS_LIVE_CHANNELS // VERITAS climate/earth observation channels
+      : FULL_LIVE_CHANNELS;
 
 /** Default channel list for the current variant (for restore in channel management). */
 export function getDefaultLiveChannels(): LiveChannel[] {
