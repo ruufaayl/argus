@@ -1,0 +1,461 @@
+/* ============================================================
+   VERITAS THEME — Dashboard re-skin to match landing page
+   ============================================================
+   Loaded UNLAYERED so it overrides @layer(base) tokens from main.css
+   regardless of source order or specificity (cascade layer rules).
+
+   Mirrors the design language from public/landing.html:
+   • Palette: deep forest #060a07 + cream #f5f0eb + gold #c8860a + emerald #4ade80
+   • Type:    Instrument Serif (display) · Barlow (body) · JetBrains Mono (data)
+   • Glass:   rgba(255,255,255,0.025) fill + 0.12 border
+   • Vibe:    Bloomberg Terminal × NASA mission console
+
+   Scope: only applied when SITE_VARIANT === 'full' (VERITAS variant).
+   The body element gets data-veritas="on" attached at boot, gating these rules.
+   ============================================================ */
+
+[data-veritas="on"] {
+  /* ─────────── Backgrounds ─────────── */
+  --bg:           #060a07;
+  --bg-secondary: #0a100c;
+  --surface:      #0a110d;
+  --surface-hover:#0f1812;
+  --surface-active:#142019;
+
+  /* ─────────── Borders (cream alpha — matches landing glass) ─────────── */
+  --border:        rgba(245, 240, 235, 0.10);
+  --border-strong: rgba(245, 240, 235, 0.22);
+  --border-subtle: rgba(245, 240, 235, 0.06);
+
+  /* ─────────── Text (cream, not pure white) ─────────── */
+  --text:           #f5f0eb;
+  --text-secondary: rgba(245, 240, 235, 0.78);
+  --text-dim:       rgba(245, 240, 235, 0.55);
+  --text-muted:     rgba(245, 240, 235, 0.42);
+  --text-faint:     rgba(245, 240, 235, 0.28);
+  --text-ghost:     rgba(245, 240, 235, 0.16);
+
+  /* Primary accent = VERITAS gold */
+  --accent: #c8860a;
+
+  /* ─────────── Overlays ─────────── */
+  --overlay-subtle: rgba(245, 240, 235, 0.025);
+  --overlay-light:  rgba(245, 240, 235, 0.05);
+  --overlay-medium: rgba(245, 240, 235, 0.10);
+  --overlay-heavy:  rgba(245, 240, 235, 0.18);
+  --shadow-color:   rgba(0, 0, 0, 0.55);
+  --darken-light:   rgba(0, 0, 0, 0.18);
+  --darken-medium:  rgba(0, 0, 0, 0.28);
+  --darken-heavy:   rgba(0, 0, 0, 0.42);
+
+  /* ─────────── Scrollbar ─────────── */
+  --scrollbar-thumb:       rgba(200, 134, 10, 0.32);
+  --scrollbar-thumb-hover: rgba(200, 134, 10, 0.55);
+
+  /* ─────────── Inputs ─────────── */
+  --input-bg: rgba(245, 240, 235, 0.04);
+
+  /* ─────────── Panels (glass) ─────────── */
+  --panel-bg:     rgba(10, 17, 13, 0.72);
+  --panel-border: rgba(245, 240, 235, 0.10);
+
+  /* ─────────── Map (deep forest) ─────────── */
+  --map-bg:      #02050b;
+  --map-grid:    rgba(74, 222, 128, 0.07);
+  --map-country: #08120c;
+  --map-stroke:  rgba(200, 134, 10, 0.32);
+
+  /* ─────────── Severity / status (re-keyed to gold/emerald/crimson) ─────────── */
+  --semantic-critical:  #f87171;
+  --semantic-high:      #fb923c;
+  --semantic-elevated:  #f5b541;
+  --semantic-normal:    #4ade80;
+  --semantic-low:       #6ee7b7;
+  --semantic-info:      #94a3b8;
+  --semantic-positive:  #4ade80;
+  --threat-critical:    #f87171;
+  --threat-high:        #fb923c;
+  --threat-medium:      #f5b541;
+  --threat-low:         #4ade80;
+  --threat-info:        #94a3b8;
+  --status-live:        #4ade80;
+  --status-cached:      #f5b541;
+  --status-unavailable: #f87171;
+  --red:                #f87171;
+  --green:              #4ade80;
+  --yellow:             #f5b541;
+
+  /* ─────────── VERITAS-specific tokens (used by panels below) ─────────── */
+  --vt-gold:        #c8860a;
+  --vt-gold-soft:   #d4943a;
+  --vt-gold-bright: #f5b541;
+  --vt-gold-glow:   rgba(200, 134, 10, 0.18);
+  --vt-emerald:     #4ade80;
+  --vt-emerald-soft:#6ee7b7;
+  --vt-crimson:     #f87171;
+  --vt-cream:       #f5f0eb;
+  --vt-ink-faint:   rgba(245, 240, 235, 0.22);
+  --vt-glass-bg:    rgba(255, 255, 255, 0.025);
+  --vt-glass-border:rgba(255, 255, 255, 0.12);
+
+  /* ─────────── Type stack ─────────── */
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:  'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:  'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+  --font-body-base: var(--font-sans);
+}
+
+/* ============================================================
+   Body + scaffolding under VERITAS
+   ============================================================ */
+[data-veritas="on"] body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  background: radial-gradient(ellipse 60% 38% at 50% -8%, rgba(200, 134, 10, 0.10), transparent 65%),
+              radial-gradient(ellipse 70% 40% at 100% 100%, rgba(74, 222, 128, 0.05), transparent 60%),
+              var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle ambient grid behind everything (matches landing .backdrop .grid) */
+[data-veritas="on"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(245, 240, 235, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 240, 235, 0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black, transparent 80%);
+}
+
+[data-veritas="on"] #app { position: relative; z-index: 1; }
+
+/* ============================================================
+   Header — matches landing nav
+   ============================================================ */
+[data-veritas="on"] .header {
+  background: rgba(6, 10, 7, 0.72);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--vt-glass-border);
+  height: 44px;
+  padding: 8px 20px;
+}
+
+/* Wordmark — Instrument Serif italic */
+[data-veritas="on"] .header .logo,
+[data-veritas="on"] .header [class*="logo"],
+[data-veritas="on"] .header .brand,
+[data-veritas="on"] .header h1 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--vt-cream);
+  font-size: 18px;
+}
+
+/* Header pills + buttons — gold accent on hover */
+[data-veritas="on"] .header button,
+[data-veritas="on"] .header a {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--text-secondary);
+  transition: color 0.18s ease;
+}
+[data-veritas="on"] .header button:hover,
+[data-veritas="on"] .header a:hover {
+  color: var(--vt-gold-bright);
+}
+
+/* ============================================================
+   Panels — glass surface with thin gold rim on hover
+   ============================================================ */
+[data-veritas="on"] .panel,
+[data-veritas="on"] [class*="panel-"]:not(.panel-tab):not(.panel-tabs):not(.panel-content):not(.panel-header):not(.panel-body):not(.panel-close) {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 2px;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow:
+    0 1px 0 rgba(245, 240, 235, 0.04) inset,
+    0 8px 24px -8px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+[data-veritas="on"] .panel:hover {
+  border-color: rgba(200, 134, 10, 0.28);
+  box-shadow:
+    0 1px 0 rgba(245, 240, 235, 0.06) inset,
+    0 12px 32px -8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(200, 134, 10, 0.06);
+}
+
+/* Panel header — Instrument Serif label, mono uppercase eyebrow */
+[data-veritas="on"] .panel-header,
+[data-veritas="on"] [class$="-header"]:not(.header) {
+  background: linear-gradient(180deg, rgba(245, 240, 235, 0.04) 0%, transparent 100%);
+  border-bottom: 1px solid var(--vt-glass-border);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-veritas="on"] .panel-header .panel-title,
+[data-veritas="on"] .panel-header h2,
+[data-veritas="on"] .panel-header h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--vt-cream);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+/* Tiny mono eyebrow above titles — added by .panel-header-eyebrow */
+[data-veritas="on"] .panel-header-eyebrow,
+[data-veritas="on"] .panel-header .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vt-gold);
+  font-weight: 400;
+}
+
+/* Panel count pill — thin gold border */
+[data-veritas="on"] .panel-count {
+  background: transparent;
+  border: 1px solid rgba(200, 134, 10, 0.32);
+  color: var(--vt-gold-bright);
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Tabs (panel-tabs from panels.css) — gold underline
+   ============================================================ */
+[data-veritas="on"] .panel-tabs {
+  background: rgba(245, 240, 235, 0.02);
+  border-bottom: 1px solid var(--vt-glass-border);
+}
+[data-veritas="on"] .panel-tab {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid transparent;
+}
+[data-veritas="on"] .panel-tab:hover {
+  color: var(--vt-cream);
+  background: rgba(245, 240, 235, 0.03);
+}
+[data-veritas="on"] .panel-tab.active {
+  color: var(--vt-gold-bright);
+  border-bottom-color: var(--vt-gold);
+  font-weight: 500;
+  background: linear-gradient(180deg, transparent 0%, rgba(200, 134, 10, 0.06) 100%);
+}
+
+/* ============================================================
+   Buttons / inputs / chips
+   ============================================================ */
+[data-veritas="on"] button:not(.panel-close):not(.panel-tab) {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background: rgba(245, 240, 235, 0.04);
+  border: 1px solid var(--vt-glass-border);
+  color: var(--text-secondary);
+  border-radius: 2px;
+  padding: 6px 12px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+[data-veritas="on"] button:not(.panel-close):not(.panel-tab):hover {
+  background: rgba(200, 134, 10, 0.10);
+  border-color: rgba(200, 134, 10, 0.42);
+  color: var(--vt-gold-bright);
+}
+[data-veritas="on"] button.primary,
+[data-veritas="on"] button[data-variant="primary"] {
+  background: linear-gradient(180deg, rgba(200, 134, 10, 0.85) 0%, rgba(200, 134, 10, 0.65) 100%);
+  border-color: rgba(200, 134, 10, 0.55);
+  color: #06050200;
+  color: #1a1208;
+  font-weight: 500;
+}
+[data-veritas="on"] button.primary:hover {
+  background: linear-gradient(180deg, var(--vt-gold-bright) 0%, var(--vt-gold) 100%);
+  color: #1a1208;
+}
+
+[data-veritas="on"] input:not([type="checkbox"]):not([type="radio"]),
+[data-veritas="on"] select,
+[data-veritas="on"] textarea {
+  background: var(--input-bg);
+  border: 1px solid var(--vt-glass-border);
+  color: var(--vt-cream);
+  font-family: var(--font-sans);
+  border-radius: 2px;
+  padding: 6px 10px;
+  font-size: 12px;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+[data-veritas="on"] input:focus,
+[data-veritas="on"] select:focus,
+[data-veritas="on"] textarea:focus {
+  outline: none;
+  border-color: rgba(200, 134, 10, 0.55);
+  background: rgba(245, 240, 235, 0.06);
+  box-shadow: 0 0 0 3px rgba(200, 134, 10, 0.12);
+}
+
+/* ============================================================
+   Data values — JetBrains Mono for numbers/coords
+   ============================================================ */
+[data-veritas="on"] .mono,
+[data-veritas="on"] [class*="value"],
+[data-veritas="on"] [class*="metric"],
+[data-veritas="on"] [class*="number"],
+[data-veritas="on"] [class*="coord"],
+[data-veritas="on"] code,
+[data-veritas="on"] kbd {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+/* Hero numerics (large) — tabular nums */
+[data-veritas="on"] .panel-content [class*="big"],
+[data-veritas="on"] .panel-content [class*="hero"] {
+  font-family: var(--font-mono);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--vt-cream);
+}
+
+/* ============================================================
+   Scrollbars (subtle gold)
+   ============================================================ */
+[data-veritas="on"] *::-webkit-scrollbar { width: 8px; height: 8px; }
+[data-veritas="on"] *::-webkit-scrollbar-track { background: transparent; }
+[data-veritas="on"] *::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0;
+}
+[data-veritas="on"] *::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ============================================================
+   Status dots (live/cached/down)
+   ============================================================ */
+[data-veritas="on"] [class*="status-dot"],
+[data-veritas="on"] [class*="-dot"] {
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Live pulse — emerald, gentle */
+@keyframes vt-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.45); }
+  50%      { opacity: 0.7; box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+}
+[data-veritas="on"] [class*="live"] [class*="-dot"],
+[data-veritas="on"] .live-dot,
+[data-veritas="on"] .status-live {
+  animation: vt-pulse 2.4s ease-in-out infinite;
+}
+
+/* ============================================================
+   Map chrome (toolbar above globe)
+   ============================================================ */
+[data-veritas="on"] .map-toolbar,
+[data-veritas="on"] .map-bar,
+[data-veritas="on"] [class*="map-controls"] {
+  background: rgba(6, 10, 7, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--vt-glass-border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ============================================================
+   Skeleton loader colors (inherits from index.html inline style;
+   we override the panel/header bg to match VERITAS deep-forest)
+   ============================================================ */
+[data-veritas="on"] .skeleton-shell { background: var(--bg); }
+[data-veritas="on"] .skeleton-header { background: var(--surface); border-bottom-color: var(--border); }
+[data-veritas="on"] .skeleton-pill   { background: rgba(245, 240, 235, 0.06); }
+[data-veritas="on"] .skeleton-dot    { background: var(--vt-emerald); }
+[data-veritas="on"] .skeleton-main   { background: var(--bg); }
+[data-veritas="on"] .skeleton-map    { background: var(--map-bg); border-color: var(--border); }
+[data-veritas="on"] .skeleton-map-bar{ background: var(--surface); border-bottom-color: var(--border); }
+[data-veritas="on"] .skeleton-panel  { background: var(--panel-bg); border-color: var(--panel-border); }
+[data-veritas="on"] .skeleton-panel-header { border-bottom-color: var(--border-subtle); }
+[data-veritas="on"] .skeleton-line {
+  background: linear-gradient(90deg,
+    rgba(245, 240, 235, 0.04) 25%,
+    rgba(245, 240, 235, 0.10) 50%,
+    rgba(245, 240, 235, 0.04) 75%);
+}
+
+/* ============================================================
+   Selection / focus rings — gold
+   ============================================================ */
+[data-veritas="on"] ::selection {
+  background: rgba(200, 134, 10, 0.32);
+  color: var(--vt-cream);
+}
+[data-veritas="on"] *:focus-visible {
+  outline: 1px solid rgba(200, 134, 10, 0.55);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Modals / overlays
+   ============================================================ */
+[data-veritas="on"] [class*="modal"],
+[data-veritas="on"] [class*="dialog"],
+[data-veritas="on"] [role="dialog"] {
+  background: var(--panel-bg);
+  border: 1px solid var(--vt-glass-border);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 24px 80px -16px rgba(0, 0, 0, 0.7);
+}
+[data-veritas="on"] [class*="modal-overlay"],
+[data-veritas="on"] [class*="backdrop"]:not(.skeleton-shell) {
+  background: rgba(2, 5, 3, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ============================================================
+   Reduce-motion respect — kill all animations
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  [data-veritas="on"] * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

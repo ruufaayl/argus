@@ -84,18 +84,47 @@ export const LAYER_REGISTRY: Record<keyof MapLayers, LayerDefinition> = {
 };
 
 const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
+  // ─── VERITAS (full variant) — environmental layers only ─────────────
+  // Carbon credit verification dashboard. All military / finance / OSINT
+  // layers are removed from this list (they remain in LAYER_REGISTRY for
+  // other variants to use). Layers ordered by relevance to carbon-credit
+  // verification: forest cover & emissions first, then biodiversity,
+  // then context overlays.
+  //
+  // Each layer here is wired to a real data source:
+  //   fires       → NASA FIRMS hot pixels (api/fires)
+  //   climate     → ERA5 / NOAA climate anomalies (api/climate)
+  //   weather     → OpenWeatherMap alerts (api/weather)
+  //   weatherRadar→ RainViewer tiles
+  //   natural     → USGS earthquakes + Smithsonian volcanoes (api/natural)
+  //   hotspots    → composite thermal/emission hotspots (api/hotspots)
+  //   waterways   → strategic waterways + hydrology context
+  //   speciesRecovery       → biodiversity recovery dataset
+  //   renewableInstallations→ Global Energy Monitor renewables registry
+  //   diseaseOutbreaks      → ProMED / WHO climate-linked outbreaks
+  //   displacement→ UNHCR climate-driven displacement
+  //   webcams     → VERITAS environmental cams (src/config/veritas-webcams.ts)
+  //   dayNight    → solar terminator overlay (no API)
   full: [
-    'iranAttacks', 'hotspots', 'conflicts',
-    'bases', 'nuclear', 'irradiators', 'radiationWatch', 'spaceports',
-    'cables', 'pipelines', 'datacenters', 'military',
-    'ais', 'tradeRoutes', 'flights', 'protests',
-    'ucdpEvents', 'displacement', 'climate', 'weather',
-    'outages', 'cyberThreats', 'natural', 'fires',
-    'waterways', 'economic', 'minerals', 'gpsJamming',
-    'satellites', 'ciiChoropleth', 'sanctions', 'dayNight', 'webcams', 'weatherRadar',
+    // Carbon & emissions
+    'fires',
+    'climate',
+    'hotspots',
+    // Biodiversity & forests
+    'speciesRecovery',
+    'renewableInstallations',
+    // Climate-driven hazards & weather
+    'natural',
+    'weather',
+    'weatherRadar',
+    // Climate health & migration
     'diseaseOutbreaks',
-    // VERITAS pivot: climate & biodiversity layers
-    'speciesRecovery', 'renewableInstallations',
+    'displacement',
+    // Hydrology / oceans context
+    'waterways',
+    // Live cams + ambient context
+    'webcams',
+    'dayNight',
   ],
   tech: [
     'startupHubs', 'techHQs', 'accelerators', 'cloudRegions',

@@ -110,40 +110,55 @@ const FULL_PANELS: Record<string, PanelConfig> = {
 };
 
 const FULL_MAP_LAYERS: MapLayers = {
-  // VERITAS: environmental layers only.
-  // Climate / disaster / fire / weather are ON. Military / finance / OSINT layers OFF.
+  // ─── VERITAS environmental layer defaults ────────────────────────────
+  // Layers in VARIANT_LAYER_ORDER.full (map-layer-definitions.ts) appear
+  // in the toggle menu. The flags below control which start ON at first
+  // load. All non-VERITAS layers are forced false — sanitizeLayersForVariant
+  // would zero them anyway, so setting false here keeps types honest.
+  //
+  // Default-ON priority: layers with the strongest visual & data signal
+  // for carbon-credit verification.
+
+  // ─── ON: core carbon / climate signal ─────────
+  fires: true,                   // NASA FIRMS hot pixels
+  climate: true,                 // climate anomaly overlay
+  speciesRecovery: true,         // biodiversity recovery dataset
+  renewableInstallations: true,  // Global Energy Monitor renewables
+  natural: true,                 // USGS earthquakes, Smithsonian volcanoes
+  weather: true,                 // OpenWeatherMap alerts
+  waterways: true,               // hydrology / SST context
+
+  // ─── OFF (available in toggle, opt-in to keep globe uncluttered) ─────
+  hotspots: false,
+  weatherRadar: false,
+  diseaseOutbreaks: false,
+  displacement: false,
+  webcams: false,
+  dayNight: false,
+
+  // ─── FORCED OFF in VERITAS: military / finance / OSINT / commodity ───
   iranAttacks: false,
   gpsJamming: false,
   satellites: false,
-
-
   conflicts: false,
   bases: false,
   cables: false,
   pipelines: false,
-  hotspots: true,           // emission + thermal hotspots
   ais: false,
   nuclear: false,
   irradiators: false,
   radiationWatch: false,
   sanctions: false,
-  weather: true,            // weather/climate overlay
   economic: false,
-  waterways: true,          // sea-surface temp / hydrology context
   outages: false,
   cyberThreats: false,
   datacenters: false,
   protests: false,
   flights: false,
   military: false,
-  natural: true,            // natural disaster events
   spaceports: false,
   minerals: false,
-  fires: true,              // NASA FIRMS fire hotspots
-  // Data source layers
   ucdpEvents: false,
-  displacement: false,
-  climate: true,            // climate anomaly overlay
   // Tech layers (off)
   startupHubs: false,
   cloudRegions: false,
@@ -156,21 +171,16 @@ const FULL_MAP_LAYERS: MapLayers = {
   centralBanks: false,
   commodityHubs: false,
   gulfInvestments: false,
-  // Environmental / regenerative layers (ON)
+  // Happy variant layers (off)
   positiveEvents: false,
   kindness: false,
   happiness: false,
-  speciesRecovery: true,         // biodiversity layer
-  renewableInstallations: true,  // renewable energy projects
   tradeRoutes: false,
   ciiChoropleth: false,
-  dayNight: true,                // earth context
   // Commodity layers (off)
   miningSites: false,
   processingPlants: false,
   commodityPorts: false,
-  webcams: false,
-  weatherRadar: false, diseaseOutbreaks: false,
 };
 
 const FULL_MOBILE_MAP_LAYERS: MapLayers = {

@@ -8,3 +8,5 @@
 @import url('./main.css') layer(base);
 @import url('./country-deep-dive.css') layer(base);
 @import url('./map-context-menu.css') layer(base);
+/* VERITAS theme — UNLAYERED so it overrides base for [data-veritas="on"] body */
+@import url('./veritas-theme.css');

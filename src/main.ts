@@ -471,6 +471,18 @@ if (SITE_VARIANT && SITE_VARIANT !== 'full') {
       .replace(/\/favico\/favicon/g, `/favico/${SITE_VARIANT}/favicon`)
       .replace(/\/favico\/apple-touch-icon/g, `/favico/${SITE_VARIANT}/apple-touch-icon`);
   });
+} else if (SITE_VARIANT === 'full') {
+  // VERITAS dashboard re-skin — activates src/styles/veritas-theme.css overrides.
+  // Set on both <html> and <body> so descendant selectors win regardless of mount point.
+  document.documentElement.dataset.veritas = 'on';
+  // Force dark theme — VERITAS palette is dark-only (no light variant designed yet).
+  document.documentElement.dataset.theme = 'dark';
+  // Body element gets the same flag once it exists (DOMContentLoaded already fired by main.ts execution).
+  if (document.body) {
+    document.body.dataset.veritas = 'on';
+  } else {
+    document.addEventListener('DOMContentLoaded', () => { document.body.dataset.veritas = 'on'; }, { once: true });
+  }
 }
 
 // Remove no-transition class after first paint to enable smooth theme transitions
