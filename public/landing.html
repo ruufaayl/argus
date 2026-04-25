@@ -893,7 +893,9 @@
   .rise.d4 { animation-delay: 0.55s; }
   .rise.d5 { animation-delay: 0.7s; }
 
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+  /* Fail-safe baseline: .reveal visible by default so the page works even if JS is blocked.
+     The .in class still triggers the upgrade-path animation when the IntersectionObserver runs. */
+  .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
   .reveal.in { opacity: 1; transform: translateY(0); }
   .reveal.d1 { transition-delay: 0.08s; }
   .reveal.d2 { transition-delay: 0.16s; }
