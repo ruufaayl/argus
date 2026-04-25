@@ -459,3 +459,179 @@
 @media (prefers-reduced-motion: reduce) {
   [data-veritas="on"] * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ============================================================
+   LAYER TOGGLES PANEL (overlay on map — GlobeMap.ts + DeckGLMap.ts)
+   .layer-toggles / .toggle-header / .layer-toggle / .toggle-label etc.
+   ============================================================ */
+[data-veritas="on"] .layer-toggles,
+[data-veritas="on"] .deckgl-layer-toggles {
+  background: rgba(6, 10, 7, 0.78) !important;
+  border: 1px solid var(--vt-glass-border) !important;
+  border-radius: 2px !important;
+  backdrop-filter: blur(18px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+  font-family: var(--font-sans) !important;
+  color: var(--vt-cream) !important;
+  box-shadow: 0 10px 32px -10px rgba(0, 0, 0, 0.6);
+}
+
+[data-veritas="on"] .layer-toggles .toggle-header,
+[data-veritas="on"] .deckgl-layer-toggles .toggle-header {
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--vt-gold) !important;
+  border-bottom: 1px solid var(--vt-glass-border) !important;
+  padding: 8px 10px !important;
+  background: linear-gradient(180deg, rgba(200, 134, 10, 0.06) 0%, transparent 100%) !important;
+}
+
+[data-veritas="on"] .layer-toggles .toggle-collapse,
+[data-veritas="on"] .deckgl-layer-toggles .toggle-collapse,
+[data-veritas="on"] .layer-toggles .layer-help-btn,
+[data-veritas="on"] .deckgl-layer-toggles .layer-help-btn {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-dim) !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+}
+[data-veritas="on"] .layer-toggles .toggle-collapse:hover,
+[data-veritas="on"] .deckgl-layer-toggles .toggle-collapse:hover,
+[data-veritas="on"] .layer-toggles .layer-help-btn:hover,
+[data-veritas="on"] .deckgl-layer-toggles .layer-help-btn:hover {
+  color: var(--vt-gold-bright) !important;
+  border-color: rgba(200, 134, 10, 0.32) !important;
+}
+
+[data-veritas="on"] .layer-toggles .layer-search,
+[data-veritas="on"] .deckgl-layer-toggles .layer-search {
+  background: rgba(245, 240, 235, 0.04) !important;
+  border: 1px solid var(--vt-glass-border) !important;
+  color: var(--vt-cream) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 11px !important;
+  padding: 5px 8px !important;
+  margin: 6px !important;
+  border-radius: 2px !important;
+  width: calc(100% - 12px) !important;
+}
+[data-veritas="on"] .layer-toggles .layer-search::placeholder,
+[data-veritas="on"] .deckgl-layer-toggles .layer-search::placeholder {
+  color: var(--text-muted) !important;
+  letter-spacing: 0.04em;
+}
+
+[data-veritas="on"] .layer-toggles .layer-toggle,
+[data-veritas="on"] .deckgl-layer-toggles .layer-toggle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 10px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid rgba(245, 240, 235, 0.04) !important;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+[data-veritas="on"] .layer-toggles .layer-toggle:hover,
+[data-veritas="on"] .deckgl-layer-toggles .layer-toggle:hover {
+  background: rgba(200, 134, 10, 0.06) !important;
+  color: var(--vt-cream) !important;
+}
+[data-veritas="on"] .layer-toggles .layer-toggle input[type="checkbox"],
+[data-veritas="on"] .deckgl-layer-toggles .layer-toggle input[type="checkbox"] {
+  accent-color: var(--vt-gold) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+[data-veritas="on"] .layer-toggles .toggle-icon,
+[data-veritas="on"] .deckgl-layer-toggles .toggle-icon {
+  font-size: 12px !important;
+  opacity: 0.7;
+  filter: saturate(0.8);
+}
+[data-veritas="on"] .layer-toggles .toggle-label,
+[data-veritas="on"] .deckgl-layer-toggles .toggle-label {
+  font-family: var(--font-sans) !important;
+  font-weight: 400 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.10em !important;
+}
+
+[data-veritas="on"] .map-author-badge {
+  font-family: var(--font-serif) !important;
+  font-style: italic !important;
+  font-size: 11px !important;
+  color: var(--vt-gold) !important;
+  background: transparent !important;
+  border-top: 1px solid var(--vt-glass-border) !important;
+  padding: 6px 10px !important;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   LIVE NEWS / WEBCAMS / INSIGHTS / FORECASTS panel chrome
+   The actual panel headers ("LIVE NEWS · 93", "LIVE WEBCAMS · 39")
+   ============================================================ */
+[data-veritas="on"] .live-news-panel,
+[data-veritas="on"] .live-webcams-panel,
+[data-veritas="on"] [data-panel-id] {
+  background: rgba(6, 10, 7, 0.62) !important;
+  border: 1px solid var(--vt-glass-border) !important;
+  border-radius: 2px !important;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+/* GLOBAL SITUATION / panel section heading bars */
+[data-veritas="on"] .global-situation,
+[data-veritas="on"] .map-toolbar,
+[data-veritas="on"] .map-bar {
+  background: linear-gradient(180deg, rgba(245, 240, 235, 0.04) 0%, transparent 100%) !important;
+  border-bottom: 1px solid var(--vt-glass-border) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--vt-gold) !important;
+}
+
+/* "GLOBAL SITUATION" header label specifically */
+[data-veritas="on"] .map-bar > span:first-child,
+[data-veritas="on"] .global-situation-label {
+  color: var(--vt-gold) !important;
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.18em !important;
+}
+
+/* Header wordmark VERITAS — Instrument Serif italic */
+[data-veritas="on"] header .logo,
+[data-veritas="on"] .topbar .logo,
+[data-veritas="on"] [class*="logo-text"],
+[data-veritas="on"] .brand-mark,
+[data-veritas="on"] .wordmark {
+  font-family: var(--font-serif) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em !important;
+  color: var(--vt-cream) !important;
+  font-size: 20px !important;
+}
+
+/* Footer brand line */
+[data-veritas="on"] .app-footer,
+[data-veritas="on"] .footer,
+[data-veritas="on"] [class*="footer"] {
+  background: rgba(6, 10, 7, 0.92) !important;
+  border-top: 1px solid var(--vt-glass-border) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.14em !important;
+  color: var(--text-muted) !important;
+}

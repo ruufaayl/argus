@@ -376,18 +376,15 @@ export class MapComponent {
     toggles.id = 'layerToggles';
 
     // Variant-aware layer buttons
+    // VERITAS (full): environmental layers only — matches VARIANT_LAYER_ORDER.full
+    // in src/config/map-layer-definitions.ts. SVG/mobile fallback path.
     const fullLayers: (keyof MapLayers)[] = [
-      'iranAttacks',                                      // Iran conflict
-      'conflicts', 'hotspots', 'sanctions', 'protests',  // geopolitical
-      'bases', 'nuclear', 'irradiators',                 // military/strategic
-      'military',                                         // military tracking (flights + vessels)
-      'cables', 'pipelines', 'outages', 'datacenters',   // infrastructure
-      // cyberThreats is intentionally hidden on SVG/mobile fallback (DeckGL desktop only)
-      'ais', 'flights', 'gpsJamming',                      // transport/interference
-      'natural', 'weather',                               // natural
-      'economic',                                         // economic
-      'waterways',                                        // labels
-      'ciiChoropleth',                                    // CII heat-map (DeckGL only, shown as disabled toggle)
+      'fires', 'climate', 'hotspots',                       // carbon & emissions
+      'speciesRecovery', 'renewableInstallations',          // biodiversity & clean energy
+      'natural', 'weather', 'weatherRadar',                 // climate hazards
+      'diseaseOutbreaks', 'displacement',                   // climate health & migration
+      'waterways',                                           // hydrology
+      'webcams', 'dayNight',                                // ambient context
     ];
     const techLayers: (keyof MapLayers)[] = [
       'cables', 'datacenters', 'outages',                // tech infrastructure

@@ -483,6 +483,10 @@ if (SITE_VARIANT && SITE_VARIANT !== 'full') {
   } else {
     document.addEventListener('DOMContentLoaded', () => { document.body.dataset.veritas = 'on'; }, { once: true });
   }
+  // Boot signal — confirms latest VERITAS bundle is loaded (look for this in DevTools Console).
+  // Bump the version number on every theme/branding change so cache-staleness is obvious.
+  console.info('%c[VERITAS] theme v3 active — env layers, gold/cream/emerald, Instrument Serif',
+    'color:#c8860a;font-family:serif;font-style:italic;font-size:13px');
 }
 
 // Remove no-transition class after first paint to enable smooth theme transitions
