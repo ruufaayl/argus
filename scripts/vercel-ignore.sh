@@ -10,8 +10,8 @@ WEB_PATHS=(
   'tailwind.config.ts' 'postcss.config.js'
 )
 
-# On main: build by default. Only skip if we can confirm ONLY non-web files changed.
-if [ "$VERCEL_GIT_COMMIT_REF" = "main" ]; then
+# On production branch (main or master): build by default. Only skip if we can confirm ONLY non-web files changed.
+if [ "$VERCEL_GIT_COMMIT_REF" = "main" ] || [ "$VERCEL_GIT_COMMIT_REF" = "master" ]; then
   if [ -n "$VERCEL_GIT_PREVIOUS_SHA" ] && git cat-file -e "$VERCEL_GIT_PREVIOUS_SHA" 2>/dev/null; then
     WEB_CHANGES=$(git diff --name-only "$VERCEL_GIT_PREVIOUS_SHA" HEAD -- "${WEB_PATHS[@]}" | head -1)
     if [ -z "$WEB_CHANGES" ]; then
