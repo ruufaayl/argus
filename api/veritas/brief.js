@@ -226,12 +226,51 @@ async function callLlmWithFallback(headlines, span) {
   throw new Error(`All LLM providers failed: ${errors.join(' | ')}`);
 }
 
-async function buildBrief(span) {
-  const headlines = await fetchGdeltHeadlines(span);
+// Fallback corpus when both GDELT primary + GDELT fallback return empty
+// (GDELT has known reliability issues — slow responses, geo-blocks, query
+// rate-limits). Pulls from /api/veritas/headlines which aggregates 18
+// climate RSS feeds (Carbon Brief, UNEP, NASA Earth, NOAA, Mongabay,
+// Verra, UNFCCC, etc.). Same edge deployment so the call stays in-DC.
+async function fetchHeadlinesFallback(reqUrl, timeoutMs = 8000) {
+  let origin = 'https://veritasoracle.vercel.app';
+  if (reqUrl) {
+    try { origin = new URL(reqUrl).origin; } catch { /* ignore */ }
+  }
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${origin}/api/veritas/headlines?limit=20`, {
+      signal: ctrl.signal,
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data?.items) return [];
+    return data.items.slice(0, 12).map(it => ({
+      title: String(it.title || '').slice(0, 240),
+      url: String(it.url || ''),
+      source: String(it.source || ''),
+      seendate: String(it.pubDate || ''),
+    })).filter(h => h.title && h.url);
+  } catch {
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function buildBrief(span, reqUrl) {
+  let headlines = await fetchGdeltHeadlines(span);
+  let source = 'gdelt';
+  if (headlines.length === 0) {
+    // GDELT failed or returned empty — pivot to the RSS aggregator.
+    headlines = await fetchHeadlinesFallback(reqUrl);
+    source = 'rss';
+  }
   if (headlines.length === 0) {
     return {
       ok: false,
-      error: `No climate headlines available from GDELT for ${spanToHumanLabel(span)}.`,
+      error: `No climate headlines available from GDELT or RSS aggregator for ${spanToHumanLabel(span)}.`,
     };
   }
   let brief;
@@ -255,6 +294,7 @@ async function buildBrief(span) {
     sources,
     span,
     spanLabel: spanToHumanLabel(span),
+    headlineSource: source,
     generatedAt: new Date().toISOString(),
     model: modelUsed,
   };
@@ -286,7 +326,7 @@ export default async function handler(req) {
     });
   }
 
-  const result = await buildBrief(span);
+  const result = await buildBrief(span, req.url);
   if (!result.ok) {
     return jsonResponse(result, 503, {
       'Cache-Control': 'no-cache, no-store',
