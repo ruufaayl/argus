@@ -2798,6 +2798,10 @@
     return Math.abs(hash);
   }
 
+  function normalizeSearchText(value) {
+    return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  }
+
   function bandVerdict(score) {
     if (score >= 85) return 'Excellent integrity. Full issuance recommended.';
     if (score >= 70) return 'High integrity. Issuance recommended.';
@@ -2848,15 +2852,26 @@
   const latencyEl  = document.getElementById('risk-latency');
   const RING_CIRC  = 427; // 2 * pi * 68
 
-  function populateSerialSelect() {
+  function createSerialOption(item) {
+    const opt = document.createElement('option');
+    opt.value = item.serial;
+    opt.dataset.search = `${item.serial} ${item.project} ${item.country}`.toUpperCase();
+    opt.textContent = `${item.serial}  |  ${item.project}  |  Score ${item.score}`;
+    return opt;
+  }
+
+  function populateSerialSelect(entries) {
     if (!selectEl) return;
-    simulatedEntries.forEach((item) => {
-      const opt = document.createElement('option');
-      opt.value = item.serial;
-      opt.dataset.search = `${item.serial} ${item.project} ${item.country}`.toUpperCase();
-      opt.textContent = `${item.serial}  |  ${item.project}  |  Score ${item.score}`;
-      selectEl.appendChild(opt);
-    });
+    const source = Array.isArray(entries) ? entries : simulatedEntries;
+    selectEl.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = source.length > 0
+      ? 'Select a carbon credit serial...'
+      : 'No serials match this search.';
+    selectEl.appendChild(placeholder);
+    source.forEach((item) => selectEl.appendChild(createSerialOption(item)));
+    selectEl.value = '';
   }
 
   function renderMetaTags(r) {
@@ -2879,19 +2894,20 @@
   }
 
   function filterSerialOptions(query) {
-    if (!selectEl) return;
     const q = (query || '').trim().toUpperCase();
-    const current = selectEl.value;
-    Array.from(selectEl.options).forEach((opt, idx) => {
-      if (idx === 0) {
-        opt.hidden = false;
-        return;
-      }
-      const hay = opt.dataset.search || opt.textContent.toUpperCase();
-      opt.hidden = q ? !hay.includes(q) : false;
-    });
-    if (current && selectEl.selectedOptions[0] && selectEl.selectedOptions[0].hidden) {
-      selectEl.value = '';
+    const qCompact = normalizeSearchText(query);
+    const filtered = q
+      ? simulatedEntries.filter((item) => {
+          const hay = `${item.serial} ${item.project} ${item.country}`.toUpperCase();
+          const hayCompact = normalizeSearchText(hay);
+          return hay.includes(q) || (qCompact && hayCompact.includes(qCompact));
+        })
+      : simulatedEntries;
+    populateSerialSelect(filtered);
+    if (filtered.length > 0 && selectEl) {
+      selectEl.value = filtered[0].serial;
+      inputEl.value = filtered[0].serial;
+      applyResult(filtered[0]);
     }
   }
 

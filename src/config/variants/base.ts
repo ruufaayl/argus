@@ -15,7 +15,7 @@ export const REFRESH_INTERVALS = {
   markets: 12 * 60 * 1000,
   crypto: 12 * 60 * 1000,
   predictions: 15 * 60 * 1000,
-  forecasts: 30 * 60 * 1000,
+  forecasts: 24 * 60 * 60 * 1000, // 24h — reduce Redis/API pressure for long-horizon forecast tiles
   ais: 15 * 60 * 1000,
   pizzint: 10 * 60 * 1000,
   natural: 60 * 60 * 1000,
@@ -47,10 +47,10 @@ export const REFRESH_INTERVALS = {
   gulfEconomies: 10 * 60 * 1000,
   groceryBasket: 6 * 60 * 60 * 1000,
   fuelPrices: 6 * 60 * 60 * 1000,
-  intelligence: 15 * 60 * 1000,
+  intelligence: 24 * 60 * 60 * 1000, // 24h — low-churn intelligence panels update daily
   correlationEngine: 5 * 60 * 1000,
   defensePatents: 24 * 60 * 60 * 1000, // 24h — data is weekly, daily poll is sufficient
-  crossSourceSignals: 15 * 60 * 1000,
+  crossSourceSignals: 24 * 60 * 60 * 1000, // 24h — composite signal feed can be daily in low-cost mode
   hormuzTracker: 60 * 60 * 1000, // 1h — data updates daily
   macroTiles: 30 * 60 * 1000,
   fsi: 30 * 60 * 1000,

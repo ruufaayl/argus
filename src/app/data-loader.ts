@@ -2773,14 +2773,15 @@ export class DataLoaderManager implements AppModule {
   async loadDiseaseOutbreaks(): Promise<void> {
     try {
       const data = await fetchDiseaseOutbreaks();
-      if (data.outbreaks?.length) {
-        const panel = this.ctx.panels['disease-outbreaks'] as DiseaseOutbreaksPanel | undefined;
-        panel?.updateData(data.outbreaks);
-        this.ctx.map?.setDiseaseOutbreaks(data.outbreaks);
-        this.ctx.map?.setLayerReady('diseaseOutbreaks', true);
-      }
+      const outbreaks = data.outbreaks ?? [];
+      const panel = this.ctx.panels['disease-outbreaks'] as DiseaseOutbreaksPanel | undefined;
+      panel?.updateData(outbreaks);
+      this.ctx.map?.setDiseaseOutbreaks(outbreaks);
+      this.ctx.map?.setLayerReady('diseaseOutbreaks', outbreaks.length > 0);
     } catch (e) {
       console.error('[App] Disease outbreaks load failed:', e);
+      this.callPanel('disease-outbreaks', 'showError');
+      this.ctx.map?.setLayerReady('diseaseOutbreaks', false);
     }
   }
 

@@ -1216,6 +1216,26 @@ export class App {
       () => this.isPanelNearViewport('cross-source-signals'),
     );
 
+    // Daily refresh for low-churn risk intelligence panels (cuts Redis churn).
+    this.refreshScheduler.scheduleRefresh(
+      'disease-outbreaks',
+      () => this.dataLoader.loadDiseaseOutbreaks(),
+      REFRESH_INTERVALS.crossSourceSignals,
+      () => this.isPanelNearViewport('disease-outbreaks'),
+    );
+    this.refreshScheduler.scheduleRefresh(
+      'radiation-watch',
+      () => this.dataLoader.loadRadiationWatch(),
+      REFRESH_INTERVALS.crossSourceSignals,
+      () => this.isPanelNearViewport('radiation-watch'),
+    );
+    this.refreshScheduler.scheduleRefresh(
+      'thermal-escalation',
+      () => this.dataLoader.loadThermalEscalations(),
+      REFRESH_INTERVALS.crossSourceSignals,
+      () => this.isPanelNearViewport('thermal-escalation'),
+    );
+
     // Telegram Intel (near real-time, 60s refresh)
     this.refreshScheduler.scheduleRefresh(
       'telegram-intel',

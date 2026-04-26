@@ -50,6 +50,7 @@ import { pinWebcam, isPinned } from '@/services/webcams/pinned-store';
 import type { WebcamEntry, WebcamCluster } from '@/generated/client/argus/webcam/v1/service_client';
 import type { TrafficAnomaly as ProtoTrafficAnomaly, DdosLocationHit } from '@/generated/client/argus/infrastructure/v1/service_client';
 import type { RadiationObservation } from '@/services/radiation';
+import type { DiseaseOutbreakItem } from '@/services/disease-outbreaks';
 
 const SAT_COUNTRY_COLORS: Record<string, string> = { CN: '#ff2020', RU: '#ff8800', US: '#4488ff', EU: '#44cc44', KR: '#aa66ff', IN: '#ff66aa', TR: '#ff4466', OTHER: '#ccccff' };
 const SAT_TYPE_EMOJI: Record<string, string> = { sar: '\u{1F4E1}', optical: '\u{1F4F7}', military: '\u{1F396}', sigint: '\u{1F4FB}' };
@@ -119,6 +120,19 @@ interface NaturalMarker extends BaseMarker {
   id: string;
   category: string;
   title: string;
+}
+interface DiseaseOutbreakMarker extends BaseMarker {
+  _kind: 'disease';
+  id: string;
+  disease: string;
+  location: string;
+  countryCode: string;
+  alertLevel: string;
+  summary: string;
+  cases: number;
+  publishedAt: number;
+  sourceName: string;
+  sourceUrl: string;
 }
 interface IranMarker extends BaseMarker {
   _kind: 'iran';
@@ -412,7 +426,7 @@ interface GlobePolygon {
 type GlobeMarker =
   | ConflictMarker | HotspotMarker | FlightMarker | VesselMarker | ClusterMarker
   | WeatherMarker | NaturalMarker | IranMarker | OutageMarker | TrafficAnomalyMarker | DdosHitMarker
-  | CyberMarker | FireMarker | ProtestMarker
+  | CyberMarker | FireMarker | ProtestMarker | DiseaseOutbreakMarker
   | UcdpMarker | DisplacementMarker | ClimateMarker | GpsJamMarker | TechMarker
   | ConflictZoneMarker | MilBaseMarker | NuclearSiteMarker | IrradiatorSiteMarker | SpaceportSiteMarker
   | EarthquakeMarker | RadiationMarker | EconomicMarker | DatacenterMarker | WaterwayMarker | MineralMarker
@@ -482,6 +496,7 @@ export class GlobeMap {
   private cyberMarkers: CyberMarker[] = [];
   private fireMarkers: FireMarker[] = [];
   private protestMarkers: ProtestMarker[] = [];
+  private diseaseMarkers: DiseaseOutbreakMarker[] = [];
   private ucdpMarkers: UcdpMarker[] = [];
   private displacementMarkers: DisplacementMarker[] = [];
   private climateMarkers: ClimateMarker[] = [];
@@ -1069,6 +1084,14 @@ export class GlobeMap {
       const intensity = d.brightness > 400 ? '#ff2020' : d.brightness > 330 ? '#ff6600' : '#ffaa00';
       el.innerHTML = GlobeMap.wrapHit(`<div style="font-size:10px;color:${intensity};text-shadow:0 0 4px ${intensity}88;">🔥</div>`);
       el.title = `Fire — ${d.region}`;
+    } else if (d._kind === 'disease') {
+      const level = (d.alertLevel || '').toLowerCase();
+      const c = level.includes('high') || level.includes('red') ? '#ff2020'
+        : level.includes('moderate') || level.includes('orange') ? '#ff8800'
+        : '#ffcc00';
+      el.innerHTML = GlobeMap.wrapHit(`<div style="font-size:11px;color:${c};text-shadow:0 0 4px ${c}88;">🦠</div>`);
+      const cases = Number.isFinite(d.cases) && d.cases > 0 ? ` · cases: ${d.cases}` : '';
+      el.title = `${d.disease} — ${d.location}${cases}`;
     } else if (d._kind === 'protest') {
       const typeColors: Record<string, string> = {
         riot: '#ff3030', protest: '#ffaa00', strike: '#44aaff',
@@ -1978,6 +2001,7 @@ export class GlobeMap {
     }
     if (this.layers.cyberThreats) markers.push(...this.cyberMarkers);
     if (this.layers.fires) markers.push(...this.fireMarkers);
+    if (this.layers.diseaseOutbreaks) markers.push(...this.diseaseMarkers);
     if (this.layers.protests) markers.push(...this.protestMarkers);
     if (this.layers.ucdpEvents) markers.push(...this.ucdpMarkers);
     if (this.layers.displacement) markers.push(...this.displacementMarkers);
@@ -3063,6 +3087,25 @@ export class GlobeMap {
       id: (f.id as string | undefined) ?? `${f.lat},${f.lon}`,
       region: f.region ?? '',
       brightness: f.brightness ?? 330,
+    }));
+    this.flushMarkers();
+  }
+
+  public setDiseaseOutbreaks(outbreaks: DiseaseOutbreakItem[]): void {
+    this.diseaseMarkers = (outbreaks ?? []).filter(o => o.lat != null && o.lng != null).map(o => ({
+      _kind: 'disease' as const,
+      _lat: o.lat,
+      _lng: o.lng,
+      id: o.id,
+      disease: o.disease ?? '',
+      location: o.location ?? '',
+      countryCode: o.countryCode ?? '',
+      alertLevel: o.alertLevel ?? '',
+      summary: o.summary ?? '',
+      cases: o.cases ?? 0,
+      publishedAt: o.publishedAt ?? 0,
+      sourceName: o.sourceName ?? '',
+      sourceUrl: o.sourceUrl ?? '',
     }));
     this.flushMarkers();
   }

@@ -80,7 +80,7 @@ export class DiseaseOutbreaksPanel extends Panel {
       return (b.publishedAt ?? 0) - (a.publishedAt ?? 0);
     });
     this._hasData = this._outbreaks.length > 0;
-    if (this._hasData) this._render();
+    this._render();
   }
 
   private _render(): void {
@@ -132,7 +132,9 @@ export class DiseaseOutbreaksPanel extends Panel {
     }).join('');
 
     const empty = filtered.length === 0
-      ? `<div style="padding:16px;text-align:center;color:var(--text-dim);font-size:12px">No outbreaks match filter</div>`
+      ? `<div style="padding:16px;text-align:center;color:var(--text-dim);font-size:12px">${
+        this._outbreaks.length === 0 ? 'No active outbreaks detected in latest daily feed.' : 'No outbreaks match filter'
+      }</div>`
       : '';
 
     this.setContent(`

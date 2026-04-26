@@ -289,7 +289,12 @@ export class ForecastPanel extends Panel {
   }
 
   private getVisibleForecasts(): Forecast[] {
-    return this.forecasts.filter(f => (f.probability || 0) >= PANEL_MIN_PROBABILITY);
+    const aboveThreshold = this.forecasts.filter(f => (f.probability || 0) >= PANEL_MIN_PROBABILITY);
+    if (aboveThreshold.length > 0) return aboveThreshold;
+    // Keep panel useful when all probabilities are currently low.
+    return [...this.forecasts]
+      .sort((a, b) => (b.probability || 0) - (a.probability || 0))
+      .slice(0, 3);
   }
 
   private render(): void {

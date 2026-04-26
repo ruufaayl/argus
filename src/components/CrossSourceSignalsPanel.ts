@@ -165,7 +165,7 @@ export class CrossSourceSignalsPanel extends Panel {
   private render(): void {
     if (this.signals.length === 0) {
       if (!this.evaluatedAt) {
-        this.showError('Signal aggregator is initializing. First evaluation runs within 15 minutes.', () => {/* refreshed by scheduler */});
+        this.showError('Signal aggregator is initializing. First evaluation appears after daily refresh.', () => {/* refreshed by scheduler */});
       } else {
         this.setContent('<div style="padding:16px 0;text-align:center;font-size:12px;color:var(--text-dim)">No cross-source signals detected.</div>');
       }
