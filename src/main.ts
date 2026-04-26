@@ -478,14 +478,42 @@ if (SITE_VARIANT && SITE_VARIANT !== 'full') {
   // Force dark theme — VERITAS palette is dark-only (no light variant designed yet).
   document.documentElement.dataset.theme = 'dark';
   // Body element gets the same flag once it exists (DOMContentLoaded already fired by main.ts execution).
-  if (document.body) {
+  const installMobileScrollArrow = () => {
+    if (!document.body) return;
     document.body.dataset.veritas = 'on';
+    // Mobile scroll-down hint — only present on touch devices below 768px.
+    // The CSS @media query handles visibility; we install the element + handler
+    // unconditionally so a desktop user shrinking the window also gets it.
+    if (document.getElementById('vt-mobile-scroll')) return;
+    const btn = document.createElement('button');
+    btn.id = 'vt-mobile-scroll';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Scroll down');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+    btn.addEventListener('click', () => {
+      // Scroll the actual scroll container — the dashboard uses #app or main.
+      const target = document.scrollingElement || document.documentElement;
+      target.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' });
+    });
+    document.body.appendChild(btn);
+    // Hide near the bottom — track on scroll.
+    const update = () => {
+      const target = document.scrollingElement || document.documentElement;
+      const remaining = target.scrollHeight - target.scrollTop - window.innerHeight;
+      btn.classList.toggle('vt-mobile-scroll--hidden', remaining < 24);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    setTimeout(update, 600);
+  };
+  if (document.body) {
+    installMobileScrollArrow();
   } else {
-    document.addEventListener('DOMContentLoaded', () => { document.body.dataset.veritas = 'on'; }, { once: true });
+    document.addEventListener('DOMContentLoaded', installMobileScrollArrow, { once: true });
   }
   // Boot signal — confirms latest VERITAS bundle is loaded (look for this in DevTools Console).
   // Bump the version number on every theme/branding change so cache-staleness is obvious.
-  console.info('%c[VERITAS] theme v3 active — env layers, gold/cream/emerald, Instrument Serif',
+  console.info('%c[VERITAS] theme v4 active — env layers, mobile scroll hint, expanded country dossier',
     'color:#c8860a;font-family:serif;font-style:italic;font-size:13px');
 }
 

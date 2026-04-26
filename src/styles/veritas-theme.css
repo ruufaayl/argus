@@ -871,3 +871,57 @@
   max-width: 360px;
   line-height: 1.5;
 }
+
+/* ============================================================
+   Mobile scroll-down hint (#vt-mobile-scroll)
+   ------------------------------------------------------------
+   Floating circular button bottom-center on phones. Tappable hint
+   that the dashboard continues below the fold. Hidden on desktop
+   (>768px) and when the page is already scrolled to the bottom.
+   ============================================================ */
+#vt-mobile-scroll {
+  position: fixed;
+  right: 14px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(10, 17, 13, 0.82);
+  color: #c8860a;
+  border: 1px solid rgba(200, 134, 10, 0.55);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  display: none;                      /* hidden by default; mobile media query reveals */
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45),
+              0 0 0 4px rgba(200, 134, 10, 0.06);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  animation: vt-mobile-scroll-bob 2.4s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+#vt-mobile-scroll:hover,
+#vt-mobile-scroll:focus-visible {
+  background: rgba(200, 134, 10, 0.18);
+  outline: none;
+  transform: translateY(-2px);
+}
+#vt-mobile-scroll svg { display: block; }
+.vt-mobile-scroll--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+@keyframes vt-mobile-scroll-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+@media (max-width: 768px) {
+  [data-veritas="on"] #vt-mobile-scroll { display: inline-flex; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #vt-mobile-scroll { animation: none; }
+}

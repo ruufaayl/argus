@@ -24,15 +24,25 @@ import { jsonResponse } from '../_json-response.js';
 
 export const config = { runtime: 'edge', regions: ['iad1', 'lhr1', 'fra1'] };
 
-// ── GDELT climate query (matches src/config/veritas-news-channels.ts) ──
-const GDELT_KEYWORDS = [
-  'carbon credits', 'carbon emissions', 'carbon market', 'REDD+',
-  'climate change', 'global warming', 'deforestation', 'glacier melt',
-  'sea level rise', 'coral bleaching', 'net zero', 'CSRD', 'ESG',
-  'carbon offset', 'greenwashing', 'Verra', 'Gold Standard',
-  'CO2 ppm', 'methane emissions', 'Paris Agreement', 'COP30',
+// ── GDELT climate query ──
+// GDELT v2 Doc API requires multi-word phrases to be quoted, otherwise the
+// tokens are AND-ed individually and the OR expression yields garbage / empty
+// results (which is what was producing the 503 we saw in production).
+//
+// Two query tiers: a primary (rich) query, and a fallback (terse) query used
+// if the primary returns 0 articles. The fallback drops the multi-word
+// phrases that GDELT often misses and keeps single-token climate keywords.
+const GDELT_PRIMARY_PHRASES = [
+  '"carbon credits"', '"carbon market"', '"carbon offset"', '"net zero"',
+  '"climate change"', '"global warming"', '"sea level rise"',
+  '"greenwashing"', '"Paris Agreement"', '"methane emissions"',
+  'REDD', 'deforestation', 'CSRD', 'COP30', 'Verra',
 ];
-const GDELT_QUERY = GDELT_KEYWORDS.join(' OR ');
+const GDELT_FALLBACK_PHRASES = [
+  'climate', 'emissions', 'carbon', 'deforestation', 'wildfire', 'drought',
+];
+const GDELT_PRIMARY_QUERY = GDELT_PRIMARY_PHRASES.join(' OR ');
+const GDELT_FALLBACK_QUERY = GDELT_FALLBACK_PHRASES.join(' OR ');
 
 // ── In-memory cache (per timespan) ──
 // 12-hour TTL caps Groq/OpenRouter spend at ~2 syntheses per span per day, per
@@ -44,13 +54,11 @@ const _cacheBySpan = new Map(); // span -> { result, at }
 const ALLOWED_SPANS = new Set(['1h', '6h', '12h', '1d', '2d', '3d', '7d']);
 const DEFAULT_SPAN = '1d';
 
-async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
-  const span = ALLOWED_SPANS.has(timespan) ? timespan : DEFAULT_SPAN;
+async function fetchGdeltOnce(query, span, timeoutMs) {
   const url =
     `https://api.gdeltproject.org/api/v2/doc/doc?` +
-    `query=${encodeURIComponent(GDELT_QUERY)}` +
+    `query=${encodeURIComponent(query)}` +
     `&mode=artlist&maxrecords=20&format=json&timespan=${span}&sort=DateDesc`;
-
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -59,7 +67,10 @@ async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
       headers: { 'User-Agent': 'VERITAS-Oracle/1.0 (+https://veritasoracle.vercel.app)' },
     });
     if (!res.ok) throw new Error(`GDELT ${res.status}`);
-    const data = await res.json();
+    // GDELT sometimes returns text/html with status 200 when query is malformed.
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { return []; }
     const articles = Array.isArray(data?.articles) ? data.articles : [];
     return articles.slice(0, 12).map(a => ({
       title: String(a.title || '').slice(0, 240),
@@ -67,12 +78,37 @@ async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
       source: String(a.domain || ''),
       seendate: String(a.seendate || ''),
     })).filter(a => a.title && a.url);
-  } catch (err) {
-    console.warn('[veritas/brief] GDELT fetch failed:', err?.message || err);
-    return [];
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
+  const span = ALLOWED_SPANS.has(timespan) ? timespan : DEFAULT_SPAN;
+  // Try primary (climate-specific quoted phrases) first.
+  try {
+    const primary = await fetchGdeltOnce(GDELT_PRIMARY_QUERY, span, timeoutMs);
+    if (primary.length > 0) return primary;
+  } catch (err) {
+    console.warn('[veritas/brief] GDELT primary failed:', err?.message || err);
+  }
+  // Widen to single-token fallback if primary returned nothing.
+  try {
+    const fallback = await fetchGdeltOnce(GDELT_FALLBACK_QUERY, span, timeoutMs);
+    if (fallback.length > 0) return fallback;
+  } catch (err) {
+    console.warn('[veritas/brief] GDELT fallback failed:', err?.message || err);
+  }
+  // Last resort: widen the timespan.
+  if (span !== '7d') {
+    try {
+      const wider = await fetchGdeltOnce(GDELT_FALLBACK_QUERY, '7d', timeoutMs);
+      if (wider.length > 0) return wider;
+    } catch (err) {
+      console.warn('[veritas/brief] GDELT 7d widen failed:', err?.message || err);
+    }
+  }
+  return [];
 }
 
 const SYSTEM_PROMPT = `You are VERITAS, a carbon-credit verification oracle. You synthesise climate-relevant headlines into a calibrated 3-paragraph intelligence brief for ESG analysts and carbon-credit traders.

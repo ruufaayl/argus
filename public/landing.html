@@ -2842,15 +2842,25 @@
   document.querySelectorAll('.widget-preset').forEach((btn) => {
     btn.addEventListener('click', () => {
       const r = presets[btn.dataset.preset];
-      if (r) applyResult(r);
+      if (!r) return;
+      // Show the canonical preset result instantly (no network round-trip), then
+      // populate the input so the user can hit "Audit" to re-run live via the
+      // OpenRouter-backed /api/veritas/oracle endpoint.
+      applyResult(r);
+      inputEl.value = (r.serial || '').replace(/^VCS-/, '');
     });
   });
 
+  // ----------------------------------------------------------------
+  // Live audit — calls /api/veritas/oracle (OpenRouter → Groq fallback)
+  // ----------------------------------------------------------------
   function syntheticAudit(serial) {
-    // Deterministic pseudo-random score from input string — looks "real" enough for demo
+    // Deterministic pseudo-random fallback used only when /api/veritas/oracle
+    // is unreachable (offline, edge cold-start timeout, both LLM providers
+    // 503). Keeps the UX intact instead of rendering an error placeholder.
     let hash = 0;
     for (let i = 0; i < serial.length; i++) hash = ((hash << 5) - hash) + serial.charCodeAt(i);
-    const score = Math.abs(hash) % 95 + 5; // 5–99
+    const score = Math.abs(hash) % 95 + 5;
     const presetKeys = Object.keys(presets);
     const closest = presetKeys.reduce((best, k) =>
       Math.abs(presets[k].score - score) < Math.abs(presets[best].score - score) ? k : best, presetKeys[0]);
@@ -2862,15 +2872,62 @@
     };
   }
 
-  goBtn.addEventListener('click', () => {
-    const serial = inputEl.value.trim() || '2543-203-204-AMS-AFOLU-BR-2021';
+  async function runLiveAudit(serial) {
+    const fullSerial = serial.startsWith('VCS-') || serial.includes('-') && /^[A-Z]{2,4}-/.test(serial)
+      ? serial
+      : 'VCS-' + serial;
+    const url = '/api/veritas/oracle?serial=' + encodeURIComponent(fullSerial);
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 28000);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal, headers: { 'Accept': 'application/json' } });
+      clearTimeout(timeout);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || data.ok !== true) {
+        throw new Error((data && data.error) || ('HTTP ' + res.status));
+      }
+      return {
+        serial: data.serial || fullSerial,
+        score: data.score,
+        verdict: data.verdict,
+        reason: data.reason,
+        bars: data.bars,
+        latency: ((data.latencyMs || 0) / 1000).toFixed(2) + 's',
+        model: data.model || ''
+      };
+    } catch (err) {
+      clearTimeout(timeout);
+      throw err;
+    }
+  }
+
+  async function handleAudit() {
+    const raw = inputEl.value.trim();
+    if (!raw) {
+      verdictEl.textContent = 'Enter a credit serial or tap a preset above.';
+      reasonEl.textContent = 'Examples: VCS-2543-203-204-AMS-AFOLU-IND-2021, GS-12892, ACR-577.';
+      return;
+    }
     valEl.textContent = '...';
-    verdictEl.textContent = 'Auditing...';
-    reasonEl.textContent = 'Synthesising satellite, registry, and IoT data with Claude Opus + Groq...';
-    setTimeout(() => applyResult(syntheticAudit(serial)), 600);
-  });
+    verdictEl.textContent = 'Auditing — OpenRouter Llama-3.3 + Groq fallback...';
+    reasonEl.textContent = 'Synthesising registry, satellite NDVI, FIRMS hot-pixel, and methodology cohort risk...';
+    latencyEl.textContent = '—';
+    try {
+      const result = await runLiveAudit(raw);
+      applyResult(result);
+    } catch (err) {
+      // Honest fallback: clearly flag that this is a synthetic/offline result.
+      const fallback = syntheticAudit(raw);
+      applyResult(fallback);
+      verdictEl.textContent = '⚠ Oracle offline — synthetic estimate shown.';
+      reasonEl.textContent = 'Live audit failed (' + (err && err.message ? err.message : 'network error')
+        + '). The score above is a deterministic placeholder derived from the serial; refresh to retry the live AI audit.';
+    }
+  }
+
+  goBtn.addEventListener('click', () => { handleAudit(); });
   inputEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') goBtn.click();
+    if (e.key === 'Enter') { e.preventDefault(); handleAudit(); }
   });
 
   // Auto-trigger first preset when widget enters view

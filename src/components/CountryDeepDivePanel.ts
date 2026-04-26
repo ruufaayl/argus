@@ -679,24 +679,33 @@ export class CountryDeepDivePanel implements CountryBriefPanel {
     right.append(shareBtn, maxBtn, storyButton, exportButton);
     header.append(left, right);
 
+    // VERITAS hides the geopolitical instability index entirely — environmental
+    // dashboards don't surface state-fragility framing. The Carbon Risk Score in
+    // the climate card below replaces it as the headline number for analysts.
     const scoreCard = this.el('section', 'cdp-card cdp-score-card');
     this.scoreCard = scoreCard;
-    const top = this.el('div', 'cdp-score-top');
-    const label = this.el('span', 'cdp-score-label', t('countryBrief.instabilityIndex'));
-    const updated = this.el('span', 'cdp-updated', `Updated ${this.shortDate(score?.lastUpdated ?? new Date())}`);
-    top.append(label, updated);
-    scoreCard.append(top);
+    if (SITE_VARIANT !== 'full') {
+      const top = this.el('div', 'cdp-score-top');
+      const label = this.el('span', 'cdp-score-label', t('countryBrief.instabilityIndex'));
+      const updated = this.el('span', 'cdp-updated', `Updated ${this.shortDate(score?.lastUpdated ?? new Date())}`);
+      top.append(label, updated);
+      scoreCard.append(top);
 
-    if (score) {
-      const band = this.ciiBand(score.score);
-      const scoreRow = this.el('div', 'cdp-score-row');
-      const value = this.el('div', `cdp-score-value cii-${band}`, `${score.score}/100`);
-      const trend = this.el('div', 'cdp-trend', `${this.trendArrow(score.trend)} ${score.trend}`);
-      scoreRow.append(value, trend);
-      scoreCard.append(scoreRow);
-      scoreCard.append(this.renderComponentBars(score.components));
+      if (score) {
+        const band = this.ciiBand(score.score);
+        const scoreRow = this.el('div', 'cdp-score-row');
+        const value = this.el('div', `cdp-score-value cii-${band}`, `${score.score}/100`);
+        const trend = this.el('div', 'cdp-trend', `${this.trendArrow(score.trend)} ${score.trend}`);
+        scoreRow.append(value, trend);
+        scoreCard.append(scoreRow);
+        scoreCard.append(this.renderComponentBars(score.components));
+      } else {
+        scoreCard.append(this.makeEmpty(t('countryBrief.ciiUnavailable')));
+      }
     } else {
-      scoreCard.append(this.makeEmpty(t('countryBrief.ciiUnavailable')));
+      // Hide the section entirely — class removed so CSS spacing doesn't reserve a slot.
+      scoreCard.classList.add('cdp-hidden');
+      scoreCard.style.display = 'none';
     }
 
     const bodyGrid = this.el('div', 'cdp-grid');

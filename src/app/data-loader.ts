@@ -538,7 +538,10 @@ export class DataLoaderManager implements AppModule {
       tasks.push({ name: 'intelligence', task: runGuarded('intelligence', () => this.loadIntelligenceSignals()) });
     }
 
-    if (SITE_VARIANT === 'full' && (shouldLoad('satellite-fires') || this.ctx.mapLayers.natural)) {
+    // VERITAS Fires layer ('fires') and the Satellite Fires panel both consume
+    // the same FIRMS dataset. Trigger the load when either is active so toggling
+    // the Fires layer in the layer-toggle panel actually populates the map.
+    if (SITE_VARIANT === 'full' && (shouldLoad('satellite-fires') || this.ctx.mapLayers.natural || this.ctx.mapLayers.fires)) {
       tasks.push({ name: 'firms', task: runGuarded('firms', () => this.loadFirmsData()) });
     }
     if (this.ctx.mapLayers.natural) tasks.push({ name: 'natural', task: runGuarded('natural', () => this.loadNatural()) });
@@ -2213,6 +2216,10 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadAisSignals(): Promise<void> {
+    // VERITAS variant: AIS shipping intel is dead-weight (no maritime layer in
+    // the variant-locked layer set, and the upstream WS_RELAY consistently
+    // returns 403). Skip silently to keep the console clean.
+    if (SITE_VARIANT === 'full') return;
     try {
       const { disruptions, density } = await fetchAisSignals();
       const aisStatus = getAisStatus();
@@ -3148,6 +3155,10 @@ export class DataLoaderManager implements AppModule {
   }
 
   async loadTelegramIntel(): Promise<void> {
+    // VERITAS: telegram intel is geopolitical-only (war / breaking news from
+    // open-source channels). Not relevant to carbon-credit verification, and
+    // the upstream relay returns 403, so skip silently.
+    if (SITE_VARIANT === 'full') return;
     if (isDesktopRuntime() && !getSecretState('WORLDMONITOR_API_KEY').present) return;
     try {
       const result = await fetchTelegramFeed();

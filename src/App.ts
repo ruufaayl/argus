@@ -126,7 +126,9 @@ export class App {
   }
 
   private shouldRefreshFirms(): boolean {
-    return this.isPanelNearViewport('satellite-fires');
+    // Refresh FIRMS when the satellite-fires panel is in view OR when the
+    // VERITAS Fires layer is toggled on (so the layer keeps updating live).
+    return this.isPanelNearViewport('satellite-fires') || !!this.state.mapLayers.fires;
   }
 
   private shouldRefreshCorrelation(): boolean {
