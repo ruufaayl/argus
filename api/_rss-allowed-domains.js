@@ -296,5 +296,20 @@ export default [
   "bitcoinmagazine.com",
   "www.dlnews.com",
   "cryptoslate.com",
-  "unchainedcrypto.com"
+  "unchainedcrypto.com",
+  // ─── VERITAS climate / carbon-credit feeds (src/config/veritas-news-channels.ts) ──
+  "www.carbonbrief.org",
+  "carbon-pulse.com",
+  "www.unep.org",
+  "www.climatechangenews.com",
+  "insideclimatenews.org",
+  "news.climate.columbia.edu",
+  "carbonchain.com",
+  "theecologist.org",
+  "www.nasa.gov",
+  "www.noaa.gov",
+  "www.globalforestwatch.org",
+  "e360.yale.edu",
+  "verra.org",
+  "unfccc.int"
 ];

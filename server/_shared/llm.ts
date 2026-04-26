@@ -194,9 +194,11 @@ function callLlmProfile(
 export const callLlmTool = (opts: Omit<LlmCallOptions, 'providerOrder' | 'modelOverrides'>) =>
   callLlmProfile(opts, 'LLM_TOOL_PROVIDER', 'LLM_TOOL_MODEL', 'groq');
 
-/** Powerful model for synthesis and reasoning tasks. Configurable via LLM_REASONING_PROVIDER / LLM_REASONING_MODEL. */
+/** Powerful model for synthesis and reasoning tasks. Configurable via LLM_REASONING_PROVIDER / LLM_REASONING_MODEL.
+ *  Default for VERITAS: groq (llama-3.3-70b-versatile via LLM_REASONING_MODEL env).
+ *  Anthropic/Claude is deliberately NOT in the provider chain — only ollama→groq→openrouter→generic. */
 export const callLlmReasoning = (opts: Omit<LlmCallOptions, 'providerOrder' | 'modelOverrides'>) =>
-  callLlmProfile(opts, 'LLM_REASONING_PROVIDER', 'LLM_REASONING_MODEL', 'openrouter');
+  callLlmProfile(opts, 'LLM_REASONING_PROVIDER', 'LLM_REASONING_MODEL', 'groq');
 
 export type LlmStreamOptions = Omit<LlmCallOptions, 'stripThinkingTags' | 'validate' | 'providerOrder' | 'modelOverrides' | 'provider'> & {
   /** When fired, aborts the active provider fetch and stops the stream. */
@@ -212,7 +214,8 @@ export type LlmStreamOptions = Omit<LlmCallOptions, 'stripThinkingTags' | 'valid
  */
 export function callLlmReasoningStream(opts: LlmStreamOptions): ReadableStream<Uint8Array> {
   const envProvider = process.env.LLM_REASONING_PROVIDER;
-  const provider = (envProvider && PROVIDER_SET.has(envProvider) ? envProvider : 'openrouter') as LlmProviderName;
+  // VERITAS default: groq (no Claude / Anthropic). Override via LLM_REASONING_PROVIDER env if needed.
+  const provider = (envProvider && PROVIDER_SET.has(envProvider) ? envProvider : 'groq') as LlmProviderName;
   const model = process.env.LLM_REASONING_MODEL;
   const remaining = PROVIDER_CHAIN.filter((p) => p !== provider);
   const providerOrder = [provider, ...remaining];
