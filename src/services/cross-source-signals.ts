@@ -16,7 +16,11 @@ const EMPTY: ListCrossSourceSignalsResponse = { signals: [], evaluatedAt: 0, com
 export async function fetchCrossSourceSignals(): Promise<ListCrossSourceSignalsResponse> {
   const hydrated = getHydratedData('crossSourceSignals') as ListCrossSourceSignalsResponse | undefined;
   if (hydrated?.signals?.length) return hydrated;
-  return breaker.execute(async () => {
+  const result = await breaker.execute(async () => {
     return await client.listCrossSourceSignals({}, { signal: AbortSignal.timeout(15_000) });
   }, EMPTY, { shouldCache: (r) => r.signals.length > 0 });
+  return {
+    ...result,
+    evaluatedAt: result.evaluatedAt && result.evaluatedAt > 0 ? result.evaluatedAt : Date.now(),
+  };
 }

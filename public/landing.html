@@ -2791,6 +2791,7 @@
     { serial: 'ACR-2088-SE-BECCS-2025', project: 'Nordic BECCS Demo Chain', score: 89, country: 'Sweden' },
     { serial: 'GS-15520-IT-BIOMETHANE-2024', project: 'Lombardy Biomethane Upgrade', score: 78, country: 'Italy' }
   ];
+  window.__veritasCreditCatalog = creditCatalog;
 
   function hashSerial(serial) {
     let hash = 0;
@@ -3052,6 +3053,56 @@
     }, { threshold: 0.4 });
     widgetIO.observe(widget);
   }
+
+  // Fallback initializer: if earlier widget wiring ran before DOM nodes existed
+  // (or failed in a strict browser), ensure dropdown + search still work.
+  (function ensureRiskSelectFallback() {
+    function normalize(v) { return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+    function fill(query) {
+      const search = document.getElementById('risk-search');
+      const select = document.getElementById('risk-select');
+      const input = document.getElementById('risk-input');
+      const source = Array.isArray(window.__veritasCreditCatalog) ? window.__veritasCreditCatalog : [];
+      if (!select || source.length === 0) return;
+      const q = String(query || '').trim().toUpperCase();
+      const qc = normalize(q);
+      const rows = q
+        ? source.filter((item) => {
+            const hay = `${item.serial} ${item.project} ${item.country}`.toUpperCase();
+            return hay.includes(q) || normalize(hay).includes(qc);
+          })
+        : source;
+      select.innerHTML = '';
+      const ph = document.createElement('option');
+      ph.value = '';
+      ph.textContent = rows.length > 0 ? 'Select a carbon credit serial...' : 'No serials match this search.';
+      select.appendChild(ph);
+      rows.forEach((item) => {
+        const opt = document.createElement('option');
+        opt.value = item.serial;
+        opt.textContent = `${item.serial}  |  ${item.project}  |  Score ${item.score}`;
+        select.appendChild(opt);
+      });
+      if (rows.length > 0) {
+        select.value = rows[0].serial;
+        if (input) input.value = rows[0].serial;
+      }
+      if (search && !search.dataset.boundFallback) {
+        search.dataset.boundFallback = '1';
+        search.addEventListener('input', () => fill(search.value));
+      }
+    }
+    const run = () => {
+      const select = document.getElementById('risk-select');
+      if (!select) return;
+      if (select.options.length <= 1) fill('');
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else {
+      run();
+    }
+  })();
 
   // ============================================================
   // 6. MAGNETIC CURSOR (desktop only)
