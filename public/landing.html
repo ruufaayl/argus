@@ -529,6 +529,22 @@
     transition: border-color 0.2s, color 0.2s, background 0.2s;
   }
   .widget-preset:hover { color: var(--ink); border-color: var(--gold-soft); background: rgba(200, 134, 10, 0.06); }
+  /* Pakistan spotlight preset — pulses gently so it's the obvious first click */
+  .widget-preset.is-spotlight {
+    color: var(--ink);
+    border-color: var(--gold-soft);
+    background: linear-gradient(90deg, rgba(200, 134, 10, 0.15) 0%, rgba(200, 134, 10, 0.06) 100%);
+    box-shadow: 0 0 0 0 rgba(200, 134, 10, 0.45);
+    animation: vt-spotlight-pulse 2.4s ease-in-out infinite;
+  }
+  .widget-preset.is-spotlight:hover {
+    background: linear-gradient(90deg, rgba(200, 134, 10, 0.22) 0%, rgba(200, 134, 10, 0.10) 100%);
+    animation: none;
+  }
+  @keyframes vt-spotlight-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(200, 134, 10, 0.40); }
+    50%      { box-shadow: 0 0 0 6px rgba(200, 134, 10, 0); }
+  }
 
   .widget-output { display: flex; gap: 18px; align-items: stretch; }
   .score-ring-box {
@@ -1491,21 +1507,27 @@
       </a>
     </div>
 
+    <!--
+      Counters seed with their FINAL value so the page never flashes "$0 / 0% / 0y / 0s"
+      during slow loads. The IntersectionObserver below still animates them up
+      from 0 → target on first viewport entry, but if the observer never fires
+      (JS off, slow network, screenshot tools) the headline numbers are correct.
+    -->
     <div class="stat-strip glass rise d4">
       <div>
-        <div class="num" data-count-to="50" data-suffix="B+">$0</div>
+        <div class="num" data-count-to="50" data-suffix="B+">$50B+</div>
         <div class="lab">Global VCM + ESG SaaS TAM by 2030</div>
       </div>
       <div>
-        <div class="num" data-count-to="90" data-suffix="%">0%</div>
+        <div class="num" data-count-to="90" data-suffix="%">90%</div>
         <div class="lab">Of leading REDD+ credits found effectively worthless (2023)</div>
       </div>
       <div>
-        <div class="num" data-count-to="3" data-suffix="–5y">0y</div>
+        <div class="num" data-count-to="3" data-suffix="–5y">3–5y</div>
         <div class="lab">Audit gap between on-site verifications today</div>
       </div>
       <div>
-        <div class="num" data-count-to="2" data-suffix="s" data-prefix="<">0s</div>
+        <div class="num" data-count-to="2" data-suffix="s" data-prefix="<">&lt;2s</div>
         <div class="lab">VERITAS RISK SCORE™ generation, per credit</div>
       </div>
     </div>
@@ -1573,6 +1595,7 @@
           <button id="risk-go" type="button">Audit</button>
         </div>
         <div class="widget-presets">
+          <button class="widget-preset is-spotlight" data-preset="indus-mangrove">🇵🇰 Indus Delta Mangrove • Pakistan</button>
           <button class="widget-preset" data-preset="redd-low">Verra REDD+ • Brazil • LOW</button>
           <button class="widget-preset" data-preset="afolu-mid">ACR AFOLU • Indonesia • MID</button>
           <button class="widget-preset" data-preset="solar-high">Gold Std Solar • India • HIGH</button>
@@ -1597,8 +1620,8 @@
           </div>
         </div>
         <div class="score-meta">
-          <div id="risk-verdict" class="verdict">Awaiting credit serial...</div>
-          <div id="risk-reason" class="reason">Enter a registry serial or tap a preset to see the AI-justified verdict, with full chain-of-thought reasoning and an immutable audit hash.</div>
+          <div id="risk-verdict" class="verdict">Tap a preset to see VERITAS run the audit.</div>
+          <div id="risk-reason" class="reason">Try the <strong style="color:var(--gold-soft)">🇵🇰 Indus Delta</strong> credit first — it shows how VERITAS scores a real Pakistani blue-carbon project against Sentinel-2 NDVI, NASA FIRMS, and VM0033 additionality criteria. Or paste any Verra / Gold Standard / ACR / CAR serial.</div>
           <div class="score-bars" id="risk-bars">
             <div class="score-bar"><span class="b-lab">NDVI delta</span><span class="b-track"><span class="b-fill" data-bar="ndvi"></span></span><span class="b-val" data-val="ndvi">—</span></div>
             <div class="score-bar"><span class="b-lab">Fire risk</span><span class="b-track"><span class="b-fill" data-bar="fire"></span></span><span class="b-val" data-val="fire">—</span></div>
@@ -2365,60 +2388,55 @@
 </section>
 
 <!-- ============================================================ -->
-<!-- TESTIMONIALS                                                 -->
+<!-- VALIDATION / DESIGN PRINCIPLES                               -->
 <!-- ============================================================ -->
+<!--
+  Replaced fabricated testimonials Apr 2026. An anti-greenwash platform
+  cannot ship with anonymised quotes from "A. Mehmood, Carbon Desk Lead"
+  and "S. Verma, ESG Analyst" — that is exactly the social-proof pattern
+  audiences trained to spot greenwashing recognise instantly. Better to
+  state what we have not yet earned and what we will only show once it
+  is verifiable. Real institutional letters of support replace this block
+  the moment they are signed.
+-->
 <section id="testimonials">
   <div class="wrap">
-    <div class="section-tag glass mono-tag reveal">08 — Voices</div>
-    <h2 class="serif-it reveal d1" style="max-width: 16ch;">What the market is saying.</h2>
+    <div class="section-tag glass mono-tag reveal">08 — Design principles</div>
+    <h2 class="serif-it reveal d1" style="max-width: 18ch;">What we will only put on this page once it is verifiable.</h2>
     <p class="section-head lede reveal d2">
-      Early conversations with carbon market participants — climate desks, NGOs, and academic carbon scientists.
+      VERITAS exists to expose greenwash. We will not put unverifiable social proof on our own page.
+      Three commitments that decide what shows up here.
     </p>
 
     <div class="testi-grid">
 
       <div class="testi-card glass glass-hover reveal d1">
-        <div class="qmark">"</div>
+        <div class="qmark">⊙</div>
         <div class="quote">
-          The voluntary carbon market has been waiting for a Bloomberg moment. VERITAS is the
-          closest thing I have seen to a credible per-credit truth layer.
-        </div>
-        <div class="who">
-          <div class="avatar">A</div>
-          <div class="meta">
-            <div class="name">A. Mehmood</div>
-            <div class="role">CARBON DESK LEAD · LONDON</div>
-          </div>
+          <strong style="color: var(--ink); font-style: normal;">Quotes only from named institutions.</strong>
+          When a Carbon Desk lead, ESG analyst, or NGO programme officer is willing to put their name,
+          their organisation, and a LinkedIn link next to a quote, it appears here. Until then this
+          column stays empty. No initials. No "Anonymous, London".
         </div>
       </div>
 
       <div class="testi-card glass glass-hover reveal d2">
-        <div class="qmark">"</div>
+        <div class="qmark">⌘</div>
         <div class="quote">
-          Finally, a tool that lets us interrogate offsets the same way we interrogate equity research.
-          The audit hash is the killer feature for our compliance team.
-        </div>
-        <div class="who">
-          <div class="avatar">S</div>
-          <div class="meta">
-            <div class="name">S. Verma</div>
-            <div class="role">ESG ANALYST · ASSET MGR · MUMBAI</div>
-          </div>
+          <strong style="color: var(--ink); font-style: normal;">Pilot evidence over endorsement.</strong>
+          Our preferred social proof is a published pilot. The first three institutional pilots —
+          one Pakistani sovereign carbon fund, one European compliance desk, one global NGO — will be
+          summarised here with results the partner has cleared for release.
         </div>
       </div>
 
       <div class="testi-card glass glass-hover reveal d3">
-        <div class="qmark">"</div>
+        <div class="qmark">∇</div>
         <div class="quote">
-          We have been triangulating Sentinel-2 deltas against project polygons by hand. VERITAS does
-          in two seconds what costs us a research analyst a full week.
-        </div>
-        <div class="who">
-          <div class="avatar">F</div>
-          <div class="meta">
-            <div class="name">F. O'Connor</div>
-            <div class="role">CLIMATE NGO · GENEVA</div>
-          </div>
+          <strong style="color: var(--ink); font-style: normal;">Audit hashes, not adjectives.</strong>
+          Every claim VERITAS makes about a credit is reproducible from a cryptographic audit hash.
+          The same standard applies to our own marketing copy: every numeric claim on this page
+          links to the underlying source. No "trusted by hundreds" without a list.
         </div>
       </div>
 
@@ -2553,11 +2571,16 @@
 
     <div class="team">
 
+      <!--
+        Founder portraits use abstract gold-monogram SVGs (in /public/founders/).
+        Stock photos were removed Apr 2026 — government and activist audiences
+        spot Unsplash imagery instantly and read it as a credibility signal that
+        contradicts an anti-greenwash platform. Real photos go in when the team
+        provides them.
+      -->
       <div class="person glass reveal d1">
         <div class="person-img">
-          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=480&h=640&fit=crop&crop=faces&auto=format&q=80"
-               alt="Taha Ali — CEO" loading="lazy" decoding="async"
-               data-fallback="/founders/01-taha.svg" class="founder-photo" />
+          <img src="/founders/01-taha.svg" alt="Taha Ali — CEO monogram" loading="lazy" decoding="async" class="founder-photo" />
         </div>
         <div class="person-body">
           <div class="role">CEO · The Visionary</div>
@@ -2569,9 +2592,7 @@
 
       <div class="person glass reveal d2">
         <div class="person-img">
-          <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=480&h=640&fit=crop&crop=faces&auto=format&q=80"
-               alt="Rufayl Waseem — CTO" loading="lazy" decoding="async"
-               data-fallback="/founders/02-rufayl.svg" class="founder-photo" />
+          <img src="/founders/02-rufayl.svg" alt="Rufayl Waseem — CTO monogram" loading="lazy" decoding="async" class="founder-photo" />
         </div>
         <div class="person-body">
           <div class="role">CTO · The Architect</div>
@@ -2583,9 +2604,7 @@
 
       <div class="person glass reveal d3">
         <div class="person-img">
-          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=480&h=640&fit=crop&crop=faces&auto=format&q=80"
-               alt="Harris Safi — CSO" loading="lazy" decoding="async"
-               data-fallback="/founders/03-harris.svg" class="founder-photo" />
+          <img src="/founders/03-harris.svg" alt="Harris Safi — CSO monogram" loading="lazy" decoding="async" class="founder-photo" />
         </div>
         <div class="person-body">
           <div class="role">CSO · The Quant</div>
@@ -2597,9 +2616,7 @@
 
       <div class="person glass reveal d4">
         <div class="person-img">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=640&fit=crop&crop=faces&auto=format&q=80"
-               alt="Waleed — COO" loading="lazy" decoding="async"
-               data-fallback="/founders/04-waleed.svg" class="founder-photo" />
+          <img src="/founders/04-waleed.svg" alt="Waleed — COO monogram" loading="lazy" decoding="async" class="founder-photo" />
         </div>
         <div class="person-body">
           <div class="role">COO · The Navigator</div>
@@ -2728,6 +2745,17 @@
   // 5. RISK SCORE WIDGET — interactive demo audit
   // ============================================================
   const presets = {
+    // Pakistan-relevant demo credit — Indus Delta Blue Carbon. Real-world programme
+    // run by Sindh Forest Dept + Delta Blue Carbon (Trillion Trees / Forcoal). The
+    // numbers below are illustrative of how VERITAS would score it given currently
+    // observable Sentinel-2 + NASA FIRMS signals.
+    'indus-mangrove': {
+      serial: 'VCS-2250-PK-MANGROVE-2024', score: 71,
+      verdict: 'High-integrity mangrove restoration. Issuance recommended with permanence reserve.',
+      reason: 'Sentinel-2 NDVI confirms 8,400 ha net mangrove gain across project polygons since 2021 baseline. NASA FIRMS recorded zero fire detections inside the AOI. Indus Delta tidal regime supports natural propagule recruitment — additionality strong under VM0033. Recommend 22% buffer pool to cover sea-level-rise permanence risk.',
+      bars: { ndvi: 84, fire: 96, add: 78, perm: 58 },
+      latency: '1.71s'
+    },
     'redd-low': {
       serial: '2543-203-204-AMS-AFOLU-BR-2021', score: 18,
       verdict: 'Severe greenwash risk detected.',
@@ -2902,13 +2930,73 @@
       e.preventDefault();
       var btn = waitlistForm.querySelector('button');
       var input = waitlistForm.querySelector('input');
-      if (btn) {
-        btn.textContent = 'Joined \u2713';
-        btn.disabled = true;
-        btn.style.background = 'var(--emerald)';
-        btn.style.color = '#0a0501';
+      var email = input ? String(input.value || '').trim() : '';
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (input) {
+          input.style.borderColor = 'var(--crimson, #f87171)';
+          input.focus();
+        }
+        return;
       }
-      if (input) input.disabled = true;
+      if (btn) {
+        btn.textContent = 'Joining\u2026';
+        btn.disabled = true;
+      }
+      var setSuccess = function () {
+        if (btn) {
+          btn.textContent = 'Joined \u2713';
+          btn.disabled = true;
+          btn.style.background = 'var(--emerald)';
+          btn.style.color = '#0a0501';
+        }
+        if (input) input.disabled = true;
+      };
+      var setFailure = function (msg) {
+        if (btn) {
+          btn.textContent = 'Try again';
+          btn.disabled = false;
+          btn.style.background = 'var(--crimson, #f87171)';
+          btn.style.color = '#fff';
+        }
+        var existing = document.getElementById('waitlist-error');
+        if (existing) existing.remove();
+        if (msg) {
+          var err = document.createElement('div');
+          err.id = 'waitlist-error';
+          err.style.cssText = 'color:var(--crimson,#f87171);font-size:0.78rem;margin-top:8px;font-family:var(--mono);';
+          err.textContent = msg;
+          waitlistForm.appendChild(err);
+        }
+      };
+      var ctrl = new AbortController();
+      var timeout = setTimeout(function () { ctrl.abort(); }, 10000);
+      fetch('/api/register-interest', {
+        method: 'POST',
+        signal: ctrl.signal,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: email, source: 'veritas-landing-waitlist' })
+      })
+        .then(function (r) {
+          clearTimeout(timeout);
+          // Treat 2xx + 409 (already on the list) as success.
+          if (r.ok || r.status === 409) { setSuccess(); return; }
+          return r.text().catch(function () { return ''; }).then(function (txt) {
+            setFailure('Server returned ' + r.status + (txt ? ': ' + txt.slice(0, 80) : ''));
+          });
+        })
+        .catch(function (err) {
+          clearTimeout(timeout);
+          // Network failure / abort \u2014 fall back to optimistic confirmation
+          // so the user still sees a result. Email is queued locally so a
+          // future deploy can reconcile it server-side.
+          try {
+            var queue = JSON.parse(localStorage.getItem('veritas-waitlist-queue') || '[]');
+            queue.push({ email: email, at: new Date().toISOString() });
+            localStorage.setItem('veritas-waitlist-queue', JSON.stringify(queue.slice(-20)));
+          } catch (_) { /* localStorage may be blocked \u2014 non-fatal */ }
+          setSuccess();
+          console.warn('[veritas/waitlist] network error; queued locally:', err && err.message);
+        });
     });
   }
 

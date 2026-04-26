@@ -12,6 +12,13 @@ import { getCSSColor } from '@/utils';
 import { toFlagEmoji } from '@/utils/country-flag';
 import { PORTS } from '@/config/ports';
 import { haversineDistanceKm } from '@/services/related-assets';
+import { SITE_VARIANT } from '@/config';
+import {
+  getVeritasCountryClimate,
+  formatCarbonPrice,
+  getRiskBandColor,
+  type VeritasCountryClimate,
+} from '@/services/veritas-country-climate';
 import type {
   CountryBriefPanel,
   CountryIntelData,
@@ -726,9 +733,92 @@ export class CountryDeepDivePanel implements CountryBriefPanel {
     marketsBody.append(this.makeLoading(t('countryBrief.loadingMarkets')));
     briefBody.append(this.makeLoading(t('countryBrief.generatingBrief')));
 
-    bodyGrid.append(briefCard, factsExpanded, signalsCard, timelineCard, newsCard, militaryCard, infraCard, economicCard, marketsCard);
+    if (SITE_VARIANT === 'full') {
+      // VERITAS layout: lead with the carbon-credit dossier, drop the military
+      // section entirely (the dashboard has no flight/vessel telemetry in this
+      // variant), and reorder so analysts see the climate metrics card first.
+      const climate = getVeritasCountryClimate(code);
+      if (climate) {
+        const climateCard = this.renderVeritasClimateCard(climate);
+        bodyGrid.append(climateCard, briefCard, factsExpanded, signalsCard, timelineCard, newsCard, infraCard, economicCard, marketsCard);
+      } else {
+        // Country not in our climate dataset — show a calibrated empty state
+        // instead of a misleading "no data" card and keep the rest in order.
+        const emptyCard = this.renderVeritasClimateEmptyCard(country, code);
+        bodyGrid.append(emptyCard, briefCard, factsExpanded, signalsCard, timelineCard, newsCard, infraCard, economicCard, marketsCard);
+      }
+    } else {
+      bodyGrid.append(briefCard, factsExpanded, signalsCard, timelineCard, newsCard, militaryCard, infraCard, economicCard, marketsCard);
+    }
     shell.append(header, scoreCard, bodyGrid);
     this.content.append(shell);
+  }
+
+  // ── VERITAS — Carbon-credit country dossier card ──
+  // Shown only when SITE_VARIANT === 'full'. Renders a climate-focused metric
+  // grid sourced from src/services/veritas-country-climate.ts. The card is
+  // self-contained (no async fetch, no dependency on other state) so it
+  // renders synchronously alongside the existing skeleton.
+  private renderVeritasClimateCard(c: VeritasCountryClimate): HTMLElement {
+    const [card, body] = this.sectionCard('Carbon Credit Intelligence');
+    card.classList.add('cdp-veritas-climate-card');
+
+    // Risk band hero row
+    const riskRow = this.el('div', 'cdp-veritas-risk-row');
+    const riskLeft = this.el('div', 'cdp-veritas-risk-left');
+    const riskScore = this.el('div', 'cdp-veritas-risk-score');
+    riskScore.textContent = `${c.carbonRiskScore}/100`;
+    riskScore.style.color = getRiskBandColor(c.riskBand);
+    const riskLabel = this.el('div', 'cdp-veritas-risk-label', 'Carbon Credit Risk Score');
+    const riskBand = this.el('div', 'cdp-veritas-risk-band');
+    riskBand.textContent = c.riskBand.toUpperCase();
+    riskBand.style.color = getRiskBandColor(c.riskBand);
+    riskBand.style.borderColor = getRiskBandColor(c.riskBand);
+    riskLeft.append(riskScore, riskLabel);
+    riskRow.append(riskLeft, riskBand);
+    body.append(riskRow);
+
+    // Metric grid — 8 tiles
+    const grid = this.el('div', 'cdp-veritas-grid');
+    const tiles: Array<[string, string, string?]> = [
+      ['Carbon Price', formatCarbonPrice(c.carbonPriceUsdPerTon), c.carbonPricingInstrument],
+      ['NDC Target', `−${c.ndcTargetPct}%`, `by ${c.ndcTargetYear}`],
+      ['Verra Projects', String(c.verraProjects), 'VCS registry'],
+      ['Gold Standard', String(c.goldStandardProjects), 'GS registry'],
+      ['Forest Cover', `${c.forestCoverPct.toFixed(1)}%`, `−${c.primaryForestLossPct.toFixed(1)}%/yr`],
+      ['Renewables', `${c.renewableSharePct}%`, 'of generation'],
+      ['Vulnerability', `${c.vulnerabilityIndex.toFixed(1)}`, 'ND-GAIN'],
+      ['Per-capita CO₂', `${c.perCapitaCo2.toFixed(1)} t`, `${c.annualCo2Mt.toLocaleString()} Mt total`],
+    ];
+    for (const [label, value, sub] of tiles) {
+      const tile = this.el('div', 'cdp-veritas-tile');
+      tile.append(this.el('div', 'cdp-veritas-tile-label', label));
+      tile.append(this.el('div', 'cdp-veritas-tile-value', value));
+      if (sub) tile.append(this.el('div', 'cdp-veritas-tile-sub', sub));
+      grid.append(tile);
+    }
+    body.append(grid);
+
+    // Analyst note
+    const note = this.el('div', 'cdp-veritas-note');
+    note.append(this.el('span', 'cdp-veritas-note-label', 'ANALYST NOTE · '));
+    note.append(this.el('span', 'cdp-veritas-note-body', c.analystNote));
+    body.append(note);
+
+    return card;
+  }
+
+  private renderVeritasClimateEmptyCard(country: string, code: string): HTMLElement {
+    const [card, body] = this.sectionCard('Carbon Credit Intelligence');
+    card.classList.add('cdp-veritas-climate-card');
+    const empty = this.el('div', 'cdp-veritas-empty');
+    empty.append(this.el('div', 'cdp-veritas-empty-icon', '🌱'));
+    empty.append(this.el('div', 'cdp-veritas-empty-title', `No baseline carbon dossier for ${country}`));
+    empty.append(this.el('div', 'cdp-veritas-empty-body',
+      `${code.toUpperCase()} is not in the VERITAS reference dataset of 33 priority jurisdictions. ` +
+      'Live climate signals (fires, anomalies, deforestation) below are still active.'));
+    body.append(empty);
+    return card;
   }
 
   private renderInitialSignals(signals: CountryBriefSignals): void {

@@ -830,7 +830,10 @@ export class App {
     this.state.signalModal.setLocationClickHandler((lat, lon) => {
       this.state.map?.setCenter(lat, lon, 4);
     });
-    if (!this.state.isMobile) {
+    // VERITAS (full variant) hides the geopolitical findings badge + breaking-news bell.
+    // The platform is a carbon-credit oracle, not a real-time intel feed — these widgets
+    // belong to the OSINT/military framing of the original tool.
+    if (!this.state.isMobile && SITE_VARIANT !== 'full') {
       this.state.findingsBadge = new IntelligenceGapBadge();
       this.state.findingsBadge.setOnSignalClick((signal) => {
         if (this.state.countryBriefPage?.isVisible()) return;
@@ -844,7 +847,7 @@ export class App {
       });
     }
 
-    if (!this.state.isMobile) {
+    if (!this.state.isMobile && SITE_VARIANT !== 'full') {
       initBreakingNewsAlerts();
       this.state.breakingBanner = new BreakingNewsBanner();
     }

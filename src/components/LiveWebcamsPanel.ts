@@ -30,11 +30,13 @@ interface WebcamFeed {
 // Verified YouTube live stream IDs — validated Feb 2026 via title cross-check.
 // IDs may rotate; update when stale.
 const WEBCAM_FEEDS: WebcamFeed[] = [
-  // Environment — earth observation, biodiversity & nature live cams (VERITAS default region).
-  // Verified sources from VERITAS_Environmental_Feeds.docx — USGS, explore.org,
-  // skylinewebcams, africam, JCU, Nature Conservancy. Mix of YouTube embeds and
-  // direct iframe pages. EMISSIONS / GLACIER / DEFORESTATION / OCEAN / ECOSYSTEM tags.
-  // North America
+  // Environment — VERITAS default region.
+  // The first entry is the curated 24/7 whole-Earth live composite (NASA / DSCOVR
+  // EPIC + ground-loop edits). When the panel opens for SITE_VARIANT='full' we
+  // pin this single feed and hide the grid+cycler — it shows the planet at-a-glance.
+  { id: 'env-earth-live',   city: 'Whole Earth Live',        country: 'Planet',              region: 'environment', channelHandle: '',         fallbackVideoId: 'HfgIFGbdGJ0', tag: 'PLANET',         pageUrl: 'https://www.youtube.com/live/HfgIFGbdGJ0' },
+  // Secondary climate-relevant biodiversity / glacier / emissions cams. Kept for
+  // users who switch off the whole-Earth lock and explore individual ecosystems.
   { id: 'env-kilauea',      city: 'Kilauea Volcano',         country: 'Hawaii, USA',         region: 'environment', channelHandle: '@USGS',    fallbackVideoId: 'kMRKYNFYOAI', tag: 'EMISSIONS',      pageUrl: 'https://www.usgs.gov/volcanoes/kilauea/webcams' },
   { id: 'env-brooks-falls', city: 'Brooks Falls Bears',      country: 'Katmai NP, Alaska',   region: 'environment', channelHandle: '@explore', fallbackVideoId: 'TVx9Pt0H6jE', tag: 'ECOSYSTEM',      pageUrl: 'https://explore.org/livecams/three-bears/brown-bear-salmon-cam-brooks-falls' },
   { id: 'env-polar-bear',   city: 'Polar Bear Cam',          country: 'Wapusk NP, Canada',   region: 'environment', channelHandle: '@explore', fallbackVideoId: 'IfHMPxRwFxc', tag: 'ARCTIC',         pageUrl: 'https://explore.org/livecams/polar-bears/polar-bear-cam' },
@@ -111,17 +113,26 @@ interface WebcamPrefs {
 function loadWebcamPrefs(forceSingleView: boolean): WebcamPrefs {
   const stored = loadFromStorage<Partial<WebcamPrefs>>(STORAGE_KEYS.webcamPrefs, {});
   const region = stored.regionFilter as RegionFilter;
-  // VERITAS migration: any non-env region from a pre-rebrand session is reset
-  // to 'environment' so users opening the dashboard see climate cams first.
-  const isLegacyMilitaryRegion = region === 'iran' || region === 'middle-east' || region === 'space';
-  const regionFilter = (SITE_VARIANT === 'full' && isLegacyMilitaryRegion)
+  // VERITAS migration: conflict-zone regions ('iran', 'middle-east', 'space') and
+  // the 'all' mosaic are no longer surfaced in the toolbar. Any leftover stored
+  // value from those tabs is rewritten to 'environment' so the panel opens on
+  // the whole-Earth live feed instead of a hidden tab.
+  const isLegacyHiddenRegion = region === 'iran' || region === 'middle-east' || region === 'space' || region === 'all';
+  const regionFilter = (SITE_VARIANT === 'full' && isLegacyHiddenRegion)
     ? 'environment'
     : (ALL_REGIONS.includes(region) ? region : DEFAULT_REGION_FOR_VARIANT);
-  const viewMode = forceSingleView ? 'single'
+  // VERITAS Environment defaults to single-stream lock (whole-Earth feed). Other
+  // variants and other regions keep the user's preferred grid/single choice.
+  const veritasEnvDefaultsToSingle = SITE_VARIANT === 'full' && regionFilter === 'environment';
+  const viewMode = forceSingleView || veritasEnvDefaultsToSingle ? 'single'
     : (stored.viewMode === 'grid' || stored.viewMode === 'single' ? stored.viewMode : 'grid');
   const regionFeeds = regionFilter === 'all' ? WEBCAM_FEEDS
     : WEBCAM_FEEDS.filter(f => f.region === regionFilter);
-  const matchedFeed = regionFeeds.find(f => f.id === stored.activeFeedId);
+  // VERITAS Environment: pin the whole-Earth feed regardless of stored activeFeedId.
+  // This ensures every cold open shows the planet, not whatever cam was last viewed.
+  const matchedFeed = veritasEnvDefaultsToSingle
+    ? regionFeeds.find(f => f.id === 'env-earth-live')
+    : regionFeeds.find(f => f.id === stored.activeFeedId);
   const activeFeedId = matchedFeed?.id ?? regionFeeds[0]?.id ?? WEBCAM_FEEDS[0]!.id;
   return { regionFilter, viewMode, activeFeedId };
 }
@@ -230,7 +241,7 @@ export class LiveWebcamsPanel extends Panel {
   }
 
   private static readonly ALL_GRID_IDS = ['jerusalem', 'tehran', 'kyiv', 'washington'];
-  private static readonly VERITAS_GRID_IDS = ['env-iss-earth', 'env-katmai-bears', 'env-amazon', 'env-coral-reef'];
+  private static readonly VERITAS_GRID_IDS = ['env-earth-live', 'env-jokulsarlon', 'env-amazon-jk', 'env-galapagos'];
 
   private get gridFeeds(): WebcamFeed[] {
     if (this.regionFilter === 'all') {
@@ -251,15 +262,15 @@ export class LiveWebcamsPanel extends Panel {
     const regionGroup = document.createElement('div');
     regionGroup.className = 'webcam-toolbar-group';
 
-    // VERITAS variant: lead with environment cams. Other variants keep their order.
+    // VERITAS variant: lead with the whole-Earth live feed. The "All" mosaic and
+    // every conflict-zone region (Iran / MidEast / Space) are hidden — they do
+    // not match the carbon-credit oracle framing. Climate-relevant continental
+    // tabs remain so analysts can drill into specific ecosystems.
     const veritasOrder: { key: RegionFilter; label: string }[] = [
       { key: 'environment', label: 'Environment' },
-      { key: 'all', label: t('components.webcams.regions.all') },
-      { key: 'space', label: t('components.webcams.regions.space') },
       { key: 'americas', label: t('components.webcams.regions.americas') },
       { key: 'europe', label: t('components.webcams.regions.europe') },
       { key: 'asia', label: t('components.webcams.regions.asia') },
-      { key: 'middle-east', label: t('components.webcams.regions.mideast') },
     ];
     const defaultOrder: { key: RegionFilter; label: string }[] = [
       { key: 'iran', label: t('components.webcams.regions.iran') },

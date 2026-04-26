@@ -35,7 +35,10 @@ const GDELT_KEYWORDS = [
 const GDELT_QUERY = GDELT_KEYWORDS.join(' OR ');
 
 // ── In-memory cache (per timespan) ──
-const CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
+// 12-hour TTL caps Groq/OpenRouter spend at ~2 syntheses per span per day, per
+// region. Edge instances are warm a few minutes each — total cold-call rate
+// stays well under 60/day across all regions even on heavy traffic.
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours = 2x/day max
 const _cacheBySpan = new Map(); // span -> { result, at }
 
 const ALLOWED_SPANS = new Set(['1h', '6h', '12h', '1d', '2d', '3d', '7d']);
@@ -100,10 +103,11 @@ function spanToHumanLabel(span) {
   }
 }
 
-async function callGroq(headlines, span, timeoutMs = 30_000) {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) throw new Error('GROQ_API_KEY not configured');
-
+// OpenAI-compatible chat completion call. Used for both Groq and OpenRouter
+// (both expose the same /v1/chat/completions schema). Returns trimmed content
+// or throws with provider+status in the message so the orchestrator can fall
+// back to the next provider in its chain.
+async function callChatCompletion({ provider, baseUrl, apiKey, model, headlines, span, extraHeaders = {}, timeoutMs = 30_000 }) {
   const headlineText = headlines
     .map((h, i) => `${i + 1}. ${h.title} — ${h.source}`)
     .join('\n');
@@ -111,15 +115,16 @@ async function callGroq(headlines, span, timeoutMs = 30_000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const res = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       signal: ctrl.signal,
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        ...extraHeaders,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model,
         temperature: 0.25,
         max_tokens: 600,
         messages: [
@@ -130,15 +135,63 @@ async function callGroq(headlines, span, timeoutMs = 30_000) {
     });
     if (!res.ok) {
       const errText = await res.text().catch(() => '');
-      throw new Error(`Groq ${res.status}: ${errText.slice(0, 200)}`);
+      throw new Error(`${provider} ${res.status}: ${errText.slice(0, 200)}`);
     }
     const data = await res.json();
     const content = data?.choices?.[0]?.message?.content;
-    if (!content || typeof content !== 'string') throw new Error('Groq returned no content');
+    if (!content || typeof content !== 'string') throw new Error(`${provider} returned no content`);
     return content.trim();
   } finally {
     clearTimeout(timer);
   }
+}
+
+// Resolve LLM provider chain in priority order. Groq is preferred (fastest,
+// cheapest for Llama-3.3-70b), with OpenRouter as fallback when Groq is rate-
+// limited, geo-blocked, or its key is missing. The brief endpoint will try
+// each in turn and report the first successful provider in `model`.
+function getLlmProviderChain() {
+  const chain = [];
+  if (process.env.GROQ_API_KEY) {
+    chain.push({
+      provider: 'groq',
+      baseUrl: 'https://api.groq.com/openai/v1',
+      apiKey: process.env.GROQ_API_KEY,
+      model: 'llama-3.3-70b-versatile',
+    });
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    chain.push({
+      provider: 'openrouter',
+      baseUrl: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY,
+      // Free, fast Llama-3.3 70B via OpenRouter — same family as Groq's so
+      // the prompt + temperature transfer cleanly.
+      model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct',
+      extraHeaders: {
+        'HTTP-Referer': 'https://veritasoracle.vercel.app',
+        'X-Title': 'VERITAS Carbon Brief',
+      },
+    });
+  }
+  return chain;
+}
+
+async function callLlmWithFallback(headlines, span) {
+  const chain = getLlmProviderChain();
+  if (chain.length === 0) {
+    throw new Error('No LLM API keys configured (set GROQ_API_KEY or OPENROUTER_API_KEY)');
+  }
+  const errors = [];
+  for (const cfg of chain) {
+    try {
+      const content = await callChatCompletion({ ...cfg, headlines, span });
+      return { content, model: `${cfg.provider}:${cfg.model}` };
+    } catch (err) {
+      errors.push(err?.message || String(err));
+    }
+  }
+  throw new Error(`All LLM providers failed: ${errors.join(' | ')}`);
 }
 
 async function buildBrief(span) {
@@ -150,8 +203,11 @@ async function buildBrief(span) {
     };
   }
   let brief;
+  let modelUsed = 'unknown';
   try {
-    brief = await callGroq(headlines, span);
+    const result = await callLlmWithFallback(headlines, span);
+    brief = result.content;
+    modelUsed = result.model;
   } catch (err) {
     return {
       ok: false,
@@ -168,7 +224,7 @@ async function buildBrief(span) {
     span,
     spanLabel: spanToHumanLabel(span),
     generatedAt: new Date().toISOString(),
-    model: 'groq:llama-3.3-70b-versatile',
+    model: modelUsed,
   };
 }
 
@@ -192,7 +248,7 @@ export default async function handler(req) {
   const cached = _cacheBySpan.get(span);
   if (cached && now - cached.at < CACHE_TTL_MS) {
     return jsonResponse(cached.result, 200, {
-      'Cache-Control': 's-maxage=600, stale-while-revalidate=300',
+      'Cache-Control': 's-maxage=43200, stale-while-revalidate=3600',
       'X-Veritas-Cache': 'HIT',
       ...corsHeaders,
     });

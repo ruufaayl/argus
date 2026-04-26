@@ -44,7 +44,10 @@ interface VeritasBriefFailure {
 type VeritasBriefResponse = VeritasBriefSuccess | VeritasBriefFailure;
 type GlobalTimeRange = '1h' | '6h' | '24h' | '48h' | '7d' | 'all';
 
-const REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10 min — matches backend cache TTL
+// 12-hour refresh = 2x/day. Aligns with the backend brief cache TTL so the
+// panel's auto-refresh tick won't trigger Groq/OpenRouter calls more often than
+// the cap. The user can still hit "Retry" to force a re-synthesis on demand.
+const REFRESH_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12 h
 
 // Map dashboard timeRange → GDELT timespan param.
 // GDELT supports values like 1h, 6h, 24h (1d), 7d. For '1h'/'6h' we narrow the

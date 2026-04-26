@@ -4538,7 +4538,7 @@ export class DeckGLMap {
               // Matches VARIANT_LAYER_ORDER.full in src/config/map-layer-definitions.ts.
               { shape: shapes.circle('rgb(248, 113, 113)'), label: 'Active Fire (NASA FIRMS)', layerKey: 'fires' },
               { shape: shapes.circle('rgb(245, 181, 65)'), label: 'Climate Anomaly', layerKey: 'climate' },
-              { shape: shapes.circle('rgb(200, 134, 10)'), label: 'Thermal Hotspot', layerKey: 'hotspots' },
+              { shape: shapes.circle('rgb(200, 134, 10)'), label: 'Emissions Hotspot', layerKey: 'hotspots' },
               { shape: shapes.circle('rgb(74, 222, 128)'), label: 'Species Recovery Zone', layerKey: 'speciesRecovery' },
               { shape: shapes.square('rgb(110, 231, 183)'), label: 'Renewable Installation', layerKey: 'renewableInstallations' },
               { shape: shapes.triangle('rgb(251, 146, 60)'), label: 'Natural Event (Quake/Volcano)', layerKey: 'natural' },
