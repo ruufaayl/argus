@@ -83,30 +83,26 @@ async function fetchGdeltOnce(query, span, timeoutMs) {
   }
 }
 
-async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
+async function fetchGdeltHeadlines(timespan, timeoutMs = 7_000) {
   const span = ALLOWED_SPANS.has(timespan) ? timespan : DEFAULT_SPAN;
-  // Try primary (climate-specific quoted phrases) first.
-  try {
-    const primary = await fetchGdeltOnce(GDELT_PRIMARY_QUERY, span, timeoutMs);
-    if (primary.length > 0) return primary;
-  } catch (err) {
-    console.warn('[veritas/brief] GDELT primary failed:', err?.message || err);
-  }
-  // Widen to single-token fallback if primary returned nothing.
-  try {
-    const fallback = await fetchGdeltOnce(GDELT_FALLBACK_QUERY, span, timeoutMs);
-    if (fallback.length > 0) return fallback;
-  } catch (err) {
-    console.warn('[veritas/brief] GDELT fallback failed:', err?.message || err);
-  }
-  // Last resort: widen the timespan.
-  if (span !== '7d') {
-    try {
-      const wider = await fetchGdeltOnce(GDELT_FALLBACK_QUERY, '7d', timeoutMs);
-      if (wider.length > 0) return wider;
-    } catch (err) {
-      console.warn('[veritas/brief] GDELT 7d widen failed:', err?.message || err);
-    }
+  // Run primary + fallback queries in parallel and take the first non-empty
+  // result. This keeps total wall time at ~timeoutMs (vs. up to 3×timeoutMs
+  // when chained sequentially) — important because Vercel's edge function
+  // runtime is ~25s total and we still need ≤20s left for the LLM call.
+  const attempts = [
+    fetchGdeltOnce(GDELT_PRIMARY_QUERY, span, timeoutMs).catch(err => {
+      console.warn('[veritas/brief] GDELT primary failed:', err?.message || err);
+      return [];
+    }),
+    fetchGdeltOnce(GDELT_FALLBACK_QUERY, span, timeoutMs).catch(err => {
+      console.warn('[veritas/brief] GDELT fallback failed:', err?.message || err);
+      return [];
+    }),
+  ];
+  const results = await Promise.all(attempts);
+  // Prefer primary (more carbon-relevant) when both succeed.
+  for (const r of results) {
+    if (Array.isArray(r) && r.length > 0) return r;
   }
   return [];
 }
@@ -143,7 +139,7 @@ function spanToHumanLabel(span) {
 // (both expose the same /v1/chat/completions schema). Returns trimmed content
 // or throws with provider+status in the message so the orchestrator can fall
 // back to the next provider in its chain.
-async function callChatCompletion({ provider, baseUrl, apiKey, model, headlines, span, extraHeaders = {}, timeoutMs = 30_000 }) {
+async function callChatCompletion({ provider, baseUrl, apiKey, model, headlines, span, extraHeaders = {}, timeoutMs = 14_000 }) {
   const headlineText = headlines
     .map((h, i) => `${i + 1}. ${h.title} — ${h.source}`)
     .join('\n');
