@@ -57,6 +57,7 @@ import { HeatmapLayer } from '@deck.gl/aggregation-layers';
 import { H3HexagonLayer } from '@deck.gl/geo-layers';
 import { PathStyleExtension } from '@deck.gl/extensions';
 import type { WeatherAlert } from '@/services/weather';
+import type { SatellitePosition } from '@/services/satellites';
 import { escapeHtml } from '@/utils/sanitize';
 import { tokenizeForMatch, matchKeyword, matchesAnyKeyword, findMatchingKeywords } from '@/utils/keyword-match';
 import { t } from '@/services/i18n';
@@ -383,6 +384,7 @@ export class DeckGLMap {
   private positiveEvents: PositiveGeoEvent[] = [];
   private kindnessPoints: KindnessPoint[] = [];
   private imageryScenes: ImageryScene[] = [];
+  private satellites: SatellitePosition[] = [];
   private imagerySearchTimer: ReturnType<typeof setTimeout> | null = null;
   private imagerySearchVersion = 0;
 
@@ -1711,6 +1713,15 @@ export class DeckGLMap {
 
     if (mapLayers.satellites && filteredImageryScenes.length > 0) {
       layers.push(this.createImageryFootprintLayer(filteredImageryScenes));
+    }
+
+    // Orbital surveillance (satellite markers + orbit trails)
+    if (mapLayers.satellites && this.satellites.length > 0) {
+      layers.push(this.createSatelliteMarkersLayer());
+      const withTrails = this.satellites.filter(s => Array.isArray(s.trail) && s.trail.length > 1);
+      if (withTrails.length > 0) {
+        layers.push(this.createSatelliteTrailsLayer(withTrails));
+      }
     }
 
     // Webcam layer (server-side clustered markers)
@@ -3506,6 +3517,52 @@ export class DeckGLMap {
     });
   }
 
+  private satelliteColor(country: string): [number, number, number, number] {
+    const c = (country || 'OTHER').toUpperCase();
+    if (c === 'CN') return [255, 32, 32, 200];
+    if (c === 'RU') return [255, 136, 0, 200];
+    if (c === 'US') return [68, 136, 255, 200];
+    if (c === 'EU') return [68, 204, 68, 200];
+    if (c === 'KR') return [170, 102, 255, 200];
+    if (c === 'IN') return [255, 102, 170, 200];
+    if (c === 'TR') return [255, 68, 102, 200];
+    return [204, 204, 255, 190];
+  }
+
+  private createSatelliteMarkersLayer(): ScatterplotLayer<SatellitePosition> {
+    return new ScatterplotLayer<SatellitePosition>({
+      id: 'satellite-markers-layer',
+      data: this.satellites,
+      getPosition: (d) => [d.lng, d.lat],
+      getRadius: () => 6,
+      radiusUnits: 'pixels',
+      radiusMinPixels: 3,
+      radiusMaxPixels: 10,
+      getFillColor: (d) => this.satelliteColor(d.country),
+      stroked: true,
+      getLineColor: [0, 0, 0, 160],
+      lineWidthUnits: 'pixels',
+      lineWidthMinPixels: 1,
+      pickable: true,
+      opacity: 0.95,
+    });
+  }
+
+  private createSatelliteTrailsLayer(items: SatellitePosition[]): PathLayer<SatellitePosition> {
+    return new PathLayer<SatellitePosition>({
+      id: 'satellite-trails-layer',
+      data: items,
+      getPath: (d) => ([[d.lng, d.lat], ...(d.trail ?? []).map(p => [p[0], p[1]])] as unknown as any),
+      getWidth: () => 1.5,
+      widthUnits: 'pixels',
+      widthMinPixels: 1,
+      widthMaxPixels: 3,
+      getColor: (d) => this.satelliteColor(d.country),
+      pickable: false,
+      opacity: 0.55,
+    });
+  }
+
   private async fetchImageryForViewport(): Promise<void> {
     const map = this.maplibreMap;
     if (!map) return;
@@ -5130,6 +5187,12 @@ export class DeckGLMap {
 
   public setNaturalEvents(events: NaturalEvent[]): void {
     this.naturalEvents = events;
+    this.render();
+  }
+
+  public setSatellites(positions: SatellitePosition[]): void {
+    this.satellites = positions ?? [];
+    this.setLayerReady('satellites', this.satellites.length > 0);
     this.render();
   }
 

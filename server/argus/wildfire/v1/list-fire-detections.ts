@@ -19,6 +19,8 @@ import { getCachedJson } from '../../../_shared/redis';
 const SEED_CACHE_KEY = 'wildfire:fires:v1';
 const LIVE_FALLBACK_TTL_MS = 6 * 60 * 60 * 1000; // 6h
 let liveFallbackCache: { result: ListFireDetectionsResponse; at: number } | null = null;
+const SKEW_REGION_RATIO_THRESHOLD = 0.72; // if one region dominates >72%, treat as biased
+const STALE_MS = 6 * 60 * 60 * 1000;
 
 function mapConfidence(c: string): 'FIRE_CONFIDENCE_HIGH' | 'FIRE_CONFIDENCE_NOMINAL' | 'FIRE_CONFIDENCE_LOW' | 'FIRE_CONFIDENCE_UNSPECIFIED' {
   switch ((c || '').toLowerCase()) {
@@ -57,24 +59,61 @@ async function fetchLiveFromVeritasEndpoint(baseUrl: string): Promise<ListFireDe
   }
 }
 
+function normalizeFireDetections(result: ListFireDetectionsResponse | null | undefined): ListFireDetectionsResponse | null {
+  if (!result?.fireDetections) return null;
+  const fireDetections = result.fireDetections.filter((f) => {
+    const lat = f.location?.latitude;
+    const lon = f.location?.longitude;
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
+    if ((lat as number) < -90 || (lat as number) > 90) return false;
+    if ((lon as number) < -180 || (lon as number) > 180) return false;
+    return true;
+  });
+  return { ...result, fireDetections };
+}
+
+function isSeedLikelyBiased(result: ListFireDetectionsResponse): boolean {
+  const detections = result.fireDetections || [];
+  if (detections.length < 200) return true; // too sparse for global layer
+
+  const maxDetectedAt = detections.reduce((m, d) => Math.max(m, d.detectedAt || 0), 0);
+  if (!maxDetectedAt || Date.now() - maxDetectedAt > STALE_MS) return true;
+
+  const regionCounts = new Map<string, number>();
+  for (const d of detections) {
+    const r = (d.region || 'Unknown').trim() || 'Unknown';
+    regionCounts.set(r, (regionCounts.get(r) || 0) + 1);
+  }
+  let maxRegion = 0;
+  for (const c of regionCounts.values()) maxRegion = Math.max(maxRegion, c);
+  return maxRegion / detections.length >= SKEW_REGION_RATIO_THRESHOLD;
+}
+
 export const listFireDetections: WildfireServiceHandler['listFireDetections'] = async (
   ctx: ServerContext,
   _req: ListFireDetectionsRequest,
 ): Promise<ListFireDetectionsResponse> => {
   // 1. Try seeded cache first (instant)
+  let seededNormalized: ListFireDetectionsResponse | null = null;
   try {
     const seeded = await getCachedJson(SEED_CACHE_KEY, true) as ListFireDetectionsResponse | null;
-    if (seeded?.fireDetections && seeded.fireDetections.length > 0) {
-      return seeded;
-    }
+    seededNormalized = normalizeFireDetections(seeded);
   } catch { /* fall through to live */ }
 
-  // 2. Fall back to in-memory live cache
-  if (liveFallbackCache && Date.now() - liveFallbackCache.at < LIVE_FALLBACK_TTL_MS) {
-    return liveFallbackCache.result;
+  const seededAvailable = !!(seededNormalized?.fireDetections?.length);
+  const seededBiased = seededAvailable ? isSeedLikelyBiased(seededNormalized as ListFireDetectionsResponse) : true;
+
+  // 2. If seeded looks healthy, prefer it for speed.
+  if (seededAvailable && !seededBiased) {
+    return seededNormalized as ListFireDetectionsResponse;
   }
 
-  // 3. Hit /api/veritas/fires endpoint live (uses NASA_FIRMS_API_KEY)
+  // 3. Fall back to in-memory live cache
+  if (liveFallbackCache && Date.now() - liveFallbackCache.at < LIVE_FALLBACK_TTL_MS) {
+    return normalizeFireDetections(liveFallbackCache.result) || { fireDetections: [], pagination: undefined };
+  }
+
+  // 4. Hit /api/veritas/fires endpoint live (uses NASA_FIRMS_API_KEY)
   // Resolve our own origin from the incoming request so it works on previews + prod.
   const reqUrl = (ctx as unknown as { request?: Request })?.request?.url;
   let origin = '';
@@ -83,10 +122,15 @@ export const listFireDetections: WildfireServiceHandler['listFireDetections'] = 
   }
   if (!origin) origin = 'https://veritasoracle.vercel.app';
 
-  const live = await fetchLiveFromVeritasEndpoint(origin);
+  const live = normalizeFireDetections(await fetchLiveFromVeritasEndpoint(origin));
   if (live && live.fireDetections.length > 0) {
     liveFallbackCache = { result: live, at: Date.now() };
     return live;
+  }
+
+  // 5. If live is unavailable, return seed even if skewed so we still show data.
+  if (seededAvailable) {
+    return seededNormalized as ListFireDetectionsResponse;
   }
 
   return { fireDetections: [], pagination: undefined };

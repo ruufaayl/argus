@@ -17,7 +17,7 @@
 import Globe from 'globe.gl';
 import { isDesktopRuntime } from '@/services/runtime';
 import type { GlobeInstance, ConfigOptions } from 'globe.gl';
-import { INTEL_HOTSPOTS, CONFLICT_ZONES, MILITARY_BASES, NUCLEAR_FACILITIES, SPACEPORTS, ECONOMIC_CENTERS, STRATEGIC_WATERWAYS, CRITICAL_MINERALS, UNDERSEA_CABLES } from '@/config/geo';
+import { INTEL_HOTSPOTS, CONFLICT_ZONES, MILITARY_BASES, NUCLEAR_FACILITIES, SPACEPORTS, ECONOMIC_CENTERS, STRATEGIC_WATERWAYS, CRITICAL_MINERALS, UNDERSEA_CABLES, SANCTIONED_COUNTRIES_ALPHA2 } from '@/config/geo';
 import { PIPELINES } from '@/config/pipelines';
 import { t } from '@/services/i18n';
 import { SITE_VARIANT } from '@/config/variant';
@@ -395,7 +395,7 @@ interface GlobePath {
 interface GlobePolygon {
   coords: number[][][];
   name: string;
-  _kind: 'cii' | 'conflict' | 'imageryFootprint' | 'forecastCone';
+  _kind: 'cii' | 'conflict' | 'sanctions' | 'imageryFootprint' | 'forecastCone';
   level?: string;
   score?: number;
 
@@ -825,6 +825,12 @@ export class GlobeMap {
       .polygonCapColor((d: GlobePolygon) => {
         if (d._kind === 'cii') return GlobeMap.CII_GLOBE_COLORS[d.level!] ?? 'rgba(0,0,0,0)';
         if (d._kind === 'conflict') return GlobeMap.CONFLICT_CAP[d.intensity!] ?? GlobeMap.CONFLICT_CAP.low;
+        if (d._kind === 'sanctions') {
+          if (d.level === 'severe') return 'rgba(255,0,0,0.22)';
+          if (d.level === 'high') return 'rgba(255,100,0,0.16)';
+          if (d.level === 'moderate') return 'rgba(255,200,0,0.12)';
+          return 'rgba(0,0,0,0)';
+        }
         if (d._kind === 'imageryFootprint') return 'rgba(0,0,0,0)';
         if (d._kind === 'forecastCone') return 'rgba(255,140,60,0.2)';
         return 'rgba(255,60,60,0.15)';
@@ -832,6 +838,7 @@ export class GlobeMap {
       .polygonSideColor((d: GlobePolygon) => {
         if (d._kind === 'cii') return 'rgba(0,0,0,0)';
         if (d._kind === 'conflict') return GlobeMap.CONFLICT_SIDE[d.intensity!] ?? GlobeMap.CONFLICT_SIDE.low;
+        if (d._kind === 'sanctions') return 'rgba(0,0,0,0)';
         if (d._kind === 'imageryFootprint') return 'rgba(0,0,0,0)';
         if (d._kind === 'forecastCone') return 'rgba(255,140,60,0.1)';
         return 'rgba(255,60,60,0.08)';
@@ -839,6 +846,7 @@ export class GlobeMap {
       .polygonStrokeColor((d: GlobePolygon) => {
         if (d._kind === 'cii') return 'rgba(80,80,80,0.3)';
         if (d._kind === 'conflict') return GlobeMap.CONFLICT_STROKE[d.intensity!] ?? GlobeMap.CONFLICT_STROKE.low;
+        if (d._kind === 'sanctions') return 'rgba(0,0,0,0)';
         if (d._kind === 'imageryFootprint') return '#00b4ff';
         if (d._kind === 'forecastCone') return 'rgba(255,140,60,0.5)';
         return '#ff4444';
@@ -846,6 +854,7 @@ export class GlobeMap {
       .polygonAltitude((d: GlobePolygon) => {
         if (d._kind === 'cii') return 0.002;
         if (d._kind === 'conflict') return GlobeMap.CONFLICT_ALT[d.intensity!] ?? GlobeMap.CONFLICT_ALT.low;
+        if (d._kind === 'sanctions') return 0.0015;
         return 0.005;
       })
       .polygonLabel((d: GlobePolygon) => {
@@ -855,6 +864,10 @@ export class GlobeMap {
           if (d.parties?.length) label += `<br/>Parties: ${d.parties.map(p => escapeHtml(p)).join(', ')}`;
           if (d.casualties) label += `<br/>Casualties: ${escapeHtml(d.casualties)}`;
           return label;
+        }
+        if (d._kind === 'sanctions') {
+          const sev = escapeHtml(d.level ?? '');
+          return `<b>${escapeHtml(d.name)}</b><br/>Sanctions: ${sev || 'unknown'}`;
         }
         if (d._kind === 'imageryFootprint') {
           let label = `<span style="color:#00b4ff;font-weight:bold;">&#128752; ${escapeHtml(d.satellite ?? '')}</span>`;
@@ -2075,6 +2088,22 @@ export class GlobeMap {
         const name = (feat.properties?.name as string) ?? code;
         for (const ring of rings) {
           polys.push({ coords: ring, name, _kind: 'cii', level: entry.level, score: entry.score });
+        }
+      }
+    }
+
+    if (this.layers.sanctions && this.countriesGeoData) {
+      for (const feat of this.countriesGeoData.features) {
+        const code = feat.properties?.['ISO3166-1-Alpha-2'] as string | undefined;
+        if (!code) continue;
+        const level = (SANCTIONED_COUNTRIES_ALPHA2 as Record<string, string | undefined>)[code];
+        if (!level) continue;
+        const geom = feat.geometry;
+        if (!geom) continue;
+        const rings = geom.type === 'Polygon' ? [geom.coordinates] : geom.type === 'MultiPolygon' ? geom.coordinates : [];
+        const name = (feat.properties?.name as string) ?? code;
+        for (const ring of rings) {
+          polys.push({ coords: ring, name, _kind: 'sanctions', level });
         }
       }
     }

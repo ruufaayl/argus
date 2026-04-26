@@ -589,6 +589,7 @@ export class MapContainer {
   public setSatellites(positions: SatellitePosition[]): void {
     this.cachedSatellites = positions;
     if (this.useGlobe) { this.globeMap?.setSatellites(positions); return; }
+    if (this.useDeckGL) { this.deckGLMap?.setSatellites(positions); return; }
   }
 
   public setDiseaseOutbreaks(outbreaks: DiseaseOutbreakItem[]): void {
