@@ -3767,6 +3767,24 @@ export class DeckGLMap {
           : (obj.title || obj.name || 'Webcam');
         return { html: `<div class="deckgl-tooltip"><strong>${text(label)}</strong></div>` };
       }
+      case 'fires-layer': {
+        // NASA FIRMS hot pixel — VERITAS carbon-relevant tooltip
+        const brightness = typeof obj.brightness === 'number' ? `${obj.brightness.toFixed(0)}K` : '?';
+        const frp = typeof obj.frp === 'number' ? `${obj.frp.toFixed(1)} MW` : '?';
+        const confidence = typeof obj.confidence === 'number' ? `${obj.confidence}%` : '?';
+        const region = text(obj.region || 'Unknown region');
+        const date = text(obj.acq_date || '');
+        const daynight = obj.daynight === 'D' ? 'Day' : obj.daynight === 'N' ? 'Night' : '';
+        return { html: `<div class="deckgl-tooltip"><strong>Active Fire · NASA FIRMS</strong>${region}<br/><span style="opacity:.7">FRP: ${frp} · Brightness: ${brightness}</span><br/><span style="opacity:.7">Confidence: ${confidence} · ${daynight} · ${date}</span></div>` };
+      }
+      case 'climate-anomaly-layer':
+      case 'climate-anomalies-layer':
+      case 'climate-layer': {
+        const aname = text(obj.name || obj.location || 'Climate anomaly');
+        const atype = text(obj.type || obj.category || 'anomaly');
+        const sev = text(obj.severity || obj.score || '');
+        return { html: `<div class="deckgl-tooltip"><strong>${aname}</strong>${atype}${sev ? `<br/><span style="opacity:.7">Severity: ${sev}</span>` : ''}</div>` };
+      }
       default:
         return null;
     }
@@ -4516,17 +4534,18 @@ export class DeckGLMap {
               { shape: shapes.circle('rgb(241, 196, 15)'), label: t('components.deckgl.legend.diseaseWatch'), layerKey: 'diseaseOutbreaks' },
             ]
             : [
-              { shape: shapes.circle('rgb(255, 68, 68)'), label: t('components.deckgl.legend.highAlert'), layerKey: 'hotspots' },
-              { shape: shapes.circle('rgb(255, 165, 0)'), label: t('components.deckgl.legend.elevated'), layerKey: 'hotspots' },
-              { shape: shapes.circle(isLight ? 'rgb(180, 120, 0)' : 'rgb(255, 255, 0)'), label: t('components.deckgl.legend.monitoring'), layerKey: 'hotspots' },
-              { shape: shapes.circle('rgb(255, 100, 100)'), label: t('components.deckgl.legend.conflict'), layerKey: 'conflicts' },
-              { shape: shapes.triangle('rgb(68, 136, 255)'), label: t('components.deckgl.legend.base'), layerKey: 'bases' },
-              { shape: shapes.hexagon(isLight ? 'rgb(180, 120, 0)' : 'rgb(255, 220, 0)'), label: t('components.deckgl.legend.nuclear'), layerKey: 'nuclear' },
-              { shape: shapes.square('rgb(136, 68, 255)'), label: t('components.deckgl.legend.datacenter'), layerKey: 'datacenters' },
-              { shape: shapes.circle('rgb(160, 100, 255)'), label: t('components.deckgl.legend.aircraft'), layerKey: 'flights' },
-              { shape: shapes.circle('rgb(231, 76, 60)'), label: t('components.deckgl.legend.diseaseAlert'), layerKey: 'diseaseOutbreaks' },
-              { shape: shapes.circle('rgb(230, 126, 34)'), label: t('components.deckgl.legend.diseaseWarning'), layerKey: 'diseaseOutbreaks' },
-              { shape: shapes.circle('rgb(241, 196, 15)'), label: t('components.deckgl.legend.diseaseWatch'), layerKey: 'diseaseOutbreaks' },
+              // VERITAS (full variant) — environmental legend items only.
+              // Matches VARIANT_LAYER_ORDER.full in src/config/map-layer-definitions.ts.
+              { shape: shapes.circle('rgb(248, 113, 113)'), label: 'Active Fire (NASA FIRMS)', layerKey: 'fires' },
+              { shape: shapes.circle('rgb(245, 181, 65)'), label: 'Climate Anomaly', layerKey: 'climate' },
+              { shape: shapes.circle('rgb(200, 134, 10)'), label: 'Thermal Hotspot', layerKey: 'hotspots' },
+              { shape: shapes.circle('rgb(74, 222, 128)'), label: 'Species Recovery Zone', layerKey: 'speciesRecovery' },
+              { shape: shapes.square('rgb(110, 231, 183)'), label: 'Renewable Installation', layerKey: 'renewableInstallations' },
+              { shape: shapes.triangle('rgb(251, 146, 60)'), label: 'Natural Event (Quake/Volcano)', layerKey: 'natural' },
+              { shape: shapes.circle('rgb(125, 211, 252)'), label: 'Weather Alert', layerKey: 'weather' },
+              { shape: shapes.triangle('rgb(56, 189, 248)'), label: 'Strategic Waterway', layerKey: 'waterways' },
+              { shape: shapes.circle('rgb(244, 114, 182)'), label: 'Climate Health Alert', layerKey: 'diseaseOutbreaks' },
+              { shape: shapes.circle('rgb(148, 163, 184)'), label: 'Climate Displacement', layerKey: 'displacement' },
             ];
 
     legend.innerHTML = `

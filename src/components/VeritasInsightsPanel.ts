@@ -42,20 +42,31 @@ interface VeritasBriefFailure {
 }
 
 type VeritasBriefResponse = VeritasBriefSuccess | VeritasBriefFailure;
+type GlobalTimeRange = '1h' | '6h' | '24h' | '48h' | '7d' | 'all';
 
 const REFRESH_INTERVAL_MS = 10 * 60 * 1000; // 10 min — matches backend cache TTL
+
+// Map dashboard timeRange → GDELT timespan param.
+// GDELT supports values like 1h, 6h, 24h (1d), 7d. For '1h'/'6h' we narrow the
+// brief to recent breaking news; for 'all' we widen to 7d.
+const TIME_RANGE_TO_GDELT_SPAN: Record<GlobalTimeRange, string> = {
+  '1h': '1h', '6h': '6h', '24h': '1d', '48h': '2d', '7d': '7d', 'all': '7d',
+};
 
 export class VeritasInsightsPanel extends Panel {
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
   private generation = 0;
+  private currentTimeRange: GlobalTimeRange = '7d';
+  private timeRangeListener: ((e: Event) => void) | null = null;
 
   constructor() {
     super({
       id: 'insights',
       title: 'AI INSIGHTS',
       showCount: false,
-      infoTooltip: 'Carbon-credit risk brief synthesised by Groq Llama-3.3-70b from the last 24h of climate-relevant headlines (GDELT). Auto-refreshes every 10 minutes.',
+      infoTooltip: 'Carbon-credit risk brief synthesised by Groq Llama-3.3-70b from climate-relevant headlines (GDELT). Auto-refreshes every 10 minutes and follows the dashboard timeRange.',
     });
+    this.subscribeToTimeRange();
     this.renderLoading();
     void this.fetchBrief();
     this.startAutoRefresh();
@@ -63,7 +74,23 @@ export class VeritasInsightsPanel extends Panel {
 
   public destroy(): void {
     this.stopAutoRefresh();
+    if (this.timeRangeListener) {
+      window.removeEventListener('veritas:timeRangeChanged', this.timeRangeListener);
+      this.timeRangeListener = null;
+    }
     super.destroy?.();
+  }
+
+  private subscribeToTimeRange(): void {
+    this.timeRangeListener = (e: Event) => {
+      const detail = (e as CustomEvent<{ range: GlobalTimeRange }>).detail;
+      if (!detail || !detail.range || detail.range === this.currentTimeRange) return;
+      this.currentTimeRange = detail.range;
+      // Re-synthesise the brief with the new time window.
+      this.renderLoading();
+      void this.fetchBrief();
+    };
+    window.addEventListener('veritas:timeRangeChanged', this.timeRangeListener);
   }
 
   private startAutoRefresh(): void {
@@ -85,7 +112,9 @@ export class VeritasInsightsPanel extends Panel {
   private async fetchBrief(): Promise<void> {
     const gen = ++this.generation;
     try {
-      const res = await fetch('/api/veritas/brief', {
+      const span = TIME_RANGE_TO_GDELT_SPAN[this.currentTimeRange];
+      const url = `/api/veritas/brief?span=${encodeURIComponent(span)}`;
+      const res = await fetch(url, {
         method: 'GET',
         headers: { Accept: 'application/json' },
       });

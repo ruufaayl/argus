@@ -48,25 +48,35 @@ interface VeritasHeadlinesResponse {
 }
 
 type TierFilter = 'all' | '1' | '2' | '3';
+type GlobalTimeRange = '1h' | '6h' | '24h' | '48h' | '7d' | 'all';
 
 const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+// Map dashboard timeRange → max-age window for headline filtering.
+// Items older than this cutoff are filtered out client-side.
+const TIME_RANGE_TO_HOURS: Record<GlobalTimeRange, number | null> = {
+  '1h': 1, '6h': 6, '24h': 24, '48h': 48, '7d': 24 * 7, 'all': null,
+};
 
 export class VeritasNewsPanel extends Panel {
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
   private generation = 0;
   private currentTier: TierFilter = 'all';
+  private currentTimeRange: GlobalTimeRange = '7d';
   private headlines: VeritasHeadline[] = [];
   private fetchedAt: string | null = null;
   private channelsResolved = 0;
   private channelsTotal = 0;
+  private timeRangeListener: ((e: Event) => void) | null = null;
 
   constructor() {
     super({
       id: 'live-news',
       title: 'CLIMATE NEWS',
       showCount: true,
-      infoTooltip: 'Live climate-policy and carbon-market headlines aggregated from 18 RSS feeds: Carbon Brief, UNEP, Climate Change News, Inside Climate News, Mongabay, NASA Earth, NOAA, Verra, UNFCCC and 9 more. Auto-refreshes every 5 min.',
+      infoTooltip: 'Live climate-policy and carbon-market headlines aggregated from 18 RSS feeds: Carbon Brief, UNEP, Climate Change News, Inside Climate News, Mongabay, NASA Earth, NOAA, Verra, UNFCCC and 9 more. Auto-refreshes every 5 min and follows the dashboard timeRange.',
     });
+    this.subscribeToTimeRange();
     this.renderLoading();
     void this.fetchHeadlines();
     this.startAutoRefresh();
@@ -74,7 +84,22 @@ export class VeritasNewsPanel extends Panel {
 
   public destroy(): void {
     this.stopAutoRefresh();
+    if (this.timeRangeListener) {
+      window.removeEventListener('veritas:timeRangeChanged', this.timeRangeListener);
+      this.timeRangeListener = null;
+    }
     super.destroy?.();
+  }
+
+  private subscribeToTimeRange(): void {
+    this.timeRangeListener = (e: Event) => {
+      const detail = (e as CustomEvent<{ range: GlobalTimeRange }>).detail;
+      if (!detail || !detail.range || detail.range === this.currentTimeRange) return;
+      this.currentTimeRange = detail.range;
+      // Headlines API doesn't yet accept since=, but client-side filter still applies.
+      this.render();
+    };
+    window.addEventListener('veritas:timeRangeChanged', this.timeRangeListener);
   }
 
   private startAutoRefresh(): void {
@@ -148,11 +173,28 @@ export class VeritasNewsPanel extends Panel {
     });
   }
 
+  private filterByTimeRange(): VeritasHeadline[] {
+    const cutoffHours = TIME_RANGE_TO_HOURS[this.currentTimeRange];
+    if (cutoffHours == null) return this.headlines;
+    const cutoffMs = Date.now() - cutoffHours * 60 * 60 * 1000;
+    return this.headlines.filter(h => {
+      if (!h.pubDate) return false;
+      const t = Date.parse(h.pubDate);
+      return !isNaN(t) && t >= cutoffMs;
+    });
+  }
+
   private render(): void {
-    if (this.headlines.length === 0) {
+    const visibleHeadlines = this.filterByTimeRange();
+    this.setCount(visibleHeadlines.length);
+
+    if (visibleHeadlines.length === 0) {
+      const reason = this.headlines.length === 0
+        ? 'No headlines from the selected tier in the last refresh.'
+        : `No headlines in the last ${this.timeRangeLabel()} window.`;
       this.content.innerHTML = `
         <div style="padding:14px 12px;font-family:var(--font-mono, monospace);font-size:10px;letter-spacing:0.10em;color:var(--text-muted);text-transform:uppercase;">
-          No headlines from the selected tier in the last refresh.
+          ${reason}
         </div>
       `;
       return;
@@ -180,11 +222,11 @@ export class VeritasNewsPanel extends Panel {
         ${tierChip('2', 'Tier 2 · Mainstream')}
         ${tierChip('3', 'Tier 3 · Specialist')}
         <span style="margin-left:auto;font-family:var(--font-mono, monospace);font-size:9px;letter-spacing:0.14em;color:var(--text-muted, #888);">
-          ${this.channelsResolved}/${this.channelsTotal} feeds · ${escapeHtml(fetchedTime)}
+          ${this.channelsResolved}/${this.channelsTotal} feeds · ${this.timeRangeLabel()} · ${escapeHtml(fetchedTime)}
         </span>
       </div>
       <div class="vt-news-list" style="padding:4px 0;max-height:100%;overflow-y:auto;">
-        ${this.headlines.map(h => this.renderItem(h)).join('')}
+        ${visibleHeadlines.map(h => this.renderItem(h)).join('')}
       </div>
     `;
 
@@ -223,6 +265,17 @@ export class VeritasNewsPanel extends Panel {
         ${h.excerpt ? `<div style="font-family:var(--font-sans, system-ui);font-size:10px;line-height:1.45;color:var(--text-secondary, rgba(245,240,235,0.65));margin-top:4px;">${escapeHtml(h.excerpt.slice(0, 160))}${h.excerpt.length > 160 ? '…' : ''}</div>` : ''}
       </a>
     `;
+  }
+
+  private timeRangeLabel(): string {
+    switch (this.currentTimeRange) {
+      case '1h':  return 'last 1h';
+      case '6h':  return 'last 6h';
+      case '24h': return 'last 24h';
+      case '48h': return 'last 48h';
+      case '7d':  return 'last 7d';
+      case 'all': return 'all time';
+    }
   }
 
   private relativeTime(iso: string | null): string {

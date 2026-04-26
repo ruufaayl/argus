@@ -1185,6 +1185,12 @@ export class PanelLayoutManager implements AppModule {
     this.ctx.map.onTimeRangeChanged((range) => {
       this.ctx.currentTimeRange = range;
       this.applyTimeRangeFilterDebounced();
+      // VERITAS cross-panel correlation: notify any panel that opted-in via
+      // window.addEventListener('veritas:timeRangeChanged', ...).
+      // Detail.range ∈ {'1h','6h','24h','48h','7d','all'}.
+      try {
+        window.dispatchEvent(new CustomEvent('veritas:timeRangeChanged', { detail: { range } }));
+      } catch { /* no-op for non-DOM environments */ }
     });
 
     this.applyPanelSettings();

@@ -635,3 +635,80 @@
   letter-spacing: 0.14em !important;
   color: var(--text-muted) !important;
 }
+
+/* ============================================================
+   MAP TOOLTIP + LEGEND — gold-glass on deep forest
+   .deckgl-tooltip rendered via deck.gl's getTooltip callback
+   .map-legend / .legend-item rendered by createLegend()
+   ============================================================ */
+[data-veritas="on"] .deckgl-tooltip {
+  background: rgba(6, 10, 7, 0.92) !important;
+  border: 1px solid rgba(200, 134, 10, 0.42) !important;
+  border-radius: 2px !important;
+  padding: 8px 10px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.01em !important;
+  color: var(--vt-cream) !important;
+  backdrop-filter: blur(14px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.6) !important;
+  max-width: 280px !important;
+}
+
+[data-veritas="on"] .deckgl-tooltip strong {
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  color: var(--vt-gold-bright) !important;
+  display: block;
+  margin-bottom: 3px;
+}
+
+[data-veritas="on"] .map-legend,
+[data-veritas="on"] .deckgl-legend {
+  background: rgba(6, 10, 7, 0.78) !important;
+  border: 1px solid var(--vt-glass-border) !important;
+  border-radius: 2px !important;
+  backdrop-filter: blur(14px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(120%) !important;
+  padding: 8px 10px !important;
+  font-family: var(--font-sans) !important;
+}
+
+[data-veritas="on"] .legend-label-title {
+  font-family: var(--font-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--vt-gold) !important;
+  margin-bottom: 4px !important;
+  display: block !important;
+}
+
+[data-veritas="on"] .legend-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 3px 0 !important;
+  font-size: 10px !important;
+  font-family: var(--font-sans) !important;
+  color: var(--text-secondary) !important;
+  letter-spacing: 0.04em !important;
+}
+
+[data-veritas="on"] .legend-label {
+  font-family: var(--font-sans) !important;
+  font-weight: 400 !important;
+}
+
+/* Layer-toggle ON state — gold accent on the active checkbox row */
+[data-veritas="on"] .layer-toggles .layer-toggle:has(input:checked),
+[data-veritas="on"] .deckgl-layer-toggles .layer-toggle:has(input:checked) {
+  background: linear-gradient(90deg, rgba(200, 134, 10, 0.10) 0%, transparent 100%) !important;
+  color: var(--vt-cream) !important;
+  border-left: 2px solid var(--vt-gold) !important;
+  padding-left: 8px !important;
+}

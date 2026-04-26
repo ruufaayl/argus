@@ -34,16 +34,19 @@ const GDELT_KEYWORDS = [
 ];
 const GDELT_QUERY = GDELT_KEYWORDS.join(' OR ');
 
-// ── In-memory cache ──
+// ── In-memory cache (per timespan) ──
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
-let _cache = null;
-let _cacheAt = 0;
+const _cacheBySpan = new Map(); // span -> { result, at }
 
-async function fetchGdeltHeadlines(timeoutMs = 15_000) {
+const ALLOWED_SPANS = new Set(['1h', '6h', '12h', '1d', '2d', '3d', '7d']);
+const DEFAULT_SPAN = '1d';
+
+async function fetchGdeltHeadlines(timespan, timeoutMs = 15_000) {
+  const span = ALLOWED_SPANS.has(timespan) ? timespan : DEFAULT_SPAN;
   const url =
     `https://api.gdeltproject.org/api/v2/doc/doc?` +
     `query=${encodeURIComponent(GDELT_QUERY)}` +
-    `&mode=artlist&maxrecords=20&format=json&timespan=1d&sort=DateDesc`;
+    `&mode=artlist&maxrecords=20&format=json&timespan=${span}&sort=DateDesc`;
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -84,7 +87,20 @@ RULES:
 - Output plain text. No markdown headers, no bullet points. Three paragraphs separated by blank lines.
 - Maximum 250 words total.`;
 
-async function callGroq(headlines, timeoutMs = 30_000) {
+function spanToHumanLabel(span) {
+  switch (span) {
+    case '1h': return 'last 1 hour';
+    case '6h': return 'last 6 hours';
+    case '12h': return 'last 12 hours';
+    case '1d': return 'last 24 hours';
+    case '2d': return 'last 48 hours';
+    case '3d': return 'last 3 days';
+    case '7d': return 'last 7 days';
+    default: return 'last 24 hours';
+  }
+}
+
+async function callGroq(headlines, span, timeoutMs = 30_000) {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) throw new Error('GROQ_API_KEY not configured');
 
@@ -108,7 +124,7 @@ async function callGroq(headlines, timeoutMs = 30_000) {
         max_tokens: 600,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: `Today's climate headlines (last 24h):\n\n${headlineText}\n\nWrite the brief.` },
+          { role: 'user', content: `Climate headlines from the ${spanToHumanLabel(span)}:\n\n${headlineText}\n\nWrite the brief.` },
         ],
       }),
     });
@@ -125,17 +141,17 @@ async function callGroq(headlines, timeoutMs = 30_000) {
   }
 }
 
-async function buildBrief() {
-  const headlines = await fetchGdeltHeadlines();
+async function buildBrief(span) {
+  const headlines = await fetchGdeltHeadlines(span);
   if (headlines.length === 0) {
     return {
       ok: false,
-      error: 'No climate headlines available from GDELT in the last 24h.',
+      error: `No climate headlines available from GDELT for ${spanToHumanLabel(span)}.`,
     };
   }
   let brief;
   try {
-    brief = await callGroq(headlines);
+    brief = await callGroq(headlines, span);
   } catch (err) {
     return {
       ok: false,
@@ -149,6 +165,8 @@ async function buildBrief() {
     brief,
     headlines,
     sources,
+    span,
+    spanLabel: spanToHumanLabel(span),
     generatedAt: new Date().toISOString(),
     model: 'groq:llama-3.3-70b-versatile',
   };
@@ -166,16 +184,21 @@ export default async function handler(req) {
     return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
   }
 
+  const requestUrl = new URL(req.url);
+  const spanRaw = requestUrl.searchParams.get('span') || DEFAULT_SPAN;
+  const span = ALLOWED_SPANS.has(spanRaw) ? spanRaw : DEFAULT_SPAN;
+
   const now = Date.now();
-  if (_cache && now - _cacheAt < CACHE_TTL_MS) {
-    return jsonResponse(_cache, 200, {
+  const cached = _cacheBySpan.get(span);
+  if (cached && now - cached.at < CACHE_TTL_MS) {
+    return jsonResponse(cached.result, 200, {
       'Cache-Control': 's-maxage=600, stale-while-revalidate=300',
       'X-Veritas-Cache': 'HIT',
       ...corsHeaders,
     });
   }
 
-  const result = await buildBrief();
+  const result = await buildBrief(span);
   if (!result.ok) {
     return jsonResponse(result, 503, {
       'Cache-Control': 'no-cache, no-store',
@@ -184,8 +207,12 @@ export default async function handler(req) {
     });
   }
 
-  _cache = result;
-  _cacheAt = now;
+  _cacheBySpan.set(span, { result, at: now });
+  // Bound cache size to avoid memory growth
+  if (_cacheBySpan.size > 12) {
+    const oldest = [..._cacheBySpan.entries()].sort((a, b) => a[1].at - b[1].at)[0];
+    if (oldest) _cacheBySpan.delete(oldest[0]);
+  }
   return jsonResponse(result, 200, {
     'Cache-Control': 's-maxage=600, stale-while-revalidate=300',
     'X-Veritas-Cache': 'MISS-OK',
