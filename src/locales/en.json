@@ -299,7 +299,7 @@
     "latam": "Latin America",
     "asia": "Asia-Pacific",
     "energy": "Energy & Resources",
-    "energyComplex": "Energy Complex",
+    "energyComplex": "Energy & Renewables",
     "gov": "Government",
     "thinktanks": "Think Tanks",
     "polymarket": "Predictions",
@@ -320,10 +320,10 @@
     "stablecoins": "Stablecoins",
     "deduction": "Deduct Situation",
     "ucdpEvents": "Armed Conflict Events",
-    "giving": "Global Giving",
+    "giving": "Carbon Credit Markets",
     "displacement": "UNHCR Displacement",
     "climate": "Climate Anomalies",
-    "populationExposure": "Population Exposure",
+    "populationExposure": "Climate Risk Exposure",
     "securityAdvisories": "Security Advisories",
     "orefSirens": "Israel Sirens",
     "telegramIntel": "Telegram Intel",
@@ -1592,7 +1592,7 @@
       "totalAffected": "Total Affected",
       "affectedCount": "{{count}} affected",
       "radiusKm": "{{km}}km radius",
-      "infoTooltip": "<strong>Population Exposure Estimates</strong> Estimated population within event impact radius. Based on WorldPop country density data.<ul><li>Conflict: 50km radius</li><li>Earthquake: 100km radius</li><li>Flood: 100km radius</li><li>Wildfire: 30km radius</li></ul>"
+      "infoTooltip": "<strong>Climate Risk Exposure</strong> Estimated population within climate-event impact radius. Based on WorldPop country density data.<ul><li>Wildfire: 30km radius</li><li>Earthquake: 100km radius</li><li>Flood: 100km radius</li><li>Drought / heat event: 200km radius</li></ul>"
     },
     "securityAdvisories": {
       "loading": "Fetching travel advisories...",

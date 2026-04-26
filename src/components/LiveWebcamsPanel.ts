@@ -111,7 +111,12 @@ interface WebcamPrefs {
 function loadWebcamPrefs(forceSingleView: boolean): WebcamPrefs {
   const stored = loadFromStorage<Partial<WebcamPrefs>>(STORAGE_KEYS.webcamPrefs, {});
   const region = stored.regionFilter as RegionFilter;
-  const regionFilter = ALL_REGIONS.includes(region) ? region : DEFAULT_REGION_FOR_VARIANT;
+  // VERITAS migration: any non-env region from a pre-rebrand session is reset
+  // to 'environment' so users opening the dashboard see climate cams first.
+  const isLegacyMilitaryRegion = region === 'iran' || region === 'middle-east' || region === 'space';
+  const regionFilter = (SITE_VARIANT === 'full' && isLegacyMilitaryRegion)
+    ? 'environment'
+    : (ALL_REGIONS.includes(region) ? region : DEFAULT_REGION_FOR_VARIANT);
   const viewMode = forceSingleView ? 'single'
     : (stored.viewMode === 'grid' || stored.viewMode === 'single' ? stored.viewMode : 'grid');
   const regionFeeds = regionFilter === 'all' ? WEBCAM_FEEDS

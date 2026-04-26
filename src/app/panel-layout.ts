@@ -482,6 +482,8 @@ export class PanelLayoutManager implements AppModule {
    */
   mountLiveNewsIfReady(): void {
     if (this.ctx.panels['live-news']) return;
+    // VERITAS doesn't gate on YouTube channels — RSS aggregator handled by lazyPanel.
+    if (SITE_VARIANT === 'full') return;
     if (getDefaultLiveChannels().length === 0 && loadChannelsFromStorage().length === 0) return;
     const panel = new LiveNewsPanel();
     this.ctx.panels['live-news'] = panel;
@@ -825,9 +827,16 @@ export class PanelLayoutManager implements AppModule {
       this.ctx.panels['fuel-prices'] = new FuelPricesPanel();
     }
 
-    if (this.shouldCreatePanel('live-news') &&
-        (getDefaultLiveChannels().length > 0 || loadChannelsFromStorage().length > 0)) {
-      this.ctx.panels['live-news'] = new LiveNewsPanel();
+    if (this.shouldCreatePanel('live-news')) {
+      // VERITAS: replace YouTube TV streams with the climate-RSS aggregator panel.
+      // Other variants keep LiveNewsPanel (gated on having ≥1 channel configured).
+      if (SITE_VARIANT === 'full') {
+        this.lazyPanel('live-news', () =>
+          import('@/components/VeritasNewsPanel').then(m => new m.VeritasNewsPanel()),
+        );
+      } else if (getDefaultLiveChannels().length > 0 || loadChannelsFromStorage().length > 0) {
+        this.ctx.panels['live-news'] = new LiveNewsPanel();
+      }
     }
 
     if (this.shouldCreatePanel('live-webcams')) {
