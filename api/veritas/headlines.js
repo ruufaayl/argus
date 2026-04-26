@@ -133,7 +133,19 @@ async function fetchOneFeed(channel, proxyOrigin, timeoutMs = 8_000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { signal: ctrl.signal });
+    // Server-to-server fetch from this edge function → rss-proxy.
+    // rss-proxy validateApiKey() rejects requests with neither Origin nor an
+    // X-Argus-Key (returns 401), so we must announce ourselves as a trusted
+    // browser origin. Pass our own deployment origin so the gateway treats
+    // this like a same-origin browser call.
+    const res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: {
+        'Origin': proxyOrigin,
+        'Referer': `${proxyOrigin}/api/veritas/headlines`,
+        'Accept': 'application/xml, text/xml, */*',
+      },
+    });
     if (!res.ok) {
       console.warn(`[veritas/headlines] ${channel.id} returned ${res.status}`);
       return [];

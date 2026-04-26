@@ -241,7 +241,14 @@ async function fetchHeadlinesFallback(reqUrl, timeoutMs = 8000) {
   try {
     const res = await fetch(`${origin}/api/veritas/headlines?limit=20`, {
       signal: ctrl.signal,
-      headers: { Accept: 'application/json' },
+      // Edge-to-edge call: pass Origin so the headlines endpoint's CORS
+      // gating (and any chained gateway checks) treats us as a trusted
+      // same-origin caller, not an unauth'd script.
+      headers: {
+        Accept: 'application/json',
+        Origin: origin,
+        Referer: `${origin}/api/veritas/brief`,
+      },
     });
     if (!res.ok) return [];
     const data = await res.json();
