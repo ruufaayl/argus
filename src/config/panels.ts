@@ -1018,36 +1018,29 @@ export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> =
 // Maps category keys to panel keys. Only categories with at least one
 // matching panel in the user's active panel settings are shown.
 export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: string[]; variants?: string[] }> = {
-  // All variants — essential panels
-  core: {
+  // VERITAS (full variant) — environmental verification dashboard
+  // Keep categories simple and strictly climate/carbon oriented.
+  veritasCore: {
     labelKey: 'header.panelCatCore',
-    panelKeys: ['map', 'live-news', 'live-webcams', 'windy-webcams', 'insights', 'strategic-posture'],
+    panelKeys: ['map', 'live-news', 'live-webcams', 'insights'],
+    variants: ['full'],
   },
-
-  // Full (geopolitical) variant
-  intelligence: {
-    labelKey: 'header.panelCatIntelligence',
-    panelKeys: ['cii', 'strategic-risk', 'intel', 'gdelt-intel', 'cascade', 'telegram-intel', 'forecast'],
-  },
-  correlation: {
-    labelKey: 'header.panelCatCorrelation',
-    panelKeys: ['military-correlation', 'escalation-correlation', 'economic-correlation', 'disaster-correlation'],
-  },
-  regionalNews: {
-    labelKey: 'header.panelCatRegionalNews',
-    panelKeys: ['politics', 'us', 'europe', 'middleeast', 'africa', 'latam', 'asia'],
-  },
-  marketsFinance: {
-    labelKey: 'header.panelCatMarketsFinance',
-    panelKeys: ['commodities', 'energy-complex', 'markets', 'economic', 'trade-policy', 'sanctions-pressure', 'supply-chain', 'finance', 'polymarket', 'macro-signals', 'gulf-economies', 'etf-flows', 'stablecoins', 'crypto', 'heatmap'],
-  },
-  topical: {
-    labelKey: 'header.panelCatTopical',
-    panelKeys: ['energy', 'gov', 'thinktanks', 'tech', 'ai', 'layoffs'],
-  },
-  dataTracking: {
+  veritasVerification: {
     labelKey: 'header.panelCatDataTracking',
-    panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure', 'security-advisories', 'radiation-watch', 'oref-sirens', 'world-clock', 'tech-readiness'],
+    panelKeys: [
+      'forecast',
+      'climate',
+      'satellite-fires',
+      'thermal-escalation',
+      'population-exposure',
+      'disaster-correlation',
+      'disease-outbreaks',
+      'radiation-watch',
+      'energy-complex',
+      'giving',
+      'cross-source-signals',
+    ],
+    variants: ['full'],
   },
 
   // Tech variant
