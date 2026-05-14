@@ -3,7 +3,7 @@
 <p align="center"><strong>The Carbon Credit Anti-Greenwash Oracle</strong></p>
 
 <p align="center">
-  <a href="https://pakontir.vercel.app/"><img src="https://img.shields.io/badge/live-pakontir.vercel.app-c8860a?style=for-the-badge&labelColor=060a07" alt="Live" /></a>
+  <a href="https://veritasoracle.vercel.app/"><img src="https://img.shields.io/badge/live-veritasoracle.vercel.app-c8860a?style=for-the-badge&labelColor=060a07" alt="Live" /></a>
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vercel-Edge-000000?style=for-the-badge&logo=vercel" alt="Vercel" />
   <img src="https://img.shields.io/badge/Stack-Free%20Tier-c8860a?style=for-the-badge&labelColor=060a07" alt="Free Tier" />
@@ -87,19 +87,6 @@ Total deployable footprint: **~12 serverless functions**, well within Vercel's f
 
 ---
 
-## The Founders
-
-**The Green Ledger · Climate-Tech Startup Project · FAST-NUCES Islamabad · BSFT-4D Fintech Programme · April 2026**
-
-| | Name | Role | Mandate |
-|---|---|---|---|
-| **CEO** | Taha Ali        | Chief Executive Officer  | *The Visionary* — Regulatory strategy, investor narrative, CSRD/ISSB alignment |
-| **CTO** | Rufayl Waseem   | Chief Technology Officer | *The Architect* — Full-stack build, globe engine, API layer, deployment |
-| **CSO** | Harris Safi     | Chief Science Officer    | *The Quant* — GHG Protocol methodology, carbon accounting engine |
-| **COO** | Waleed          | Chief Operating Officer  | *The Navigator* — Phase timeline, deadline coordination, QA |
-
----
-
 ## Run Locally
 
 ```bash
@@ -173,7 +160,7 @@ The site is **fully API-driven** — no panel falls back to fabricated data. Set
 1. Open Vercel → `pakontir` project → **Settings** → **Environment Variables**.
 2. Add the rows above (paste only the keys you have — missing ones leave their panels empty, not broken).
 3. Trigger a redeploy (push to `main`, or **Deployments → … → Redeploy**).
-4. Confirm panels populate at `https://pakontir.vercel.app/dashboard`.
+4. Confirm panels populate at `https://veritasoracle.vercel.app/dashboard`.
 
 > Nothing is hardcoded. Every figure on every panel originates from a live API response or a cache hit. If a panel is empty, its upstream feed is either missing an env var or rate-limited.
 
@@ -185,7 +172,7 @@ The site is **fully API-driven** — no panel falls back to fabricated data. Set
 - **Phase 01 — Market Identification & Comparative Analysis** ✅ Complete (April 9, 2026)
 - **Phase 02 — Methodology & Alpha MVP** 🚧 In progress
   - GHG formula engine (live)
-  - First clickable low-fidelity prototype (live URL: [pakontir.vercel.app](https://pakontir.vercel.app/))
+  - First clickable low-fidelity prototype (live URL: [veritasoracle.vercel.app](https://veritasoracle.vercel.app/))
 - **Phase 03 — VERITAS RISK SCORE™ engine** ⏳ Next
 
 ---
